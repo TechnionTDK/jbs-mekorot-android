@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
         setAutoCompleteTextView();
         final TextView btnJSON = (TextView) findViewById(R.id.btnJSON);
 
-        final String queryString =
+        final String dbpediaQuery =
                 "PREFIX p: <http://dbpedia.org/property/>"+
                         "PREFIX dbpedia: <http://dbpedia.org/resource/>"+
                         "PREFIX category: <http://dbpedia.org/resource/Category:>"+
@@ -139,7 +139,20 @@ public class MainActivity extends AppCompatActivity {
                         " ?subject rdfs:comment ?comment ."+
                         " FILTER( (?lat > 48.23185544 && ?lat < 49.23185844 && ?long > 16.31660208 && ?long < 17.31660208) && (lang(?comment) = 'en') && (lang(?label) = 'en') )"+
                         " .} ORDER BY ?lat ?long LIMIT 15 ";
+        final String technionQuery = "PREFIX jbr: <http://jbs.technion.ac.il/resource/>" +
+                "PREFIX jbo: <http://jbs.technion.ac.il/ontology/>" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>"+
+                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>"+
+                "PREFIX dco: <http://purl.org/dc/terms/>"+
+                "SELECT ?uri ?label ?position "+
+                "WHERE {" +
+                " ?uri a jbo:ParashaTorah ." +
+                " ?uri rdfs:label ?label ."+
+                " ?uri jbo:position ?position" +
+                " .} ORDER BY ASC(xsd:integer(?position))";
 
+        final String dbpediaEndpoint = "http://dbpedia.org/sparql";
+        final String technionEndpoint = "http://tdk3.csf.technion.ac.il:8890/sparql";
         HandlerThread handlerThread = new HandlerThread("URLConnection");
         handlerThread.start();
         Handler mainHandler = new Handler(handlerThread.getLooper());
@@ -148,8 +161,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    com.hp.hpl.jena.query.Query query = com.hp.hpl.jena.query.QueryFactory.create(queryString);
-                    com.hp.hpl.jena.query.QueryExecution qexec = com.hp.hpl.jena.query.QueryExecutionFactory.sparqlService("http://dbpedia.org/sparql", query);
+                    com.hp.hpl.jena.query.Query query = com.hp.hpl.jena.query.QueryFactory.create(technionQuery);
+                    com.hp.hpl.jena.query.QueryExecution qexec = com.hp.hpl.jena.query.QueryExecutionFactory.sparqlService(technionEndpoint, query);
 
                     try {
                         ResultSet rs = qexec.execSelect();
@@ -172,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
                     finally {
                         qexec.close();
                     }
+
 
                 }catch( Exception err){
                     err.printStackTrace();
