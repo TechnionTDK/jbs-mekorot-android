@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">TestApplication</string>
+    <string name="action_favorite">favorite action</string>
+    <string name="action_settings">settings action</string>
+    <string-array name="spinner_items">
+        <item> פרק</item>
+        <item> פרשה</item>
+    </string-array>
+</resources>
