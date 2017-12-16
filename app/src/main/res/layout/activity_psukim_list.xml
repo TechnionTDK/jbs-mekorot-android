@@ -17,41 +17,54 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textColor="@color/White"
+            android:textSize="20sp"
             android:id="@+id/toolbar_title" />
-
-
     </android.support.v7.widget.Toolbar>
+
+    <!-- Header aligned to top -->
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/DodgerBlue"
+        android:elevation="2dp"
+        android:gravity="center" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="אנא בחר/י פסוקים"
+            android:textColor="@color/White"
+            android:textSize="16sp" />
+    </LinearLayout>
 
     <LinearLayout android:layout_width="match_parent"
                   android:layout_height="match_parent"
                   android:weightSum="1"
                   android:orientation="vertical">
-        <TextView
-            android:id="@+id/txtData"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="100dip"
-            android:gravity="center"
-            android:text="אתונות"
-            android:textSize="36sp"
-            android:src="@drawable/ic_search_black_48dp"
-            android:textStyle="bold"
-        />
+            android:layout_height="match_parent"
+            android:scrollbars="vertical" />
+
+    </LinearLayout>
+    <!-- Footer aligned to top -->
+    <LinearLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/DodgerBlue"
+        android:elevation="2dp"
+        android:gravity="center" >
+
         <TextView
-            android:id="@+id/btnJSON"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dip"
-            android:gravity="center"
-            android:text="בחר/י פרק או פרשה וחפש/י"
-            android:src="@drawable/ic_search_black_48dp"
-            android:textSize="22sp"
-            android:textStyle="italic"/>
-        <ImageView android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   android:layout_marginTop="10dip"
-                   android:gravity="center"
-                   android:src="@drawable/ic_search_black_48dp"
-        />
+            android:layout_margin="5dp"
+            android:text="אנא בחר/י פסוקים"
+            android:textColor="@color/White"
+            android:textSize="16sp" />
     </LinearLayout>
 </LinearLayout>
