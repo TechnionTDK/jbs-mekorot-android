@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -31,11 +32,16 @@ public class PsukimRecyclerViewAdapter extends RecyclerView.Adapter<PsukimRecycl
         final PasukModel pasukModel = mPsukim.get(position);
         holder.mTextView.setText(pasukModel.getText());
         holder.mView.setBackgroundColor(pasukModel.isSelected() ? Color.CYAN : Color.WHITE);
-        holder.mTextView.setOnClickListener(new View.OnClickListener() {
+        holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 pasukModel.setSelected(!pasukModel.isSelected());
                 holder.mView.setBackgroundColor(pasukModel.isSelected() ? Color.CYAN : Color.WHITE);
+                if (pasukModel.isSelected()) {
+                    holder.mImageView.setImageResource(R.drawable.ic_check_box_black_24dp);
+                } else {
+                    holder.mImageView.setImageResource(R.drawable.ic_check_box_outline_blank_black_24dp);
+                }
             }
         });
 
@@ -50,11 +56,13 @@ public class PsukimRecyclerViewAdapter extends RecyclerView.Adapter<PsukimRecycl
 
         private View mView;
         private TextView mTextView;
+        private ImageView mImageView;
 
         private MyViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
             mTextView = (TextView) itemView.findViewById(R.id.pasuk_text);
+            mImageView = (ImageView) itemView.findViewById(R.id.pasuk_selection);
         }
     }
 

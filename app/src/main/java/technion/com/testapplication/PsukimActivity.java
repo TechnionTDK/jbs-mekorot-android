@@ -29,7 +29,7 @@ public class PsukimActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
-
+        menu.findItem(R.id.action_favorite).setVisible(false);
         return true;
     }
 
