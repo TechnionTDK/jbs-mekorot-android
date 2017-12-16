@@ -11,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -84,7 +86,7 @@ public class PsukimActivity extends AppCompatActivity {
                         "} ORDER BY ASC(xsd:integer(?position))";
         FetchPsukimTask fetchPsukimTask = new FetchPsukimTask(this);
         fetchPsukimTask.execute(psukimByParashaQuery);
-        // Initialize recycler view.
+
     }
 
     public void setRecyclerViewAdapter(ArrayList<PasukModel> psukim) {
@@ -94,6 +96,21 @@ public class PsukimActivity extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setAdapter(mAdapter);
+        View chooseAll = findViewById(R.id.choose_all);
+        chooseAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PsukimRecyclerViewAdapter psukimRecyclerViewAdapter = ((PsukimRecyclerViewAdapter) mAdapter);
+                ImageView chooseAllImage = (ImageView) findViewById(R.id.choose_all_image);
+                if (psukimRecyclerViewAdapter.getAreAllItemsClicked()) {
+                    chooseAllImage.setImageResource(R.drawable.ic_check_box_outline_blank_black_24dp);
+                    psukimRecyclerViewAdapter.clickOnAllItems(false);
+                } else {
+                    chooseAllImage.setImageResource(R.drawable.ic_check_box_black_24dp);
+                    psukimRecyclerViewAdapter.clickOnAllItems(true);
+                }
+            }
+        });
     }
 
 }

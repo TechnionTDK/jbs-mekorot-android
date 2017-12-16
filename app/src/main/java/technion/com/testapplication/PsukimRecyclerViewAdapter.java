@@ -17,8 +17,22 @@ public class PsukimRecyclerViewAdapter extends RecyclerView.Adapter<PsukimRecycl
 
     private ArrayList<PasukModel> mPsukim;
 
+    private boolean allItemsClicked = false;
+
     public PsukimRecyclerViewAdapter(ArrayList<PasukModel> psukim) {
         mPsukim = psukim;
+    }
+
+    public void clickOnAllItems(boolean setSelected) {
+        for (PasukModel pasukModel: mPsukim) {
+            pasukModel.setSelected(setSelected);
+        }
+        notifyDataSetChanged();
+        allItemsClicked = setSelected;
+    }
+
+    public boolean getAreAllItemsClicked() {
+        return allItemsClicked;
     }
 
     @Override
@@ -32,6 +46,11 @@ public class PsukimRecyclerViewAdapter extends RecyclerView.Adapter<PsukimRecycl
         final PasukModel pasukModel = mPsukim.get(position);
         holder.mTextView.setText(pasukModel.getText());
         holder.mView.setBackgroundColor(pasukModel.isSelected() ? Color.CYAN : Color.WHITE);
+        if (pasukModel.isSelected()) {
+            holder.mImageView.setImageResource(R.drawable.ic_check_box_black_24dp);
+        } else {
+            holder.mImageView.setImageResource(R.drawable.ic_check_box_outline_blank_black_24dp);
+        }
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
