@@ -10,6 +10,7 @@ import android.os.HandlerThread;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,7 +25,13 @@ import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
+
+    private ArrayList<String> mQueryResults;
+    private ArrayList<String> mLabels = new ArrayList<>();
+    private ArrayList<Pair<String, String>> URILabelPairs = new ArrayList<>();
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -100,22 +107,42 @@ public class MainActivity extends AppCompatActivity {
         String[] languages={"Android ","java","IOS","SQL","JDBC","Web services"};
         AutoCompleteTextView actv = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>
-                (this,android.R.layout.simple_list_item_1, languages);
+                (this,android.R.layout.simple_list_item_1, mLabels);
         actv.setAdapter(adapter);
         actv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), PsukimActivity.class);
                 String message = (String) ((TextView) view).getText();
+                String uriToSend = "";
+                for (Pair<String,String> uriLabel:URILabelPairs) {
+                    if (uriLabel.first.equals(message)) {
+                        uriToSend = uriLabel.second;
+                    }
+                }
                 intent.putExtra("extraMessage", message);
+                intent.putExtra("extraUri", uriToSend);
                 startActivity(intent);
             }
         });
     }
 
+    private void populateUriLabelPairs() {
+        for (String queryResult: mQueryResults) {
+            int firstMagicIndex = queryResult.indexOf(SparqlTask.MAGIC_SEPERATOR);
+            String label = queryResult.substring(0, firstMagicIndex);
+            mLabels.add(label);
+            String uri = queryResult.substring(firstMagicIndex + 3);
+            URILabelPairs.add(new Pair(label, uri));
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        mQueryResults = (ArrayList<String>) intent.getExtras().get("queryResults");
+        populateUriLabelPairs();
         setContentView(R.layout.activity_main);
         getWindow().getDecorView().setBackgroundColor(ContextCompat.getColor(this, R.color.LightBlue));
         forceRTLIfSupported();

@@ -15,6 +15,9 @@ import android.widget.TextView;
  * Created by tomerlevinson on 13/12/2017.
  */
 public class PsukimActivity extends AppCompatActivity {
+
+    private String mParashaName;
+    private String mParashaUri;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -47,13 +50,18 @@ public class PsukimActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_psukim_list);
+        // Get extras
         Intent intent = getIntent();
-        String message = intent.getStringExtra("extraMessage");
+        mParashaName = intent.getStringExtra("extraMessage");
+        String uri = intent.getStringExtra("extraUri");
+        mParashaUri = uri.substring(uri.lastIndexOf("/") + 1);
         TextView tv = (TextView) findViewById(R.id.txtData);
-        tv.setText(message);
+        tv.setText(mParashaName);
         getWindow().getDecorView().setBackgroundColor(ContextCompat.getColor(this, R.color.LightBlue));
         final Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        TextView toolbarTitleTV = (TextView) findViewById(R.id.toolbar_title);
+        toolbarTitleTV.setText(mParashaName);
     }
 }
