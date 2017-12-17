@@ -1,4 +1,4 @@
-package technion.com.testapplication;
+package technion.com.testapplication.models;
 
 /**
  * Created by tomerlevinson on 16/12/2017.

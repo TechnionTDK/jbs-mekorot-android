@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import technion.com.testapplication.models.PasukModel;
+
 /**
  * Created by tomerlevinson on 16/12/2017.
  */

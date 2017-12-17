@@ -1,4 +1,4 @@
-package technion.com.testapplication;
+package technion.com.testapplication.async;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,16 +9,18 @@ import com.hp.hpl.jena.query.ResultSet;
 
 import java.util.ArrayList;
 
+import technion.com.testapplication.JBSQueries;
+import technion.com.testapplication.R;
+import technion.com.testapplication.activities.MainActivity;
+
 /**
  * Created by tomerlevinson on 15/12/2017.
  */
-public class SparqlTask extends AsyncTask<String, Void, ArrayList<String>> {
-    private static final String DBPEDIA_ENDPOINT = "http://dbpedia.org/sparql";
-    private static final String TECHNION_ENDPOINT = "http://tdk3.csf.technion.ac.il:8890/sparql";
+public class FetchParashotTask extends AsyncTask<String, Void, ArrayList<String>> {
     private Activity mActivity;
     public static final String MAGIC_SEPERATOR = "$$$";
 
-    public SparqlTask(Activity activity) {
+    public FetchParashotTask(Activity activity) {
         mActivity = activity;
     }
 
@@ -26,36 +28,38 @@ public class SparqlTask extends AsyncTask<String, Void, ArrayList<String>> {
     protected ArrayList<String> doInBackground(String... params) {
         ArrayList<String> queryResults = new ArrayList<>();
         try {
-            com.hp.hpl.jena.query.Query query = com.hp.hpl.jena.query.QueryFactory.create(params[0]);
-            com.hp.hpl.jena.query.QueryExecution qexec = com.hp.hpl.jena.query.QueryExecutionFactory.sparqlService(TECHNION_ENDPOINT, query);
+            com.hp.hpl.jena.query.Query query = com.hp.hpl.jena.query.QueryFactory.create(
+                    params[0]);
+            com.hp.hpl.jena.query.QueryExecution qexec = com.hp.hpl.jena.query.QueryExecutionFactory.sparqlService(
+                    JBSQueries.JBS_ENDPOINT, query);
 
             try {
                 ResultSet rs = qexec.execSelect();
 
-                while(rs.hasNext()) {
-                    QuerySolution rb = rs.nextSolution() ;
-                    String label = rb.get("label").toString();
-                    String uri = rb.get("uri").toString();
+                while (rs.hasNext()) {
+                    QuerySolution rb = rs.nextSolution();
+                    String label = rb.get(JBSQueries.JBS_LABEL).toString();
+                    String uri = rb.get(JBSQueries.JBS_URI).toString();
                     String labelAndUri = label + MAGIC_SEPERATOR + uri;
                     queryResults.add(labelAndUri);
                 }
-            }
-            finally {
+            } finally {
                 qexec.close();
             }
 
 
-        }catch( Exception err){
+        } catch (Exception err) {
             err.printStackTrace();
         }
         return queryResults;
     }
 
     @Override
-    protected void onPostExecute(ArrayList<String> strings) {
-        super.onPostExecute(strings);
+    protected void onPostExecute(ArrayList<String> parashotAndUris) {
+        super.onPostExecute(parashotAndUris);
         Intent startMainActivityIntent = new Intent(mActivity, MainActivity.class);
-        startMainActivityIntent.putStringArrayListExtra("queryResults", strings);
+        startMainActivityIntent.putStringArrayListExtra(
+                mActivity.getResources().getString(R.string.parashot_and_uri_extra), parashotAndUris);
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {

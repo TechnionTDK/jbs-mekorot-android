@@ -2,6 +2,13 @@
     <string name="app_name">TestApplication</string>
     <string name="action_favorite">favorite action</string>
     <string name="action_settings">settings action</string>
+    <string name="enter_perek">אנא הכנס/י פרק</string>
+    <string name="enter_parasha">אנא הכנס/י פרשה</string>
+    <string name="perek">פרק</string>
+    <string name="perek_or_parasha_name_extra">perekOrParashaName</string>
+    <string name="perek_or_parasha_uri_extra">perekOrParashaUri</string>
+    <string name="parashot_and_uri_extra">parashotAndUri</string>
+    <string name="please_wait_he">אנא המתנ/י</string>
     <string-array name="spinner_items">
         <item> פרק</item>
         <item> פרשה</item>

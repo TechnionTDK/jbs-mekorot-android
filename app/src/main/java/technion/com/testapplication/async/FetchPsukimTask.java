@@ -1,4 +1,4 @@
-package technion.com.testapplication;
+package technion.com.testapplication.async;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -9,14 +9,17 @@ import com.hp.hpl.jena.query.ResultSet;
 
 import java.util.ArrayList;
 
+import technion.com.testapplication.JBSQueries;
+import technion.com.testapplication.R;
+import technion.com.testapplication.models.PasukModel;
+import technion.com.testapplication.activities.PsukimActivity;
+
 /**
  * Created by tomerlevinson on 16/12/2017.
  */
 public class FetchPsukimTask extends AsyncTask<String, Void, ArrayList<PasukModel>> {
-    private static final String TECHNION_ENDPOINT = "http://tdk3.csf.technion.ac.il:8890/sparql";
     private Activity mActivity;
     private ProgressDialog mProgressDialog;
-    public static final String MAGIC_SEPERATOR = "$$$";
 
     public FetchPsukimTask(Activity activity) {
         mActivity = activity;
@@ -26,7 +29,7 @@ public class FetchPsukimTask extends AsyncTask<String, Void, ArrayList<PasukMode
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        this.mProgressDialog.setMessage("אנא המתנ/י");
+        this.mProgressDialog.setMessage(mActivity.getResources().getString(R.string.please_wait_he));
         this.mProgressDialog.show();
     }
 
@@ -35,15 +38,15 @@ public class FetchPsukimTask extends AsyncTask<String, Void, ArrayList<PasukMode
         ArrayList<PasukModel> queryResults = new ArrayList<>();
         try {
             com.hp.hpl.jena.query.Query query = com.hp.hpl.jena.query.QueryFactory.create(params[0]);
-            com.hp.hpl.jena.query.QueryExecution qexec = com.hp.hpl.jena.query.QueryExecutionFactory.sparqlService(TECHNION_ENDPOINT, query);
+            com.hp.hpl.jena.query.QueryExecution qexec = com.hp.hpl.jena.query.QueryExecutionFactory.sparqlService(JBSQueries.JBS_ENDPOINT, query);
 
             try {
                 ResultSet rs = qexec.execSelect();
 
                 while(rs.hasNext()) {
                     QuerySolution rb = rs.nextSolution() ;
-                    PasukModel pasukModel = new PasukModel(rb.get("pasuk_text").toString());
-                    pasukModel.setUri(rb.get("pasuk").toString());
+                    PasukModel pasukModel = new PasukModel(rb.get(JBSQueries.PASUK_TEXT).toString());
+                    pasukModel.setUri(rb.get(JBSQueries.PASUK).toString());
                     queryResults.add(pasukModel);
                 }
             }

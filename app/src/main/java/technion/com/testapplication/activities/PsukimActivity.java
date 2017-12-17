@@ -1,4 +1,4 @@
-package technion.com.testapplication;
+package technion.com.testapplication.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +16,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+
+import technion.com.testapplication.JBSQueries;
+import technion.com.testapplication.async.FetchPsukimTask;
+import technion.com.testapplication.models.PasukModel;
+import technion.com.testapplication.PsukimRecyclerViewAdapter;
+import technion.com.testapplication.R;
 
 /**
  * Created by tomerlevinson on 13/12/2017.
@@ -61,8 +67,8 @@ public class PsukimActivity extends AppCompatActivity {
         setContentView(R.layout.activity_psukim_list);
         // Get extras
         Intent intent = getIntent();
-        mParashaName = intent.getStringExtra("extraMessage");
-        String uri = intent.getStringExtra("extraUri");
+        mParashaName = intent.getStringExtra(getResources().getString(R.string.perek_or_parasha_name_extra));
+        String uri = intent.getStringExtra(getResources().getString(R.string.perek_or_parasha_uri_extra));
         mParashaUri = uri.substring(uri.lastIndexOf("/") + 1);
         getWindow().getDecorView().setBackgroundColor(
                 ContextCompat.getColor(this, R.color.LightBlue));
@@ -71,19 +77,7 @@ public class PsukimActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView toolbarTitleTV = (TextView) findViewById(R.id.toolbar_title);
         toolbarTitleTV.setText(mParashaName);
-        String psukimByParashaQuery =
-                " PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-                        " PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
-                        " PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-                        " PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n" +
-                        " PREFIX dc: <http://purl.org/dc/elements/1.1/>\n" +
-                        " PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n" +
-                        " PREFIX jbr: <http://jbs.technion.ac.il/resource/>\n" +
-                        " PREFIX jbo: <http://jbs.technion.ac.il/ontology/>\n" +
-                        " SELECT distinct ?pasuk ?position ?pasuk_text WHERE {\n" +
-                        " ?pasuk a jbo:Pasuk; jbo:within jbr:" + mParashaUri + "; jbo:position ?position; jbo:text ?pasuk_text.\n" +
-                        " ?perush jbo:interprets ?pasuk; jbo:text ?text.\n" +
-                        "} ORDER BY ASC(xsd:integer(?position))";
+        String psukimByParashaQuery = JBSQueries.getAllPsukimFromParashaQuery(mParashaUri);
         FetchPsukimTask fetchPsukimTask = new FetchPsukimTask(this);
         fetchPsukimTask.execute(psukimByParashaQuery);
 
