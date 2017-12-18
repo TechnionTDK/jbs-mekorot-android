@@ -21,14 +21,20 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import technion.com.testapplication.async.FetchParashotTask;
+import technion.com.testapplication.async.FetchParashotAndPrakimTask;
 import technion.com.testapplication.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ArrayList<String> mQueryResults;
-    private ArrayList<String> mParashot = new ArrayList<>();
-    private ArrayList<Pair<String, String>> URILabelPairs = new ArrayList<>();
+    private ArrayList<String> mParashotAndUris;
+    private ArrayList<String> mPrakimAndUris;
+    private ArrayList<String> mAdapterArrayList = new ArrayList<>();
+    private final ArrayList<String> mParashot = new ArrayList<>();
+    private final ArrayList<String> mPrakim = new ArrayList<>();
+    private ArrayList<Pair<String, String>> parashotURILabelPairs = new ArrayList<>();
+    private ArrayList<Pair<String, String>> prakimURILabelPairs = new ArrayList<>();
+    private ArrayAdapter<String> mAdapter;
+    private int mSpinnerCheck = 0;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -81,8 +87,18 @@ public class MainActivity extends AppCompatActivity {
                         R.id.autoCompleteTextView);
                 if (((TextView) view).getText().equals(getResources().getString(R.string.perek))) {
                     actv.setHint(getResources().getString(R.string.enter_perek));
+                    if (!mAdapter.isEmpty() && ++mSpinnerCheck > 1) {
+                        mAdapter.clear();
+                    }
+                    mAdapter.addAll(mPrakim);
+                    mAdapter.notifyDataSetChanged();
                 } else {
                     actv.setHint(getResources().getString(R.string.enter_parasha));
+                    if (!mAdapter.isEmpty() && ++mSpinnerCheck > 1) {
+                        mAdapter.clear();
+                    }
+                    mAdapter.addAll(mParashot);
+                    mAdapter.notifyDataSetChanged();
                 }
             }
 
@@ -102,17 +118,24 @@ public class MainActivity extends AppCompatActivity {
 
     public void setAutoCompleteTextView() {
         AutoCompleteTextView actv = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>
-                (this, android.R.layout.simple_list_item_1, mParashot);
+        mAdapter = new ArrayAdapter<>
+                (this, android.R.layout.simple_list_item_1, mAdapterArrayList);
         //TODO: change adapter in case of prakim.
-        actv.setAdapter(adapter);
+        actv.setAdapter(mAdapter);
         actv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String spinnerText = ((Spinner)findViewById(R.id.spinner_nav)).getSelectedItem().toString();
                 Intent intent = new Intent(getApplicationContext(), PsukimActivity.class);
                 String perekOrParashaName = (String) ((TextView) view).getText();
                 String perekOrParashaUri = "";
-                for (Pair<String, String> uriLabel : URILabelPairs) {
+                ArrayList<Pair<String, String>> perekOrParashaPairs;
+                if (spinnerText.equals(getResources().getString(R.string.parasha))) {
+                    perekOrParashaPairs = parashotURILabelPairs;
+                } else {
+                    perekOrParashaPairs = prakimURILabelPairs;
+                }
+                for (Pair<String, String> uriLabel : perekOrParashaPairs) {
                     if (uriLabel.first.equals(perekOrParashaName)) {
                         perekOrParashaUri = uriLabel.second;
                     }
@@ -127,12 +150,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void populateUriLabelPairs() {
-        for (String queryResult : mQueryResults) {
-            int firstMagicIndex = queryResult.indexOf(FetchParashotTask.MAGIC_SEPERATOR);
+        for (String queryResult : mParashotAndUris) {
+            int firstMagicIndex = queryResult.indexOf(FetchParashotAndPrakimTask.MAGIC_SEPERATOR);
             String label = queryResult.substring(0, firstMagicIndex);
             mParashot.add(label);
             String uri = queryResult.substring(firstMagicIndex + 3);
-            URILabelPairs.add(new Pair(label, uri));
+            parashotURILabelPairs.add(new Pair(label, uri));
+        }
+        for (String queryResult : mPrakimAndUris) {
+            int firstMagicIndex = queryResult.indexOf(FetchParashotAndPrakimTask.MAGIC_SEPERATOR);
+            String label = queryResult.substring(0, firstMagicIndex);
+            mPrakim.add(label);
+            String uri = queryResult.substring(firstMagicIndex + 3);
+            prakimURILabelPairs.add(new Pair(label, uri));
         }
     }
 
@@ -142,8 +172,10 @@ public class MainActivity extends AppCompatActivity {
         // Get Parashot
         // TODO: Add get prakim.
         Intent intent = getIntent();
-        mQueryResults = (ArrayList<String>) intent.getExtras().get(
+        mParashotAndUris = (ArrayList<String>) intent.getExtras().get(
                 getResources().getString(R.string.parashot_and_uri_extra));
+        mPrakimAndUris = (ArrayList<String>) intent.getExtras().get(
+                getResources().getString(R.string.prakim_and_uri_extra));
         populateUriLabelPairs();
         setContentView(R.layout.activity_main);
         getWindow().getDecorView().setBackgroundColor(

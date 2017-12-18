@@ -9,6 +9,8 @@
     <string name="perek_or_parasha_uri_extra">perekOrParashaUri</string>
     <string name="parashot_and_uri_extra">parashotAndUri</string>
     <string name="please_wait_he">אנא המתנ/י</string>
+    <string name="prakim_and_uri_extra">prakimAndUri</string>
+    <string name="parasha">פרשה</string>
     <string-array name="spinner_items">
         <item> פרק</item>
         <item> פרשה</item>

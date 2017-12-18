@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import technion.com.testapplication.JBSQueries;
-import technion.com.testapplication.async.FetchParashotTask;
+import technion.com.testapplication.async.FetchParashotAndPrakimTask;
 import technion.com.testapplication.R;
 
 /**
@@ -16,7 +16,7 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
-        FetchParashotTask task = new FetchParashotTask(this);
-        task.execute(JBSQueries.GET_ALL_PARASHOT);
+        FetchParashotAndPrakimTask task = new FetchParashotAndPrakimTask(this);
+        task.execute(JBSQueries.GET_ALL_PARASHOT, JBSQueries.GET_ALL_PRAKIM);
     }
 }

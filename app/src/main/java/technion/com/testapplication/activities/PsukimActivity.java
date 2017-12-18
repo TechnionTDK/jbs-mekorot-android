@@ -28,8 +28,8 @@ import technion.com.testapplication.R;
  */
 public class PsukimActivity extends AppCompatActivity {
 
-    private String mParashaName;
-    private String mParashaUri;
+    private String mPerekOrParashaName;
+    private String mPerekOrParashaUri;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
 
@@ -67,17 +67,17 @@ public class PsukimActivity extends AppCompatActivity {
         setContentView(R.layout.activity_psukim_list);
         // Get extras
         Intent intent = getIntent();
-        mParashaName = intent.getStringExtra(getResources().getString(R.string.perek_or_parasha_name_extra));
+        mPerekOrParashaName = intent.getStringExtra(getResources().getString(R.string.perek_or_parasha_name_extra));
         String uri = intent.getStringExtra(getResources().getString(R.string.perek_or_parasha_uri_extra));
-        mParashaUri = uri.substring(uri.lastIndexOf("/") + 1);
+        mPerekOrParashaUri = uri.substring(uri.lastIndexOf("/") + 1);
         getWindow().getDecorView().setBackgroundColor(
                 ContextCompat.getColor(this, R.color.LightBlue));
         final Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView toolbarTitleTV = (TextView) findViewById(R.id.toolbar_title);
-        toolbarTitleTV.setText(mParashaName);
-        String psukimByParashaQuery = JBSQueries.getAllPsukimFromParashaQuery(mParashaUri);
+        toolbarTitleTV.setText(mPerekOrParashaName);
+        String psukimByParashaQuery = JBSQueries.getAllPsukimFromParashaQuery(mPerekOrParashaUri);
         FetchPsukimTask fetchPsukimTask = new FetchPsukimTask(this);
         fetchPsukimTask.execute(psukimByParashaQuery);
 

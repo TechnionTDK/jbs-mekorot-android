@@ -29,6 +29,18 @@ public class JBSQueries {
             " ?uri rdfs:label ?label ."+
             " ?uri jbo:position ?position" +
             " .} ORDER BY ASC(xsd:integer(?position))";
+    public static final String GET_ALL_PRAKIM = "PREFIX jbr: <http://jbs.technion.ac.il/resource/> \n" +
+            "PREFIX jbo: <http://jbs.technion.ac.il/ontology/> \n" +
+            "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+            "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+            "PREFIX dco: <http://purl.org/dc/terms/>\n" +
+            "SELECT ?uri ?label ?position WHERE {\n" +
+            "?uri a jbo:Section. \n" +
+            "?uri rdfs:label ?label. \n" +
+            "?uri jbo:position ?position.\n" +
+            "?uri jbo:book ?book.\n" +
+            "?book a jbo:BookTanach.\n" +
+            "} ORDER BY ASC(xsd:integer(?position))";
     public static final String SAMPLE_DBPEDIA_QUERY =
             "PREFIX p: <http://dbpedia.org/property/>"+
                     "PREFIX dbpedia: <http://dbpedia.org/resource/>"+
