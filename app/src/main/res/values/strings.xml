@@ -16,6 +16,9 @@
     <string name="makor_author">makorAuthor</string>
     <string name="makor_title">makorTitle</string>
     <string name="mekorot_reference">אזכור במקורות</string>
+    <string name="choose_category_to_filter">בחר/י קטגוריות לסינון</string>
+    <string name="choose_button">בחר</string>
+    <string name="cancel_button">בטל</string>
     <string-array name="spinner_items">
         <item> פרק</item>
         <item> פרשה</item>

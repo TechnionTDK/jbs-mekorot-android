@@ -15,6 +15,7 @@ public class JBSQueries {
     public static final String PASUK_TEXT = "pasuk_text";
     public static final String MAKOR_NAME = "label";
     public static final String MAKOR_TEXT = "text";
+    public static final String BOOK_SUBJECT = "book_subject";
 
 
     public static final String GET_ALL_PSUKIM_FROM_PARASHA =
@@ -76,6 +77,63 @@ public class JBSQueries {
                 " ?pasuk a jbo:Pasuk; jbo:within jbr:" + parashaUri + "; jbo:position ?position; jbo:text ?pasuk_text.\n" +
                 " ?perush jbo:interprets ?pasuk; jbo:text ?text.\n" +
                 "} ORDER BY ASC(xsd:integer(?position))";
+    }
+
+    public static String getCategoriesByPsukim(ArrayList<String> psukim) {
+        String psukimList = "";
+        for (String pasuk : psukim) {
+            psukimList += pasuk + " ";
+        }
+        return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>                           \n" +
+                "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n" +
+                "            PREFIX dco: <http://purl.org/dc/terms/>                                     \n" +
+                "            SELECT ?book_subject COUNT(DISTINCT(?source)) as ?count                     \n" +
+                "            WHERE                                                                       \n" +
+                "            {                                                                           \n" +
+                "                {                                                                       \n" +
+                "                    values ?pasuk { " + psukimList + " }                                \n" +
+                "                    ?pasuk a jbo:Pasuk.                                                 \n" +
+                "                    ?mentions rdf:type jbo:Mention.                                     \n" +
+                "                    ?mentions jbo:target ?pasuk.                                        \n" +
+                "                    ?mentions jbo:source ?source.                                          \n" +
+                "                    ?source rdfs:label ?label.                                          \n" +
+                "                    ?source jbo:text ?text.                                             \n" +
+                "                    ?pasuk rdfs:label ?target_label.                                       \n" +
+                "                    ?source jbo:book ?source_book.                                         \n" +
+                "                    ?source_book dco:subject ?book_subject.                                \n" +
+                "                }                                                                          \n" +
+                "                UNION {                                                                 \n" +
+                "                    values ?container { " + psukimList + " }                            \n" +
+                "                    values ?types {jbo:Section jbo:ParashaTorah}                        \n" +
+                "                    ?container a ?types.                                                \n" +
+                "                    ?pasuk jbo:within ?container.                                       \n" +
+                "                    ?pasuk a jbo:Pasuk.                                                 \n" +
+                "                    ?mentions rdf:type jbo:Mention.                                     \n" +
+                "                    ?mentions jbo:target ?pasuk.                                        \n" +
+                "                    ?mentions jbo:source ?source.                                          \n" +
+                "                    ?source rdfs:label ?label.                                          \n" +
+                "                    ?source jbo:text ?text.                                             \n" +
+                "                    ?pasuk rdfs:label ?target_label.                                       \n" +
+                "                    ?source jbo:book ?source_book.                                         \n" +
+                "                    ?source_book dco:subject ?book_subject.                                \n" +
+                "                }                                                                       \n" +
+                "                UNION {                                                                 \n" +
+                "                    values ?books { " + psukimList + " }                                \n" +
+                "                    values ?types {jbo:BookTorah}                                       \n" +
+                "                    ?books a ?types.                                                    \n" +
+                "                    ?pasuk jbo:book ?books.                                             \n" +
+                "                    ?pasuk a jbo:Pasuk.                                                 \n" +
+                "                    ?mentions rdf:type jbo:Mention.                                     \n" +
+                "                    ?mentions jbo:target ?pasuk.                                        \n" +
+                "                    ?mentions jbo:source ?source.                                          \n" +
+                "                    ?source rdfs:label ?label.                                          \n" +
+                "                    ?source jbo:text ?text.                                             \n" +
+                "                    ?pasuk rdfs:label ?target_label.                                       \n" +
+                "                    ?source jbo:book ?source_book.                                         \n" +
+                "                    ?source_book dco:subject ?book_subject.                                \n" +
+                "                }                                                                       \n" +
+                "            }                                                                              \n" +
+                "            group by ?book_subject order by ?count";
     }
 
     public static String getMekorot(ArrayList<String> psukim) {

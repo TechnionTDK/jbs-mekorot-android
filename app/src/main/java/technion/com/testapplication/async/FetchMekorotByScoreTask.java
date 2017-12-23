@@ -3,6 +3,7 @@ package technion.com.testapplication.async;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.util.Pair;
 
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
@@ -18,7 +19,7 @@ import technion.com.testapplication.models.MakorModel;
 /**
  * Created by tomerlevinson on 18/12/2017.
  */
-public class FetchMekorotByScoreTask extends AsyncTask<String, Void, ArrayList<MakorModel>> {
+public class FetchMekorotByScoreTask extends AsyncTask<String, Void, Pair<ArrayList<MakorModel>,ArrayList<String>>> {
     private Activity mActivity;
     private ProgressDialog mProgressDialog;
 
@@ -35,11 +36,12 @@ public class FetchMekorotByScoreTask extends AsyncTask<String, Void, ArrayList<M
     }
 
     @Override
-    protected ArrayList<MakorModel> doInBackground(String... params) {
-        ArrayList<MakorModel> queryResults = new ArrayList<>();
+    protected Pair<ArrayList<MakorModel>, ArrayList<String>> doInBackground(String... params) {
+        ArrayList<MakorModel> sortedMekorot = new ArrayList<>();
+        ArrayList<String> bookSubjects = new ArrayList<>();
         try {
             QueryEngineHTTP queryEngineHTTP = new QueryEngineHTTP(JBSQueries.JBS_ENDPOINT, params[0]);
-
+            QueryEngineHTTP queryEngineHTTPCategories = new QueryEngineHTTP(JBSQueries.JBS_ENDPOINT, params[1]);
             try {
                 ResultSet resultSet = queryEngineHTTP.execSelect();
                 while (resultSet.hasNext()) {
@@ -48,27 +50,40 @@ public class FetchMekorotByScoreTask extends AsyncTask<String, Void, ArrayList<M
                             rb.get(JBSQueries.MAKOR_NAME).toString(),
                             rb.get(JBSQueries.MAKOR_NAME).toString(),
                             rb.get(JBSQueries.MAKOR_TEXT).toString());
-                    queryResults.add(makorModel);
+                    sortedMekorot.add(makorModel);
                 }
             } finally {
                 queryEngineHTTP.close();
             }
-
+            try {
+                ResultSet resultSet = queryEngineHTTPCategories.execSelect();
+                while (resultSet.hasNext()) {
+                    QuerySolution rb = resultSet.nextSolution();
+                    String bookSubjectUri = rb.get(JBSQueries.BOOK_SUBJECT).toString();
+                    String bookSubject = bookSubjectUri.substring(bookSubjectUri.lastIndexOf("/") + 1);
+                    bookSubjects.add(bookSubject);
+                }
+            } finally {
+                queryEngineHTTPCategories.close();
+            }
 
         } catch (Exception err) {
             err.printStackTrace();
         }
-        return queryResults;
+        Pair<ArrayList<MakorModel>, ArrayList<String>> queryResultsPair = Pair.create(sortedMekorot, bookSubjects);
+        return queryResultsPair;
     }
 
     @Override
-    protected void onPostExecute(ArrayList<MakorModel> mekorotModels) {
-        super.onPostExecute(mekorotModels);
+    protected void onPostExecute(Pair<ArrayList<MakorModel>, ArrayList<String>> mekorotModelCategoryPair) {
+        super.onPostExecute(mekorotModelCategoryPair);
         if (mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }
+        ArrayList<MakorModel> mekorotModels = mekorotModelCategoryPair.first;
+        ArrayList<String> mekorotCategories = mekorotModelCategoryPair.second;
         if (mActivity instanceof MekorotActivity) {
-            ((MekorotActivity) mActivity).setRecyclerViewAdapter(mekorotModels);
+            ((MekorotActivity) mActivity).setRecyclerViewAdapter(mekorotModels, mekorotCategories);
         }
     }
 }
