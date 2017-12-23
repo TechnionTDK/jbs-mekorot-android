@@ -11,6 +11,8 @@
     <string name="please_wait_he">אנא המתנ/י</string>
     <string name="prakim_and_uri_extra">prakimAndUri</string>
     <string name="parasha">פרשה</string>
+    <string name="psukim_uris_extra">psukimUris</string>
+    <string name="mekorot_reference">אזכור במקורות</string>
     <string-array name="spinner_items">
         <item> פרק</item>
         <item> פרשה</item>
