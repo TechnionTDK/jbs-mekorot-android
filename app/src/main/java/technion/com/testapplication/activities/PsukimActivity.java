@@ -67,8 +67,10 @@ public class PsukimActivity extends AppCompatActivity {
         setContentView(R.layout.activity_psukim_list);
         // Get extras
         Intent intent = getIntent();
-        mPerekOrParashaName = intent.getStringExtra(getResources().getString(R.string.perek_or_parasha_name_extra));
-        String uri = intent.getStringExtra(getResources().getString(R.string.perek_or_parasha_uri_extra));
+        mPerekOrParashaName = intent.getStringExtra(
+                getResources().getString(R.string.perek_or_parasha_name_extra));
+        String uri = intent.getStringExtra(
+                getResources().getString(R.string.perek_or_parasha_uri_extra));
         mPerekOrParashaUri = uri.substring(uri.lastIndexOf("/") + 1);
         getWindow().getDecorView().setBackgroundColor(
                 ContextCompat.getColor(this, R.color.LightBlue));
@@ -81,6 +83,19 @@ public class PsukimActivity extends AppCompatActivity {
         FetchPsukimTask fetchPsukimTask = new FetchPsukimTask(this);
         fetchPsukimTask.execute(psukimByParashaQuery);
 
+    }
+
+    private void setFooter() {
+        View footer = findViewById(R.id.footer);
+        footer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mekorotIntent = new Intent(getApplicationContext(), MekorotActivity.class);
+                mekorotIntent.putStringArrayListExtra(getResources().getString(R.string.psukim_uris_extra),
+                        ((PsukimRecyclerViewAdapter) mAdapter).getAllPsukimUris());
+                startActivity(mekorotIntent);
+            }
+        });
     }
 
     public void setRecyclerViewAdapter(ArrayList<PasukModel> psukim) {
@@ -97,7 +112,8 @@ public class PsukimActivity extends AppCompatActivity {
                 PsukimRecyclerViewAdapter psukimRecyclerViewAdapter = ((PsukimRecyclerViewAdapter) mAdapter);
                 ImageView chooseAllImage = (ImageView) findViewById(R.id.choose_all_image);
                 if (psukimRecyclerViewAdapter.getAreAllItemsClicked()) {
-                    chooseAllImage.setImageResource(R.drawable.ic_check_box_outline_blank_black_24dp);
+                    chooseAllImage.setImageResource(
+                            R.drawable.ic_check_box_outline_blank_black_24dp);
                     psukimRecyclerViewAdapter.clickOnAllItems(false);
                 } else {
                     chooseAllImage.setImageResource(R.drawable.ic_check_box_black_24dp);
@@ -105,6 +121,7 @@ public class PsukimActivity extends AppCompatActivity {
                 }
             }
         });
+        setFooter();
     }
 
 }
