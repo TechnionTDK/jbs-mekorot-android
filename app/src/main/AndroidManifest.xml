@@ -16,6 +16,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.PsukimActivity"/>
+        <activity android:name=".activities.MekorotActivity"/>
     </application>
 
 </manifest>
