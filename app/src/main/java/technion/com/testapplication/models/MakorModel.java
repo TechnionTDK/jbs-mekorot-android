@@ -10,8 +10,8 @@ public class MakorModel {
     private String mMakorText;
 
     public MakorModel(String name, String author, String text) {
-        mMakorAuthor = author;
         mMakorName = name;
+        mMakorAuthor = author;
         mMakorText = text;
     }
 

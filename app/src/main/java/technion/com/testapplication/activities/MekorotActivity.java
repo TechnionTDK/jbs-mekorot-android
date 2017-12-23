@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,13 +16,18 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import technion.com.testapplication.JBSQueries;
+import technion.com.testapplication.MekorotRecyclerViewAdapter;
 import technion.com.testapplication.R;
 import technion.com.testapplication.async.FetchMekorotByScoreTask;
+import technion.com.testapplication.models.MakorModel;
 
 /**
  * Created by tomerlevinson on 18/12/2017.
  */
 public class MekorotActivity extends AppCompatActivity {
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -73,5 +80,22 @@ public class MekorotActivity extends AppCompatActivity {
         String mekorotQuery = JBSQueries.getMekorot(prefixedPsukimUris);
         FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(this);
         fetchMekorotByScoreTask.execute(mekorotQuery);
+    }
+
+    public void setHeader() {
+        TextView numOfResults = (TextView) findViewById(R.id.num_of_results);
+        int mekorotSize = ((MekorotRecyclerViewAdapter) mAdapter).getMekorotSize();
+        numOfResults.setText("תוצאות: " + Integer.toString(mekorotSize));
+
+    }
+
+    public void setRecyclerViewAdapter(ArrayList<MakorModel> mekorot) {
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        mAdapter = new MekorotRecyclerViewAdapter(mekorot);
+        LinearLayoutManager manager = new LinearLayoutManager(this);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(manager);
+        mRecyclerView.setAdapter(mAdapter);
+        setHeader();
     }
 }

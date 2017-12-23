@@ -46,8 +46,8 @@ public class FetchMekorotByScoreTask extends AsyncTask<String, Void, ArrayList<M
                     QuerySolution rb = resultSet.nextSolution();
                     MakorModel makorModel = new MakorModel(
                             rb.get(JBSQueries.MAKOR_NAME).toString(),
-                            rb.get(JBSQueries.MAKOR_TEXT).toString(),
-                            rb.get(JBSQueries.PASUK_TEXT).toString());
+                            rb.get(JBSQueries.MAKOR_NAME).toString(),
+                            rb.get(JBSQueries.MAKOR_TEXT).toString());
                     queryResults.add(makorModel);
                 }
             } finally {
@@ -62,13 +62,13 @@ public class FetchMekorotByScoreTask extends AsyncTask<String, Void, ArrayList<M
     }
 
     @Override
-    protected void onPostExecute(ArrayList<MakorModel> strings) {
-        super.onPostExecute(strings);
+    protected void onPostExecute(ArrayList<MakorModel> mekorotModels) {
+        super.onPostExecute(mekorotModels);
         if (mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }
         if (mActivity instanceof MekorotActivity) {
-            // setRecyclerViewAdapter with strings.
+            ((MekorotActivity) mActivity).setRecyclerViewAdapter(mekorotModels);
         }
     }
 }

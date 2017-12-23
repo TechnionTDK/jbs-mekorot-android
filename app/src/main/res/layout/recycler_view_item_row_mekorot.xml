@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    android:id="@+id/card_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    card_view:cardCornerRadius="4dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/PowderBlue">
+
+        <TextView
+            android:id="@+id/makor_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:gravity="right"
+            android:text="שם המקור"
+            android:textColor="@color/Black"
+            android:textSize="22sp"/>
+
+        <TextView
+            android:id="@+id/makor_author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/makor_name"
+            android:layout_marginRight="7dp"
+            android:layout_marginTop="10dp"
+            android:gravity="right"
+            android:text="שם הסופר"
+            android:textColor="@color/DarkSlateGray"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/makor_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/makor_author"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:gravity="right"
+            android:maxLines="12"
+            android:minLines="1"
+            android:textSize="10sp" android:layout_marginLeft="10dp"/>
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_below="@id/makor_text"
+                      android:orientation="horizontal"
+                      android:weightSum="1"
+                      android:layout_alignParentStart="true"
+                      android:layout_alignParentEnd="true"
+                      android:layout_margin="10dp">
+            <ImageView android:layout_width="0dip"
+                       android:layout_height="30dp"
+                       android:layout_gravity="left"
+                       android:layout_weight="0.5"
+                       android:scaleType="fitStart"
+                       android:src="@drawable/ic_share_black_18dp"/>
+            <ImageView android:layout_width="0dip"
+                       android:layout_height="30dp"
+                       android:layout_weight="0.5"
+                       android:scaleType="fitEnd"
+                       android:src="@drawable/ic_favorite_black_18dp" android:tint="@color/Red"
+            />
+        </LinearLayout>
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

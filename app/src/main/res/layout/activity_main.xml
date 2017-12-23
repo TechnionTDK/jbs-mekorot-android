@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="100dip"
             android:gravity="center"
-            android:text="אתונות"
+            android:text="סולמות"
             android:textSize="36sp"
             android:src="@drawable/ic_search_black_48dp"
             android:textStyle="bold"
