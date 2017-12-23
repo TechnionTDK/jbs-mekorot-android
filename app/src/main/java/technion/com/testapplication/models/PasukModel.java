@@ -24,6 +24,10 @@ public class PasukModel {
         mUri = uri;
     }
 
+    public String getUri() {
+        return mUri;
+    }
+
     public boolean isSelected() {
         return mIsSelected;
     }
