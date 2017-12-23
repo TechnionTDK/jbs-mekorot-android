@@ -18,6 +18,7 @@ import technion.com.testapplication.models.PasukModel;
 public class PsukimRecyclerViewAdapter extends RecyclerView.Adapter<PsukimRecyclerViewAdapter.MyViewHolder> {
 
     private ArrayList<PasukModel> mPsukim;
+    private ArrayList<String> mSelectedUris = new ArrayList<>();
 
     private boolean allItemsClicked = false;
 
@@ -31,6 +32,10 @@ public class PsukimRecyclerViewAdapter extends RecyclerView.Adapter<PsukimRecycl
         }
         notifyDataSetChanged();
         allItemsClicked = setSelected;
+    }
+
+    public ArrayList<String> getAllPsukimUris() {
+        return mSelectedUris;
     }
 
     public boolean getAreAllItemsClicked() {
@@ -58,10 +63,13 @@ public class PsukimRecyclerViewAdapter extends RecyclerView.Adapter<PsukimRecycl
             public void onClick(View view) {
                 pasukModel.setSelected(!pasukModel.isSelected());
                 holder.mView.setBackgroundColor(pasukModel.isSelected() ? Color.CYAN : Color.WHITE);
+                String pasukUri = pasukModel.getUri();
                 if (pasukModel.isSelected()) {
                     holder.mImageView.setImageResource(R.drawable.ic_check_box_black_24dp);
+                    mSelectedUris.add(pasukUri);
                 } else {
                     holder.mImageView.setImageResource(R.drawable.ic_check_box_outline_blank_black_24dp);
+                    mSelectedUris.remove(pasukUri);
                 }
             }
         });
