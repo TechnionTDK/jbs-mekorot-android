@@ -155,7 +155,7 @@ public class MekorotActivity extends AppCompatActivity {
     public void setHeader() {
         TextView numOfResults = (TextView) findViewById(R.id.num_of_results);
         int mekorotSize = ((MekorotRecyclerViewAdapter) mAdapter).getMekorotSize();
-        numOfResults.setText("תוצאות: " + Integer.toString(mekorotSize));
+        numOfResults.setText(getResources().getString(R.string.num_of_mekorot) + Integer.toString(mekorotSize));
 
     }
 
