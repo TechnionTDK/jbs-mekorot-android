@@ -12,6 +12,9 @@
     <string name="prakim_and_uri_extra">prakimAndUri</string>
     <string name="parasha">פרשה</string>
     <string name="psukim_uris_extra">psukimUris</string>
+    <string name="makor_text">makorText</string>
+    <string name="makor_author">makorAuthor</string>
+    <string name="makor_title">makorTitle</string>
     <string name="mekorot_reference">אזכור במקורות</string>
     <string-array name="spinner_items">
         <item> פרק</item>

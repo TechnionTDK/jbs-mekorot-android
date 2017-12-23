@@ -91,7 +91,7 @@ public class MekorotActivity extends AppCompatActivity {
 
     public void setRecyclerViewAdapter(ArrayList<MakorModel> mekorot) {
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mAdapter = new MekorotRecyclerViewAdapter(mekorot);
+        mAdapter = new MekorotRecyclerViewAdapter(mekorot, this);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(manager);

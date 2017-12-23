@@ -160,6 +160,6 @@ public class JBSQueries {
                 + "}\n"
                 + "group by ?source ?label ?text ?description\n"
                 + "}\n"
-                + " ORDER BY DESC(?sum) offset 0 limit 100";
+                + " ORDER BY DESC(?sum) offset 0 limit 500";
     }
 }

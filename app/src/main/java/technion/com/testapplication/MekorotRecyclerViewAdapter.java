@@ -1,5 +1,7 @@
 package technion.com.testapplication;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +10,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import technion.com.testapplication.activities.MakorDetailView;
 import technion.com.testapplication.models.MakorModel;
 
 /**
@@ -17,9 +20,11 @@ public class MekorotRecyclerViewAdapter
         extends RecyclerView.Adapter<MekorotRecyclerViewAdapter.MekorotViewHolder> {
 
     private ArrayList<MakorModel> mMekorotList;
+    private Context mContext;
 
-    public MekorotRecyclerViewAdapter(ArrayList<MakorModel> mekorot) {
+    public MekorotRecyclerViewAdapter(ArrayList<MakorModel> mekorot, Context context) {
         mMekorotList = mekorot;
+        mContext = context;
     }
 
     public int getMekorotSize() {
@@ -35,11 +40,27 @@ public class MekorotRecyclerViewAdapter
     }
 
     @Override
-    public void onBindViewHolder(MekorotViewHolder holder, int position) {
+    public void onBindViewHolder(final MekorotViewHolder holder, int position) {
         final MakorModel makorModel = mMekorotList.get(position);
         holder.mTitle.setText(makorModel.getMakorName());
         holder.mAuthor.setText(makorModel.getMakorAuthor());
         holder.mText.setText(makorModel.getMakorText());
+        holder.mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent makorDetailViewIntent = new Intent(mContext, MakorDetailView.class);
+                makorDetailViewIntent.putExtra(
+                        mContext.getResources().getString(R.string.makor_text),
+                        holder.mText.getText());
+                makorDetailViewIntent.putExtra(
+                        mContext.getResources().getString(R.string.makor_author),
+                        holder.mAuthor.getText());
+                makorDetailViewIntent.putExtra(
+                        mContext.getResources().getString(R.string.makor_title),
+                        holder.mTitle.getText());
+                mContext.startActivity(makorDetailViewIntent);
+            }
+        });
     }
 
     @Override
