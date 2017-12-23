@@ -136,6 +136,175 @@ public class JBSQueries {
                 "            group by ?book_subject order by ?count";
     }
 
+    public static String getMekorotFiltered(ArrayList<String> subjects, ArrayList<String> psukim) {
+        String psukimList = "";
+        String subjectList = "";
+        for (String pasuk : psukim) {
+            psukimList += pasuk + " ";
+        }
+        for (String subject: subjects) {
+            subjectList += subject + " ";
+        }
+        return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>\n" +
+                "      PREFIX jbo: <http://jbs.technion.ac.il/ontology/>\n" +
+                "      PREFIX dco: <http://purl.org/dc/terms/>\n" +
+                "      \n" +
+                "      SELECT DISTINCT(?source) SAMPLE(?label) as ?label SAMPLE(?text) as ?text       SAMPLE(?sums) as ?sums SAMPLE(?spanss) as ?spanss SAMPLE (?labels) as ?labels      SAMPLE(?sum) as ?sum SAMPLE(?description) as ?description\n" +
+                "   WHERE {\n" +
+                "   \n" +
+                "   \n" +
+                "   SELECT ?source ?label ?text ?description\n" +
+                "       (SUM(xsd:integer(?numOfMentions)) as ?sum)\n" +
+                "       \n" +
+                "       (group_concat(?numOfMentions;separator=\",\") as ?sums)\n" +
+                "    (group_concat(?spans;separator=\",\") as ?spanss)\n" +
+                "       (group_concat(?target_label ;separator=\",\") as ?labels)\n" +
+                "    WHERE {\n" +
+                "    \n" +
+                "    \n" +
+                " SELECT ?mentions ?source ?numOfMentions ?target_label ?label ?text ?description      (group_concat(DISTINCT(?span);separator=\",\") as ?spans)\n" +
+                "     WHERE\n" +
+                "     \n" +
+                "     \n" +
+                " {\n" +
+                " \n" +
+                " \n" +
+                " \n" +
+                " \n" +
+                " \n" +
+                " {\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "       values ?pasuk {"+ psukimList +"}\n" +
+                "       \n" +
+                "       ?pasuk a jbo:Pasuk.\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "  ?mentions rdf:type jbo:Mention.\n" +
+                "  \n" +
+                "  ?mentions jbo:target ?pasuk.\n" +
+                "  \n" +
+                "  ?mentions jbo:source ?source.\n" +
+                "  \n" +
+                "  ?mentions jbo:numOfMentions ?numOfMentions.\n" +
+                "       ?mentions jbo:span ?span.\n" +
+                "       \n" +
+                "   ?source rdfs:label ?label.\n" +
+                "   \n" +
+                "   ?source jbo:text ?text.\n" +
+                "   \n" +
+                "    ?source jbo:book ?source_book.values ?subjects {" + subjectList +" }.\n" +
+                "    \n" +
+                "   ?source_book dco:subject ?subjects.?source_book jbo:description ?description.\n" +
+                "    ?pasuk rdfs:label ?target_label.\n" +
+                "    \n" +
+                " FILTER (regex(str(?text), \"\")  || regex(str(?label), \"\")).       }\n" +
+                " \n" +
+                " \n" +
+                " UNION {\n" +
+                "\n" +
+                "\n" +
+                " values ?container {"+ psukimList +"}\n" +
+                " \n" +
+                " values ?types {jbo:Section jbo:ParashaTorah}\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "?container a ?types.\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                " ?pasuk jbo:within ?container.\n" +
+                " \n" +
+                "  ?pasuk a jbo:Pasuk.\n" +
+                "  \n" +
+                "  \n" +
+                "  \n" +
+                "  \n" +
+                "  ?mentions rdf:type jbo:Mention.\n" +
+                "  \n" +
+                "  ?mentions jbo:target ?pasuk.\n" +
+                "  \n" +
+                "  ?mentions jbo:source ?source.\n" +
+                "  \n" +
+                "  ?mentions jbo:numOfMentions ?numOfMentions.\n" +
+                "       ?mentions jbo:span ?span.\n" +
+                "       \n" +
+                "   ?source rdfs:label ?label.\n" +
+                "   \n" +
+                "   ?source jbo:text ?text.\n" +
+                "   \n" +
+                "    ?source jbo:book ?source_book.values ?subjects { "+ subjectList  +" }.\n" +
+                "    \n" +
+                "   ?source_book dco:subject ?subjects.?source_book jbo:description ?description.\n" +
+                "    ?pasuk rdfs:label ?target_label.\n" +
+                "    \n" +
+                "  FILTER (regex(str(?text), \"\")  || regex(str(?label), \"\")).      }\n" +
+                "  \n" +
+                "  \n" +
+                " UNION {\n" +
+                " \n" +
+                " \n" +
+                " values ?books {" + psukimList +"}\n" +
+                " \n" +
+                " values ?types { jbo:BookTorah }\n" +
+                " \n" +
+                " \n" +
+                " \n" +
+                " ?books a ?types.\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "  ?pasuk jbo:book ?books.\n" +
+                "  \n" +
+                "    ?pasuk a jbo:Pasuk.\n" +
+                "    \n" +
+                "    \n" +
+                "    \n" +
+                "    \n" +
+                "  ?mentions rdf:type jbo:Mention.\n" +
+                "  \n" +
+                "  ?mentions jbo:target ?pasuk.\n" +
+                "  \n" +
+                "  ?mentions jbo:source ?source.\n" +
+                "  \n" +
+                "  ?mentions jbo:numOfMentions ?numOfMentions.\n" +
+                "       ?mentions jbo:span ?span.\n" +
+                "       \n" +
+                "   ?source rdfs:label ?label.\n" +
+                "   \n" +
+                "   ?source jbo:text ?text.\n" +
+                "   \n" +
+                "    ?source jbo:book ?source_book.values ?subjects {" + subjectList+ "}.\n" +
+                "    \n" +
+                "   ?source_book dco:subject ?subjects.?source_book jbo:description ?description.\n" +
+                "    ?pasuk rdfs:label ?target_label.\n" +
+                "    \n" +
+                "  FILTER (regex(str(?text), \"\")  || regex(str(?label), \"\")).      }\n" +
+                "  \n" +
+                "  \n" +
+                "  }\n" +
+                "\n" +
+                "\n" +
+                " group by ?target_label ?text ?mentions ?description\n" +
+                "     ?source ?numOfMentions ?label\n" +
+                "     \n" +
+                "  }\n" +
+                "  \n" +
+                "  \n" +
+                " group by ?source ?label ?text ?description\n" +
+                "       }\n" +
+                "       \n" +
+                "       \n" +
+                " order by DESC(?sum) offset 0 limit 500";
+    }
+
     public static String getMekorot(ArrayList<String> psukim) {
         String psukimList = "";
         for (String pasuk : psukim) {
@@ -220,4 +389,5 @@ public class JBSQueries {
                 + "}\n"
                 + " ORDER BY DESC(?sum) offset 0 limit 500";
     }
+
 }

@@ -1,5 +1,6 @@
 package technion.com.testapplication.activities;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,6 +33,9 @@ public class MekorotActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private ArrayList<String> mMekorotCategories;
     private static final int CATEGORY_STRING_LENGTH = 9;
+    private ArrayList<String> mPrefixedPsukimUris;
+    private static ArrayList<Integer> mDialogSelectedItems = new ArrayList<>();
+    private static ArrayList<String> mDialogSelectedItemsNames = new ArrayList<>();
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -61,7 +65,7 @@ public class MekorotActivity extends AppCompatActivity {
         }
     }
 
-    private void setFilterDialog() {
+    private void setFilterDialog(final Activity activity) {
         ArrayList<String> prettifiedCategories = new ArrayList<>();
         for (String category : mMekorotCategories) {
             String prettifiedCategory = category.substring(CATEGORY_STRING_LENGTH).replace("_", " ");
@@ -69,26 +73,41 @@ public class MekorotActivity extends AppCompatActivity {
         }
         final CharSequence[] items = prettifiedCategories.toArray(
                 new CharSequence[prettifiedCategories.size()]);
-        final ArrayList selectedItems = new ArrayList();
+        boolean[] checkedItemsPositions = new boolean[mMekorotCategories.size()];
+        for (Integer selectedItem: mDialogSelectedItems) {
+            checkedItemsPositions[selectedItem] = true;
+        }
         final AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle(getResources().getString(R.string.choose_category_to_filter))
-                .setMultiChoiceItems(items, null, new DialogInterface.OnMultiChoiceClickListener() {
+                .setMultiChoiceItems(items, checkedItemsPositions, new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int indexSelected,
                                         boolean isChecked) {
                         if (isChecked) {
                             // If the user checked the item, add it to the selected items
-                            selectedItems.add(indexSelected);
-                        } else if (selectedItems.contains(indexSelected)) {
+                            mDialogSelectedItems.add(indexSelected);
+                            String prefixedSelection = "jbr:" + mMekorotCategories.get(indexSelected);
+                            mDialogSelectedItemsNames.add(prefixedSelection);
+                        } else if (mDialogSelectedItems.contains(indexSelected)) {
                             // Else, if the item is already in the array, remove it
-                            selectedItems.remove(Integer.valueOf(indexSelected));
+                            mDialogSelectedItems.remove(Integer.valueOf(indexSelected));
+                            String prefixedSelection = "jbr:" + mMekorotCategories.get(indexSelected);
+                            mDialogSelectedItemsNames.remove(prefixedSelection);
                         }
                     }
                 }).setPositiveButton(getResources().getString(R.string.choose_button), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        //  Your code when user clicked on OK
-                        //  You can write the code  to save the selected item here
+                        String mekorotQuery;
+                        if (mDialogSelectedItemsNames.size() > 0) {
+                            mekorotQuery = JBSQueries.getMekorotFiltered(
+                                    mDialogSelectedItemsNames, mPrefixedPsukimUris);
+                        } else {
+                            mekorotQuery = JBSQueries.getMekorot(mPrefixedPsukimUris);
+                        }
+                        String categoriesQuery = JBSQueries.getCategoriesByPsukim(mPrefixedPsukimUris);
+                        FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(activity);
+                        fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQuery);
                     }
                 }).setNegativeButton(getResources().getString(R.string.cancel_button), new DialogInterface.OnClickListener() {
                     @Override
@@ -120,15 +139,15 @@ public class MekorotActivity extends AppCompatActivity {
         toolbarTitleTV.setText(getResources().getString(R.string.mekorot_reference));
         ArrayList<String> psukimUris = (ArrayList<String>) receivedIntent.getExtras().get(
                 getResources().getString(R.string.psukim_uris_extra));
-        ArrayList<String> prefixedPsukimUris = new ArrayList<>();
+        mPrefixedPsukimUris = new ArrayList<>();
         for (int i = 0; i < psukimUris.size(); i++) {
             String pasukUri = psukimUris.get(i);
             pasukUri = pasukUri.substring(pasukUri.lastIndexOf("/") + 1);
             pasukUri = "jbr:" + pasukUri;
-            prefixedPsukimUris.add(i, pasukUri);
+            mPrefixedPsukimUris.add(i, pasukUri);
         }
-        String mekorotQuery = JBSQueries.getMekorot(prefixedPsukimUris);
-        String categoriesQuery = JBSQueries.getCategoriesByPsukim(prefixedPsukimUris);
+        String mekorotQuery = JBSQueries.getMekorot(mPrefixedPsukimUris);
+        String categoriesQuery = JBSQueries.getCategoriesByPsukim(mPrefixedPsukimUris);
         FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(this);
         fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQuery);
     }
@@ -150,6 +169,6 @@ public class MekorotActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setAdapter(mAdapter);
         setHeader();
-        setFilterDialog();
+        setFilterDialog(this);
     }
 }
