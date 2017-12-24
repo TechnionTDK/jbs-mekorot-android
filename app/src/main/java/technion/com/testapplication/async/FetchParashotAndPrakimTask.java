@@ -16,6 +16,7 @@ import technion.com.testapplication.models.ParashotAndPrakim;
 
 /**
  * Created by tomerlevinson on 15/12/2017.
+ * Used in order to fetch all parashot and all prakim.
  */
 public class FetchParashotAndPrakimTask extends AsyncTask<String, Void, ParashotAndPrakim> {
     private Activity mActivity;

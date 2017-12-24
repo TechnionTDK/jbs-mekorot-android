@@ -48,17 +48,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                // User chose the "Settings" item, show the app settings UI...
                 return true;
-
             case R.id.action_favorite:
-                // User chose the "Favorite" action, mark the current item
-                // as a favorite...
                 return true;
-
             default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
         }
@@ -71,6 +64,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Set the spinner for this activity.
+     * Spinner will have two values:
+     *  1) Perek.
+     *  2) Parasha.
+     *  Each choice will trigger invalidation of the autocomplete text view adapter.
+     */
     public void setSpinner() {
         Spinner spinner = (Spinner) findViewById(R.id.spinner_nav);
         spinner.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.White),
@@ -109,6 +109,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Set toolbar for this activity.
+     * This will also set the spinner.
+     */
     public void setToolbar() {
         final Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
@@ -116,6 +120,10 @@ public class MainActivity extends AppCompatActivity {
         setSpinner();
     }
 
+    /**
+     * Sets the autocomplete text view and listens to item clicks
+     * in order to start a new activity.
+     */
     public void setAutoCompleteTextView() {
         AutoCompleteTextView actv = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView);
         mAdapter = new ArrayAdapter<>
@@ -125,7 +133,8 @@ public class MainActivity extends AppCompatActivity {
         actv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String spinnerText = ((Spinner)findViewById(R.id.spinner_nav)).getSelectedItem().toString();
+                String spinnerText = ((Spinner) findViewById(
+                        R.id.spinner_nav)).getSelectedItem().toString();
                 Intent intent = new Intent(getApplicationContext(), PsukimActivity.class);
                 String perekOrParashaName = (String) ((TextView) view).getText();
                 String perekOrParashaUri = "";
@@ -149,6 +158,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Populate prakim and parashot pairs.
+     */
     private void populateUriLabelPairs() {
         for (String queryResult : mParashotAndUris) {
             int firstMagicIndex = queryResult.indexOf(FetchParashotAndPrakimTask.MAGIC_SEPERATOR);

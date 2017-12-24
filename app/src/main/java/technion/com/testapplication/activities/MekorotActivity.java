@@ -60,56 +60,72 @@ public class MekorotActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * set the filter dialog that will have inside of it all the
+     * relavent categories deducted from the psukim selected
+     * in the psukim activity.
+     * @param activity
+     */
     private void setFilterDialog(final Activity activity) {
         ArrayList<String> prettifiedCategories = new ArrayList<>();
         for (String category : mMekorotCategories) {
-            String prettifiedCategory = category.substring(CATEGORY_STRING_LENGTH).replace("_", " ");
+            String prettifiedCategory = category.substring(CATEGORY_STRING_LENGTH).replace("_",
+                    " ");
             prettifiedCategories.add(prettifiedCategory);
         }
         final CharSequence[] items = prettifiedCategories.toArray(
                 new CharSequence[prettifiedCategories.size()]);
         boolean[] checkedItemsPositions = new boolean[mMekorotCategories.size()];
-        for (Integer selectedItem: mDialogSelectedItems) {
+        for (Integer selectedItem : mDialogSelectedItems) {
             checkedItemsPositions[selectedItem] = true;
         }
         final AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle(getResources().getString(R.string.choose_category_to_filter))
-                .setMultiChoiceItems(items, checkedItemsPositions, new DialogInterface.OnMultiChoiceClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int indexSelected,
-                                        boolean isChecked) {
-                        if (isChecked) {
-                            // If the user checked the item, add it to the selected items
-                            mDialogSelectedItems.add(indexSelected);
-                            String prefixedSelection = "jbr:" + mMekorotCategories.get(indexSelected);
-                            mDialogSelectedItemsNames.add(prefixedSelection);
-                        } else if (mDialogSelectedItems.contains(indexSelected)) {
-                            // Else, if the item is already in the array, remove it
-                            mDialogSelectedItems.remove(Integer.valueOf(indexSelected));
-                            String prefixedSelection = "jbr:" + mMekorotCategories.get(indexSelected);
-                            mDialogSelectedItemsNames.remove(prefixedSelection);
-                        }
-                    }
-                }).setPositiveButton(getResources().getString(R.string.choose_button), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        String mekorotQuery;
-                        if (mDialogSelectedItemsNames.size() > 0) {
-                            mekorotQuery = JBSQueries.getMekorotFiltered(
-                                    mDialogSelectedItemsNames, mPrefixedPsukimUris);
-                        } else {
-                            mekorotQuery = JBSQueries.getMekorot(mPrefixedPsukimUris);
-                        }
-                        String categoriesQuery = JBSQueries.getCategoriesByPsukim(mPrefixedPsukimUris);
-                        FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(activity);
-                        fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQuery);
-                    }
-                }).setNegativeButton(getResources().getString(R.string.cancel_button), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                }).create();
+                .setMultiChoiceItems(items, checkedItemsPositions,
+                        new DialogInterface.OnMultiChoiceClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int indexSelected,
+                                                boolean isChecked) {
+                                if (isChecked) {
+                                    // If the user checked the item, add it to the selected items
+                                    mDialogSelectedItems.add(indexSelected);
+                                    String prefixedSelection = getResources().getString(
+                                            R.string.jbr_prefix) + mMekorotCategories.get(
+                                            indexSelected);
+                                    mDialogSelectedItemsNames.add(prefixedSelection);
+                                } else if (mDialogSelectedItems.contains(indexSelected)) {
+                                    // Else, if the item is already in the array, remove it
+                                    mDialogSelectedItems.remove(Integer.valueOf(indexSelected));
+                                    String prefixedSelection = getResources().getString(
+                                            R.string.jbr_prefix) + mMekorotCategories.get(
+                                            indexSelected);
+                                    mDialogSelectedItemsNames.remove(prefixedSelection);
+                                }
+                            }
+                        }).setPositiveButton(getResources().getString(R.string.choose_button),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                String mekorotQuery;
+                                if (mDialogSelectedItemsNames.size() > 0) {
+                                    mekorotQuery = JBSQueries.getMekorotFiltered(
+                                            mDialogSelectedItemsNames, mPrefixedPsukimUris);
+                                } else {
+                                    mekorotQuery = JBSQueries.getMekorot(mPrefixedPsukimUris);
+                                }
+                                String categoriesQuery = JBSQueries.getCategoriesByPsukim(
+                                        mPrefixedPsukimUris);
+                                FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(
+                                        activity);
+                                fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQuery);
+                            }
+                        }).setNegativeButton(getResources().getString(R.string.cancel_button),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        }).create();
         View header = findViewById(R.id.header);
         header.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,8 +148,8 @@ public class MekorotActivity extends AppCompatActivity {
 
     /**
      * Run queries to receive:
-     *  1) Mekorot list.
-     *  2) Mekorot categories.
+     * 1) Mekorot list.
+     * 2) Mekorot categories.
      */
     private void runMekorotAndCategoriesQueries(Intent receivedIntent) {
         ArrayList<String> psukimUris = (ArrayList<String>) receivedIntent.getExtras().get(
@@ -163,7 +179,8 @@ public class MekorotActivity extends AppCompatActivity {
     public void setHeader() {
         TextView numOfResults = (TextView) findViewById(R.id.num_of_results);
         int mekorotSize = ((MekorotRecyclerViewAdapter) mAdapter).getMekorotSize();
-        numOfResults.setText(getResources().getString(R.string.num_of_mekorot) + Integer.toString(mekorotSize));
+        numOfResults.setText(
+                getResources().getString(R.string.num_of_mekorot) + Integer.toString(mekorotSize));
 
     }
 

@@ -20,6 +20,7 @@
     <string name="choose_button">בחר</string>
     <string name="cancel_button">בטל</string>
     <string name="num_of_mekorot">"תוצאות: "</string>
+    <string name="jbr_prefix">jbr:</string>
     <string-array name="spinner_items">
         <item> פרק</item>
         <item> פרשה</item>

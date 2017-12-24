@@ -18,8 +18,10 @@ import technion.com.testapplication.models.MakorModel;
 
 /**
  * Created by tomerlevinson on 18/12/2017.
+ * This class is intended for fetching mekorot by task.
  */
-public class FetchMekorotByScoreTask extends AsyncTask<String, Void, Pair<ArrayList<MakorModel>,ArrayList<String>>> {
+public class FetchMekorotByScoreTask
+        extends AsyncTask<String, Void, Pair<ArrayList<MakorModel>, ArrayList<String>>> {
     private Activity mActivity;
     private ProgressDialog mProgressDialog;
 
@@ -31,7 +33,8 @@ public class FetchMekorotByScoreTask extends AsyncTask<String, Void, Pair<ArrayL
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        this.mProgressDialog.setMessage(mActivity.getResources().getString(R.string.please_wait_he));
+        this.mProgressDialog.setMessage(
+                mActivity.getResources().getString(R.string.please_wait_he));
         this.mProgressDialog.show();
     }
 
@@ -40,8 +43,10 @@ public class FetchMekorotByScoreTask extends AsyncTask<String, Void, Pair<ArrayL
         ArrayList<MakorModel> sortedMekorot = new ArrayList<>();
         ArrayList<String> bookSubjects = new ArrayList<>();
         try {
-            QueryEngineHTTP queryEngineHTTP = new QueryEngineHTTP(JBSQueries.JBS_ENDPOINT, params[0]);
-            QueryEngineHTTP queryEngineHTTPCategories = new QueryEngineHTTP(JBSQueries.JBS_ENDPOINT, params[1]);
+            QueryEngineHTTP queryEngineHTTP = new QueryEngineHTTP(JBSQueries.JBS_ENDPOINT,
+                    params[0]);
+            QueryEngineHTTP queryEngineHTTPCategories = new QueryEngineHTTP(JBSQueries.JBS_ENDPOINT,
+                    params[1]);
             try {
                 ResultSet resultSet = queryEngineHTTP.execSelect();
                 while (resultSet.hasNext()) {
@@ -60,7 +65,8 @@ public class FetchMekorotByScoreTask extends AsyncTask<String, Void, Pair<ArrayL
                 while (resultSet.hasNext()) {
                     QuerySolution rb = resultSet.nextSolution();
                     String bookSubjectUri = rb.get(JBSQueries.BOOK_SUBJECT).toString();
-                    String bookSubject = bookSubjectUri.substring(bookSubjectUri.lastIndexOf("/") + 1);
+                    String bookSubject = bookSubjectUri.substring(
+                            bookSubjectUri.lastIndexOf("/") + 1);
                     bookSubjects.add(bookSubject);
                 }
             } finally {
@@ -70,12 +76,14 @@ public class FetchMekorotByScoreTask extends AsyncTask<String, Void, Pair<ArrayL
         } catch (Exception err) {
             err.printStackTrace();
         }
-        Pair<ArrayList<MakorModel>, ArrayList<String>> queryResultsPair = Pair.create(sortedMekorot, bookSubjects);
+        Pair<ArrayList<MakorModel>, ArrayList<String>> queryResultsPair = Pair.create(sortedMekorot,
+                bookSubjects);
         return queryResultsPair;
     }
 
     @Override
-    protected void onPostExecute(Pair<ArrayList<MakorModel>, ArrayList<String>> mekorotModelCategoryPair) {
+    protected void onPostExecute(
+            Pair<ArrayList<MakorModel>, ArrayList<String>> mekorotModelCategoryPair) {
         super.onPostExecute(mekorotModelCategoryPair);
         if (mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
