@@ -49,17 +49,12 @@ public class MekorotActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                // User chose the "Settings" item, show the app settings UI...
                 return true;
 
             case R.id.action_favorite:
-                // User chose the "Favorite" action, mark the current item
-                // as a favorite...
                 return true;
 
             default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
         }
@@ -125,11 +120,7 @@ public class MekorotActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.mekorot_activity);
-        Intent receivedIntent = getIntent();
+    private void setToolbar() {
         getWindow().getDecorView().setBackgroundColor(
                 ContextCompat.getColor(this, R.color.LightBlue));
         final Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -137,19 +128,36 @@ public class MekorotActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView toolbarTitleTV = (TextView) findViewById(R.id.toolbar_title);
         toolbarTitleTV.setText(getResources().getString(R.string.mekorot_reference));
+    }
+
+    /**
+     * Run queries to receive:
+     *  1) Mekorot list.
+     *  2) Mekorot categories.
+     */
+    private void runMekorotAndCategoriesQueries(Intent receivedIntent) {
         ArrayList<String> psukimUris = (ArrayList<String>) receivedIntent.getExtras().get(
                 getResources().getString(R.string.psukim_uris_extra));
         mPrefixedPsukimUris = new ArrayList<>();
         for (int i = 0; i < psukimUris.size(); i++) {
             String pasukUri = psukimUris.get(i);
             pasukUri = pasukUri.substring(pasukUri.lastIndexOf("/") + 1);
-            pasukUri = "jbr:" + pasukUri;
+            pasukUri = getResources().getString(R.string.jbr_prefix) + pasukUri;
             mPrefixedPsukimUris.add(i, pasukUri);
         }
         String mekorotQuery = JBSQueries.getMekorot(mPrefixedPsukimUris);
         String categoriesQuery = JBSQueries.getCategoriesByPsukim(mPrefixedPsukimUris);
         FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(this);
         fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQuery);
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.mekorot_activity);
+        setToolbar();
+        Intent receivedIntent = getIntent();
+        runMekorotAndCategoriesQueries(receivedIntent);
     }
 
     public void setHeader() {
