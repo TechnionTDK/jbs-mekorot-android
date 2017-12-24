@@ -87,14 +87,14 @@ public class MainActivity extends AppCompatActivity {
                         R.id.autoCompleteTextView);
                 if (((TextView) view).getText().equals(getResources().getString(R.string.perek))) {
                     actv.setHint(getResources().getString(R.string.enter_perek));
-                    if (!mAdapter.isEmpty() && ++mSpinnerCheck > 1) {
+                    if (++mSpinnerCheck > 1 && !mAdapter.isEmpty()) {
                         mAdapter.clear();
                     }
                     mAdapter.addAll(mPrakim);
                     mAdapter.notifyDataSetChanged();
                 } else {
                     actv.setHint(getResources().getString(R.string.enter_parasha));
-                    if (!mAdapter.isEmpty() && ++mSpinnerCheck > 1) {
+                    if (++mSpinnerCheck > 1 && !mAdapter.isEmpty()) {
                         mAdapter.clear();
                     }
                     mAdapter.addAll(mParashot);
@@ -169,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
         // Get Parashot
         // TODO: Add get prakim.
         Intent intent = getIntent();
@@ -177,7 +178,6 @@ public class MainActivity extends AppCompatActivity {
         mPrakimAndUris = (ArrayList<String>) intent.getExtras().get(
                 getResources().getString(R.string.prakim_and_uri_extra));
         populateUriLabelPairs();
-        setContentView(R.layout.activity_main);
         getWindow().getDecorView().setBackgroundColor(
                 ContextCompat.getColor(this, R.color.LightBlue));
         forceRTLIfSupported();
