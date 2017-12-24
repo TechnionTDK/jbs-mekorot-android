@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TestApplication</string>
+    <string name="app_name">Sulamot</string>
     <string name="action_favorite">favorite action</string>
     <string name="action_settings">settings action</string>
     <string name="enter_perek">אנא הכנס/י פרק</string>
@@ -19,6 +19,7 @@
     <string name="choose_category_to_filter">בחר/י קטגוריות לסינון</string>
     <string name="choose_button">בחר</string>
     <string name="cancel_button">בטל</string>
+    <string name="num_of_mekorot">"תוצאות: "</string>
     <string-array name="spinner_items">
         <item> פרק</item>
         <item> פרשה</item>
