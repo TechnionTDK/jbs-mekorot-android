@@ -2,10 +2,14 @@ package technion.com.testapplication.activities;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Pair;
@@ -21,8 +25,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import technion.com.testapplication.async.FetchParashotAndPrakimTask;
 import technion.com.testapplication.R;
+import technion.com.testapplication.ViewPagerAdapter;
+import technion.com.testapplication.async.FetchParashotAndPrakimTask;
+import technion.com.testapplication.fragments.MekorotTab;
+import technion.com.testapplication.fragments.PsukimTab;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,12 +42,18 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Pair<String, String>> prakimURILabelPairs = new ArrayList<>();
     private ArrayAdapter<String> mAdapter;
     private int mSpinnerCheck = 0;
+    private static final String HEADING_FONT_PATH = "fonts/shofarregular-webfont.ttf";
+    private ViewPager mViewPager;
+    private ViewPagerAdapter mViewPagerAdapter;
+    private static final int PSUKIM_FRAG_POSITION = 0;
+    private static final int MEKOROT_FRAG_POSITION = 1;
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
-
+        menu.findItem(R.id.action_favorite).setVisible(false);
         return true;
     }
 
@@ -50,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_settings:
                 return true;
             case R.id.action_favorite:
-                return true;
+                return false;
             default:
                 return super.onOptionsItemSelected(item);
 
@@ -109,6 +122,16 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    /**
+     * Set fonts for the title and other elements in the activity.
+     */
+    public void setFonts() {
+        TextView tx = (TextView)findViewById(R.id.heading);
+        Typeface custom_font = Typeface.createFromAsset(getAssets(),  HEADING_FONT_PATH);
+        tx.setTypeface(custom_font);
+    }
+
     /**
      * Set toolbar for this activity.
      * This will also set the spinner.
@@ -118,6 +141,25 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         setSpinner();
+        setFonts();
+    }
+
+    /**
+     * Set the tabs for the view pager.
+     */
+    public void setTabs() {
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+
+        // Add Fragments to adapter one by one
+        mViewPagerAdapter.addFragment(new PsukimTab(), getResources().getString(R.string.psukim));
+        mViewPagerAdapter.addFragment(new MekorotTab(), getResources().getString(R.string.mekorot));
+        mViewPager.setAdapter(mViewPagerAdapter);
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#FFFFFF"));
+
     }
 
     /**
@@ -153,7 +195,9 @@ public class MainActivity extends AppCompatActivity {
                         perekOrParashaName);
                 intent.putExtra(getResources().getString(R.string.perek_or_parasha_uri_extra),
                         perekOrParashaUri);
-                startActivity(intent);
+                PsukimTab psukimTabFrag = (PsukimTab) mViewPagerAdapter.getItem(PSUKIM_FRAG_POSITION);
+                psukimTabFrag.loadPuskim(perekOrParashaUri, perekOrParashaName);
+//                startActivity(intent);
             }
         });
     }
@@ -183,7 +227,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         // Get Parashot
-        // TODO: Add get prakim.
         Intent intent = getIntent();
         mParashotAndUris = (ArrayList<String>) intent.getExtras().get(
                 getResources().getString(R.string.parashot_and_uri_extra));
@@ -195,5 +238,6 @@ public class MainActivity extends AppCompatActivity {
         forceRTLIfSupported();
         setToolbar();
         setAutoCompleteTextView();
+        setTabs();
     }
 }

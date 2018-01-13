@@ -21,6 +21,8 @@
     <string name="cancel_button">בטל</string>
     <string name="num_of_mekorot">"תוצאות: "</string>
     <string name="jbr_prefix">jbr:</string>
+    <string name="psukim">פסוקים</string>
+    <string name="mekorot">מקורות</string>
     <string-array name="spinner_items">
         <item> פרק</item>
         <item> פרשה</item>
