@@ -63,6 +63,7 @@ public class MekorotActivity extends AppCompatActivity {
      * set the filter dialog that will have inside of it all the
      * relavent categories deducted from the psukim selected
      * in the psukim activity.
+     *
      * @param activity
      */
     private void setFilterDialog(final Activity activity) {
@@ -132,7 +133,6 @@ public class MekorotActivity extends AppCompatActivity {
                 dialog.show();
             }
         });
-
     }
 
     private void setToolbar() {

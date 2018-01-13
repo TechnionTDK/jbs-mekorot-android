@@ -41,9 +41,8 @@ public class PsukimTab extends Fragment {
             mCallback = (OnMoveToMekorotTabListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnHeadlineSelectedListener");
+                    + " must implement OnMoveToMekorotTabListener");
         }
-
     }
 
     public void setRecyclerViewAdapter(ArrayList<PasukModel> psukim) {

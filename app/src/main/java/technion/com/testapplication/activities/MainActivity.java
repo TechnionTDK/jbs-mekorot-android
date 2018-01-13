@@ -2,6 +2,7 @@ package technion.com.testapplication.activities;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -35,7 +36,7 @@ import technion.com.testapplication.async.FetchParashotAndPrakimTask;
 import technion.com.testapplication.fragments.MekorotTab;
 import technion.com.testapplication.fragments.PsukimTab;
 
-public class MainActivity extends AppCompatActivity implements PsukimTab.OnMoveToMekorotTabListener{
+public class MainActivity extends AppCompatActivity implements PsukimTab.OnMoveToMekorotTabListener, MekorotTab.MekorotChangesListener{
 
     private ArrayList<String> mParashotAndUris;
     private ArrayList<String> mPrakimAndUris;
@@ -312,5 +313,16 @@ public class MainActivity extends AppCompatActivity implements PsukimTab.OnMoveT
     @Override
     public void onPsukimSelected(boolean areNewSelected) {
         mIsNewQuerySubmitted = areNewSelected;
+    }
+
+    @Override
+    public void setFilterIcon(final Dialog dialog) {
+        View filterIcon = findViewById(R.id.filter_icon);
+        filterIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.show();
+            }
+        });
     }
 }
