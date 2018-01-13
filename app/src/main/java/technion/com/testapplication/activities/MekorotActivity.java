@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.MekorotRecyclerViewAdapter;
 import technion.com.testapplication.R;
-import technion.com.testapplication.async.FetchMekorotByScoreTask;
 import technion.com.testapplication.models.MakorModel;
 
 /**
@@ -115,9 +114,9 @@ public class MekorotActivity extends AppCompatActivity {
                                 }
                                 String categoriesQuery = JBSQueries.getCategoriesByPsukim(
                                         mPrefixedPsukimUris);
-                                FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(
-                                        activity);
-                                fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQuery);
+//                                FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(
+//                                        activity);
+//                                fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQuery);
                             }
                         }).setNegativeButton(getResources().getString(R.string.cancel_button),
                         new DialogInterface.OnClickListener() {
@@ -163,8 +162,8 @@ public class MekorotActivity extends AppCompatActivity {
         }
         String mekorotQuery = JBSQueries.getMekorot(mPrefixedPsukimUris);
         String categoriesQuery = JBSQueries.getCategoriesByPsukim(mPrefixedPsukimUris);
-        FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(this);
-        fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQuery);
+//        FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(this);
+//        fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQuery);
     }
 
     @Override

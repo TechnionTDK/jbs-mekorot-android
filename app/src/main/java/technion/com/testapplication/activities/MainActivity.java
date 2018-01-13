@@ -1,6 +1,8 @@
 package technion.com.testapplication.activities;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -17,9 +19,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -31,7 +35,7 @@ import technion.com.testapplication.async.FetchParashotAndPrakimTask;
 import technion.com.testapplication.fragments.MekorotTab;
 import technion.com.testapplication.fragments.PsukimTab;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PsukimTab.OnMoveToMekorotTabListener{
 
     private ArrayList<String> mParashotAndUris;
     private ArrayList<String> mPrakimAndUris;
@@ -47,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPagerAdapter mViewPagerAdapter;
     private static final int PSUKIM_FRAG_POSITION = 0;
     private static final int MEKOROT_FRAG_POSITION = 1;
+    private static boolean mIsNewQuerySubmitted = false;
 
 
     @Override
@@ -80,9 +85,9 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Set the spinner for this activity.
      * Spinner will have two values:
-     *  1) Perek.
-     *  2) Parasha.
-     *  Each choice will trigger invalidation of the autocomplete text view adapter.
+     * 1) Perek.
+     * 2) Parasha.
+     * Each choice will trigger invalidation of the autocomplete text view adapter.
      */
     public void setSpinner() {
         Spinner spinner = (Spinner) findViewById(R.id.spinner_nav);
@@ -127,9 +132,18 @@ public class MainActivity extends AppCompatActivity {
      * Set fonts for the title and other elements in the activity.
      */
     public void setFonts() {
-        TextView tx = (TextView)findViewById(R.id.heading);
-        Typeface custom_font = Typeface.createFromAsset(getAssets(),  HEADING_FONT_PATH);
+        TextView tx = (TextView) findViewById(R.id.heading);
+        Typeface custom_font = Typeface.createFromAsset(getAssets(), HEADING_FONT_PATH);
         tx.setTypeface(custom_font);
+    }
+
+    public void setFilterIconClickable(boolean isClickable) {
+        ImageView filterIcon = (ImageView) findViewById(R.id.filter_icon);
+        if (!isClickable) {
+            filterIcon.setColorFilter(R.color.Gray);
+        } else {
+            filterIcon.setColorFilter(R.color.White);
+        }
     }
 
     /**
@@ -142,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         setSpinner();
         setFonts();
+        setFilterIconClickable(false);
     }
 
     /**
@@ -158,8 +173,37 @@ public class MainActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-        tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#FFFFFF"));
+        tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#000000"));
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (tab.getPosition() == 0) {
+                    //Psukim tab
+                } else if (tab.getPosition() == 1) {
+                    //Mekorot tab
+                    PsukimTab psukimTabFrag = (PsukimTab) mViewPagerAdapter.getItem(
+                            PSUKIM_FRAG_POSITION);
+                    psukimTabFrag.moveToMekorot();
+                }
+            }
 
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+    }
+
+    public static void hideSoftKeyboard(Activity activity, View view) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
     }
 
     /**
@@ -195,9 +239,14 @@ public class MainActivity extends AppCompatActivity {
                         perekOrParashaName);
                 intent.putExtra(getResources().getString(R.string.perek_or_parasha_uri_extra),
                         perekOrParashaUri);
-                PsukimTab psukimTabFrag = (PsukimTab) mViewPagerAdapter.getItem(PSUKIM_FRAG_POSITION);
+                PsukimTab psukimTabFrag = (PsukimTab) mViewPagerAdapter.getItem(
+                        PSUKIM_FRAG_POSITION);
+                perekOrParashaUri = perekOrParashaUri.substring(
+                        perekOrParashaUri.lastIndexOf("/") + 1);
                 psukimTabFrag.loadPuskim(perekOrParashaUri, perekOrParashaName);
-//                startActivity(intent);
+                hideSoftKeyboard(MainActivity.this,
+                        view);
+                mIsNewQuerySubmitted = true;
             }
         });
     }
@@ -239,5 +288,27 @@ public class MainActivity extends AppCompatActivity {
         setToolbar();
         setAutoCompleteTextView();
         setTabs();
+    }
+
+    /**
+     * Used in order to move from the current psukim activity to the mekorot activity.
+     * This is called from the psukim fragment, after the psukim fragment is called by the
+     * main activity's on tab change listener (after we move to the mekorot fragment)
+     * @param psukimUris
+     */
+    @Override
+    public void onMoveToMekorotTab(ArrayList<String> psukimUris) {
+        if (mIsNewQuerySubmitted) {
+            MekorotTab mekorotTabFrag = (MekorotTab) mViewPagerAdapter.getItem(
+                    MEKOROT_FRAG_POSITION);
+            mekorotTabFrag.runMekorotAndCategoriesQueries(psukimUris);
+            mIsNewQuerySubmitted = false;
+        }
+
+    }
+
+    @Override
+    public void onPsukimSelected(boolean areNewSelected) {
+        mIsNewQuerySubmitted = areNewSelected;
     }
 }

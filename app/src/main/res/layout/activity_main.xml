@@ -17,12 +17,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="סולמות"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:textSize="18sp"
             android:layout_marginRight="10dip"
             android:layout_marginLeft="10dip"
             android:textColor="@color/White"
             android:layout_gravity="right"/>
         <ImageView
+            android:id="@+id/filter_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"

@@ -1,8 +1,8 @@
 package technion.com.testapplication.async;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
 import android.util.Pair;
 
 import com.hp.hpl.jena.query.QuerySolution;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.R;
-import technion.com.testapplication.activities.MekorotActivity;
+import technion.com.testapplication.fragments.MekorotTab;
 import technion.com.testapplication.models.MakorModel;
 
 /**
@@ -22,19 +22,19 @@ import technion.com.testapplication.models.MakorModel;
  */
 public class FetchMekorotByScoreTask
         extends AsyncTask<String, Void, Pair<ArrayList<MakorModel>, ArrayList<String>>> {
-    private Activity mActivity;
+    private Fragment mFragment;
     private ProgressDialog mProgressDialog;
 
-    public FetchMekorotByScoreTask(Activity activity) {
-        mActivity = activity;
-        mProgressDialog = new ProgressDialog(activity);
+    public FetchMekorotByScoreTask(Fragment fragment) {
+        mFragment = fragment;
+        mProgressDialog = new ProgressDialog(mFragment.getContext());
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
         this.mProgressDialog.setMessage(
-                mActivity.getResources().getString(R.string.please_wait_he));
+                mFragment.getContext().getResources().getString(R.string.please_wait_he));
         this.mProgressDialog.show();
     }
 
@@ -90,8 +90,8 @@ public class FetchMekorotByScoreTask
         }
         ArrayList<MakorModel> mekorotModels = mekorotModelCategoryPair.first;
         ArrayList<String> mekorotCategories = mekorotModelCategoryPair.second;
-        if (mActivity instanceof MekorotActivity) {
-            ((MekorotActivity) mActivity).setRecyclerViewAdapter(mekorotModels, mekorotCategories);
+        if (mFragment instanceof MekorotTab) {
+            ((MekorotTab) mFragment).setRecyclerViewAdapter(mekorotModels, mekorotCategories);
         }
     }
 }
