@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements PsukimTab.OnMoveT
         if (!isClickable) {
             filterIcon.setColorFilter(R.color.Gray);
         } else {
-            filterIcon.setColorFilter(R.color.White);
+            filterIcon.setColorFilter(null);
         }
     }
 
@@ -179,11 +179,13 @@ public class MainActivity extends AppCompatActivity implements PsukimTab.OnMoveT
             public void onTabSelected(TabLayout.Tab tab) {
                 if (tab.getPosition() == 0) {
                     //Psukim tab
+                    setFilterIconClickable(false);
                 } else if (tab.getPosition() == 1) {
                     //Mekorot tab
                     PsukimTab psukimTabFrag = (PsukimTab) mViewPagerAdapter.getItem(
                             PSUKIM_FRAG_POSITION);
                     psukimTabFrag.moveToMekorot();
+                    setFilterIconClickable(true);
                 }
             }
 
