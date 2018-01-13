@@ -246,6 +246,11 @@ public class MainActivity extends AppCompatActivity implements PsukimTab.OnMoveT
                         PSUKIM_FRAG_POSITION);
                 perekOrParashaUri = perekOrParashaUri.substring(
                         perekOrParashaUri.lastIndexOf("/") + 1);
+                TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
+                TabLayout.Tab tab = tabs.getTabAt(PSUKIM_FRAG_POSITION);
+                if (tab != null) {
+                    tab.select();
+                }
                 psukimTabFrag.loadPuskim(perekOrParashaUri, perekOrParashaName);
                 hideSoftKeyboard(MainActivity.this,
                         view);
