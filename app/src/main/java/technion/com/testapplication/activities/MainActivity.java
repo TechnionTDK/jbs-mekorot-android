@@ -142,8 +142,10 @@ public class MainActivity extends AppCompatActivity implements PsukimTab.OnMoveT
         ImageView filterIcon = (ImageView) findViewById(R.id.filter_icon);
         if (!isClickable) {
             filterIcon.setColorFilter(R.color.Gray);
+            filterIcon.setEnabled(false);
         } else {
             filterIcon.setColorFilter(null);
+            filterIcon.setEnabled(true);
         }
     }
 
