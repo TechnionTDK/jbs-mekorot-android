@@ -18,6 +18,7 @@ import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.MekorotRecyclerViewAdapter;
 import technion.com.testapplication.R;
 import technion.com.testapplication.async.FetchMekorotByScoreTask;
+import technion.com.testapplication.models.CategoryModel;
 import technion.com.testapplication.models.MakorModel;
 
 /**
@@ -27,7 +28,7 @@ public class MekorotTab extends Fragment {
     private ArrayList<String> mPrefixedPsukimUris;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
-    private ArrayList<String> mMekorotCategories;
+    private ArrayList<CategoryModel> mMekorotCategories;
     private static final int CATEGORY_STRING_LENGTH = 9;
     private static ArrayList<Integer> mDialogSelectedItems = new ArrayList<>();
     private static ArrayList<String> mDialogSelectedItemsNames = new ArrayList<>();
@@ -59,9 +60,9 @@ public class MekorotTab extends Fragment {
     private void setFilterDialog() {
         final Fragment mekorotTabFrag = this;
         ArrayList<String> prettifiedCategories = new ArrayList<>();
-        for (String category : mMekorotCategories) {
-            String prettifiedCategory = category.substring(CATEGORY_STRING_LENGTH).replace("_",
-                    " ");
+        for (CategoryModel category : mMekorotCategories) {
+            String prettifiedCategory = category.getCategoryName().substring(CATEGORY_STRING_LENGTH).replace("_",
+                    " ") + " (" + category.getCategoryRefernceNum()+ ")";
             prettifiedCategories.add(prettifiedCategory);
         }
         final CharSequence[] items = prettifiedCategories.toArray(
@@ -82,14 +83,14 @@ public class MekorotTab extends Fragment {
                                     mDialogSelectedItems.add(indexSelected);
                                     String prefixedSelection = getResources().getString(
                                             R.string.jbr_prefix) + mMekorotCategories.get(
-                                            indexSelected);
+                                            indexSelected).getCategoryName();
                                     mDialogSelectedItemsNames.add(prefixedSelection);
                                 } else if (mDialogSelectedItems.contains(indexSelected)) {
                                     // Else, if the item is already in the array, remove it
                                     mDialogSelectedItems.remove(Integer.valueOf(indexSelected));
                                     String prefixedSelection = getResources().getString(
                                             R.string.jbr_prefix) + mMekorotCategories.get(
-                                            indexSelected);
+                                            indexSelected).getCategoryName();
                                     mDialogSelectedItemsNames.remove(prefixedSelection);
                                 }
                             }
@@ -104,7 +105,7 @@ public class MekorotTab extends Fragment {
                                 } else {
                                     mekorotQuery = JBSQueries.getMekorot(mPrefixedPsukimUris);
                                 }
-                                String categoriesQuery = JBSQueries.getCategoriesByPsukim(
+                                String categoriesQuery = JBSQueries.getCategoriesByPsukimWithReferenceNumber(
                                         mPrefixedPsukimUris);
                                 FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(
                                         mekorotTabFrag);
@@ -130,12 +131,13 @@ public class MekorotTab extends Fragment {
         }
         String mekorotQuery = JBSQueries.getMekorot(mPrefixedPsukimUris);
         String categoriesQuery = JBSQueries.getCategoriesByPsukim(mPrefixedPsukimUris);
+        String categoriesQueryV2 = JBSQueries.getCategoriesByPsukimWithReferenceNumber(mPrefixedPsukimUris);
         FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(this);
-        fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQuery);
+        fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQueryV2);
     }
 
     public void setRecyclerViewAdapter(ArrayList<MakorModel> mekorot,
-                                       ArrayList<String> mekorotCategories) {
+                                       ArrayList<CategoryModel> mekorotCategories) {
         if (getView() != null) {
             mMekorotCategories = mekorotCategories;
             mRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view);
