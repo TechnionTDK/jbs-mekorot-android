@@ -16,6 +16,8 @@ public class JBSQueries {
     public static final String MAKOR_NAME = "label";
     public static final String MAKOR_TEXT = "text";
     public static final String BOOK_SUBJECT = "book_subject";
+    public static final String CATEGORY = "category";
+    public static final String CATEGORY_REFERENCE_NUM = "num";
 
 
     public static final String GET_ALL_PSUKIM_FROM_PARASHA =
@@ -77,6 +79,21 @@ public class JBSQueries {
                 " ?pasuk a jbo:Pasuk; jbo:within jbr:" + parashaUri + "; jbo:position ?position; jbo:text ?pasuk_text.\n" +
                 " ?perush jbo:interprets ?pasuk; jbo:text ?text.\n" +
                 "} ORDER BY ASC(xsd:integer(?position))";
+    }
+
+    public static String getCategoriesByPsukimWithReferenceNumber(ArrayList<String> psukim) {
+        String psukimList = "";
+        for (String pasuk : psukim) {
+            psukimList += pasuk + " ";
+        }
+        return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>                           \n"
+                + "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n"
+                + "            PREFIX dco: <http://purl.org/dc/terms/>                                     \n"
+                + "SELECT ?category (COUNT(DISTINCT ?makor) AS ?num)  WHERE {\n"
+                + "values ?pasuk { "+ psukimList  +" }\n"
+                + "?makor jbo:mentions ?pasuk; jbo:book ?book.\n"
+                + "?book dco:subject ?category.\n"
+                + "} GROUP BY ?category order by DESC(?num)";
     }
 
     public static String getCategoriesByPsukim(ArrayList<String> psukim) {
