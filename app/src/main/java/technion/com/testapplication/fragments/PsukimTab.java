@@ -81,8 +81,12 @@ public class PsukimTab extends Fragment {
     }
 
     public void moveToMekorot() {
-        ArrayList<String> psukimUris = ((PsukimRecyclerViewAdapter) mAdapter).getAllPsukimUris();
-        if (Arrays.asList(psukimUris).containsAll(Arrays.asList(mCurrentPsukim)) && psukimUris.size() == mCurrentPsukim.size()) {
+        ArrayList<String> psukimUris = new ArrayList<>();
+        if (mAdapter != null) {
+            psukimUris = ((PsukimRecyclerViewAdapter) mAdapter).getAllPsukimUris();
+        }
+        if (Arrays.asList(psukimUris).containsAll(
+                Arrays.asList(mCurrentPsukim)) && psukimUris.size() == mCurrentPsukim.size()) {
             mCallback.onPsukimSelected(false);
         } else {
             mCallback.onPsukimSelected(true);
