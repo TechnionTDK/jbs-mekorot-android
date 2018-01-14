@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.R;
 import technion.com.testapplication.fragments.MekorotTab;
+import technion.com.testapplication.models.CategoryModel;
 import technion.com.testapplication.models.MakorModel;
 
 /**
@@ -21,9 +22,11 @@ import technion.com.testapplication.models.MakorModel;
  * This class is intended for fetching mekorot by task.
  */
 public class FetchMekorotByScoreTask
-        extends AsyncTask<String, Void, Pair<ArrayList<MakorModel>, ArrayList<String>>> {
+        extends AsyncTask<String, Void, Pair<ArrayList<MakorModel>, ArrayList<CategoryModel>>> {
     private Fragment mFragment;
     private ProgressDialog mProgressDialog;
+    private static final String NUM_OF_REFERENCES_REGEX = "^";
+    private static final String BOOK_URI_SEPARATOR = "/";
 
     public FetchMekorotByScoreTask(Fragment fragment) {
         mFragment = fragment;
@@ -39,9 +42,10 @@ public class FetchMekorotByScoreTask
     }
 
     @Override
-    protected Pair<ArrayList<MakorModel>, ArrayList<String>> doInBackground(String... params) {
+    protected Pair<ArrayList<MakorModel>, ArrayList<CategoryModel>> doInBackground(
+            String... params) {
         ArrayList<MakorModel> sortedMekorot = new ArrayList<>();
-        ArrayList<String> bookSubjects = new ArrayList<>();
+        ArrayList<CategoryModel> bookSubjects = new ArrayList<>();
         try {
             QueryEngineHTTP queryEngineHTTP = new QueryEngineHTTP(JBSQueries.JBS_ENDPOINT,
                     params[0]);
@@ -64,10 +68,16 @@ public class FetchMekorotByScoreTask
                 ResultSet resultSet = queryEngineHTTPCategories.execSelect();
                 while (resultSet.hasNext()) {
                     QuerySolution rb = resultSet.nextSolution();
-                    String bookSubjectUri = rb.get(JBSQueries.BOOK_SUBJECT).toString();
+                    String bookSubjectUri = rb.get(JBSQueries.CATEGORY).toString();
+                    String referenceNumNodeAsString = rb.get(
+                            JBSQueries.CATEGORY_REFERENCE_NUM).toString();
+                    String bookReferenceNum = referenceNumNodeAsString.substring(0,
+                            referenceNumNodeAsString.indexOf(
+                                    NUM_OF_REFERENCES_REGEX));
                     String bookSubject = bookSubjectUri.substring(
-                            bookSubjectUri.lastIndexOf("/") + 1);
-                    bookSubjects.add(bookSubject);
+                            bookSubjectUri.lastIndexOf(BOOK_URI_SEPARATOR) + 1);
+                    CategoryModel categoryModel = new CategoryModel(bookSubject, bookReferenceNum);
+                    bookSubjects.add(categoryModel);
                 }
             } finally {
                 queryEngineHTTPCategories.close();
@@ -76,20 +86,21 @@ public class FetchMekorotByScoreTask
         } catch (Exception err) {
             err.printStackTrace();
         }
-        Pair<ArrayList<MakorModel>, ArrayList<String>> queryResultsPair = Pair.create(sortedMekorot,
+        Pair<ArrayList<MakorModel>, ArrayList<CategoryModel>> queryResultsPair = Pair.create(
+                sortedMekorot,
                 bookSubjects);
         return queryResultsPair;
     }
 
     @Override
     protected void onPostExecute(
-            Pair<ArrayList<MakorModel>, ArrayList<String>> mekorotModelCategoryPair) {
+            Pair<ArrayList<MakorModel>, ArrayList<CategoryModel>> mekorotModelCategoryPair) {
         super.onPostExecute(mekorotModelCategoryPair);
         if (mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }
         ArrayList<MakorModel> mekorotModels = mekorotModelCategoryPair.first;
-        ArrayList<String> mekorotCategories = mekorotModelCategoryPair.second;
+        ArrayList<CategoryModel> mekorotCategories = mekorotModelCategoryPair.second;
         if (mFragment instanceof MekorotTab) {
             ((MekorotTab) mFragment).setRecyclerViewAdapter(mekorotModels, mekorotCategories);
         }
