@@ -33,6 +33,8 @@ public class MekorotTab extends Fragment {
     private static ArrayList<Integer> mDialogSelectedItems = new ArrayList<>();
     private static ArrayList<String> mDialogSelectedItemsNames = new ArrayList<>();
     MekorotChangesListener mCallback;
+    private static final String CATEGORY_NUM_OPEN_BRACE = " (";
+    private static final String CATEGORY_NUM_CLOSE_BRACE = ")";
 
     public MekorotTab() {
     }
@@ -52,6 +54,7 @@ public class MekorotTab extends Fragment {
         }
 
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,8 +64,12 @@ public class MekorotTab extends Fragment {
         final Fragment mekorotTabFrag = this;
         ArrayList<String> prettifiedCategories = new ArrayList<>();
         for (CategoryModel category : mMekorotCategories) {
-            String prettifiedCategory = category.getCategoryName().substring(CATEGORY_STRING_LENGTH).replace("_",
-                    " ") + " (" + category.getCategoryRefernceNum()+ ")";
+            String prettifiedCategory = category.getCategoryName().substring(
+                    CATEGORY_STRING_LENGTH).replace("_",
+                    " ")
+                    + CATEGORY_NUM_OPEN_BRACE
+                    + category.getCategoryRefernceNum()
+                    + CATEGORY_NUM_CLOSE_BRACE;
             prettifiedCategories.add(prettifiedCategory);
         }
         final CharSequence[] items = prettifiedCategories.toArray(
@@ -99,16 +106,18 @@ public class MekorotTab extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
                                 String mekorotQuery;
+                                boolean shouldFilter = false;
                                 if (mDialogSelectedItemsNames.size() > 0) {
                                     mekorotQuery = JBSQueries.getMekorotFiltered(
                                             mDialogSelectedItemsNames, mPrefixedPsukimUris);
+                                    shouldFilter = true;
                                 } else {
-                                    mekorotQuery = JBSQueries.getMekorot(mPrefixedPsukimUris);
+                                    mekorotQuery = JBSQueries.getMekorotWithAllData(mPrefixedPsukimUris);
                                 }
                                 String categoriesQuery = JBSQueries.getCategoriesByPsukimWithReferenceNumber(
                                         mPrefixedPsukimUris);
                                 FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(
-                                        mekorotTabFrag);
+                                        mekorotTabFrag, shouldFilter);
                                 fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQuery);
                             }
                         }).setNegativeButton(getResources().getString(R.string.cancel_button),
@@ -129,11 +138,11 @@ public class MekorotTab extends Fragment {
             pasukUri = getResources().getString(R.string.jbr_prefix) + pasukUri;
             mPrefixedPsukimUris.add(i, pasukUri);
         }
-        String mekorotQuery = JBSQueries.getMekorot(mPrefixedPsukimUris);
-        String categoriesQuery = JBSQueries.getCategoriesByPsukim(mPrefixedPsukimUris);
-        String categoriesQueryV2 = JBSQueries.getCategoriesByPsukimWithReferenceNumber(mPrefixedPsukimUris);
-        FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(this);
-        fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQueryV2);
+        String mekorotQuery = JBSQueries.getMekorotWithAllData(mPrefixedPsukimUris);
+        String categoriesQuery = JBSQueries.getCategoriesByPsukimWithReferenceNumber(
+                mPrefixedPsukimUris);
+        FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(this, false);
+        fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQuery);
     }
 
     public void setRecyclerViewAdapter(ArrayList<MakorModel> mekorot,
@@ -141,7 +150,7 @@ public class MekorotTab extends Fragment {
         if (getView() != null) {
             mMekorotCategories = mekorotCategories;
             mRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view);
-            mAdapter = new MekorotRecyclerViewAdapter(mekorot, getContext());
+            mAdapter = new MekorotRecyclerViewAdapter(mPrefixedPsukimUris, mekorot, getContext());
             LinearLayoutManager manager = new LinearLayoutManager(getContext());
             mRecyclerView.setHasFixedSize(true);
             mRecyclerView.setLayoutManager(manager);

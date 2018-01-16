@@ -13,11 +13,15 @@ public class JBSQueries {
     public static final String JBS_URI = "uri";
     public static final String PASUK = "pasuk";
     public static final String PASUK_TEXT = "pasuk_text";
+    public static final String MAKOR = "makor";
     public static final String MAKOR_NAME = "label";
     public static final String MAKOR_TEXT = "text";
+    public static final String NUM_OF_PSUKIM_AS_SUM = "sum";
+    public static final String MAKOR_SOURCE_URI = "source";
     public static final String BOOK_SUBJECT = "book_subject";
     public static final String CATEGORY = "category";
     public static final String CATEGORY_REFERENCE_NUM = "num";
+    public static final String NUM_OF_PSUKIM = "numOfPsukim";
 
 
     public static final String GET_ALL_PSUKIM_FROM_PARASHA =
@@ -79,6 +83,22 @@ public class JBSQueries {
                 " ?pasuk a jbo:Pasuk; jbo:within jbr:" + parashaUri + "; jbo:position ?position; jbo:text ?pasuk_text.\n" +
                 " ?perush jbo:interprets ?pasuk; jbo:text ?text.\n" +
                 "} ORDER BY ASC(xsd:integer(?position))";
+    }
+
+    public static String getPsukimToHighlightFromMakor(String makorUri, ArrayList<String> psukim) {
+        String psukimList = "";
+        for (String pasuk : psukim) {
+            psukimList += pasuk + " ";
+        }
+        return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>                           \n"
+                + "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n"
+                + "            PREFIX dco: <http://purl.org/dc/terms/>                                     \n"
+                + "SELECT ?makor ?pasuk ?span WHERE {\n"
+                + "values ?makor { "+ makorUri +" }\n"
+                + "values ?pasuk { "+ psukimList +" }\n"
+                + "?mention a jbo:Mention.\n"
+                + "?mention jbo:source ?makor; jbo:target ?pasuk; jbo:span ?span.\n"
+                + "}\n";
     }
 
     public static String getCategoriesByPsukimWithReferenceNumber(ArrayList<String> psukim) {
@@ -315,11 +335,43 @@ public class JBSQueries {
                 "  }\n" +
                 "  \n" +
                 "  \n" +
-                " group by ?source ?label ?text ?description\n" +
+                " group by ?source ?label ?text ?description ?numOfMentions\n" +
                 "       }\n" +
                 "       \n" +
                 "       \n" +
                 " order by DESC(?sum) offset 0 limit 500";
+    }
+
+    public static String getMekorotWithAllData(ArrayList<String> psukim) {
+        String psukimList = "";
+        for (String pasuk : psukim) {
+            psukimList += pasuk + " ";
+        }
+        return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>                           \n" +
+                "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n" +
+                "            PREFIX dco: <http://purl.org/dc/terms/>                                     \n" +
+                "SELECT ?label ?text ?makor (COUNT(?pasuk) AS ?numOfPsukim) (SUM(xsd:integer(?numOfMentions)) as ?score) WHERE {\n" +
+                "values ?pasuk {" + psukimList + "}\n" +
+                "?mention a jbo:Mention.\n" +
+                "?mention jbo:source ?makor; jbo:target ?pasuk; jbo:numOfMentions ?numOfMentions.\n" +
+                "?makor rdfs:label ?label.\n" +
+                "?makor jbo:text ?text.\n" +
+                "} GROUP BY ?text ?label ?makor ORDER BY DESC(?score)\n";
+    }
+
+    public static String getMekorotWithNumOfPsukimRefernces(ArrayList<String> psukim) {
+        String psukimList = "";
+        for (String pasuk : psukim) {
+            psukimList += pasuk + " ";
+        }
+        return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>                           \n" +
+                "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n" +
+                "            PREFIX dco: <http://purl.org/dc/terms/>                                     \n" +
+                "SELECT ?makor (COUNT(?pasuk) AS ?numOfPsukim) (SUM(xsd:integer(?numOfMentions)) as ?score) WHERE {\n" +
+                "values ?pasuk {" + psukimList + "}\n" +
+                "?mention a jbo:Mention.\n" +
+                "?mention jbo:source ?makor; jbo:target ?pasuk; jbo:numOfMentions ?numOfMentions.\n" +
+                "} GROUP BY ?makor ORDER BY DESC(?score)\n";
     }
 
     public static String getMekorot(ArrayList<String> psukim) {

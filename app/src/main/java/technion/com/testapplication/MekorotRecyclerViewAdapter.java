@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -19,10 +20,12 @@ import technion.com.testapplication.models.MakorModel;
 public class MekorotRecyclerViewAdapter
         extends RecyclerView.Adapter<MekorotRecyclerViewAdapter.MekorotViewHolder> {
 
+    private ArrayList<String> mPsukimUris;
     private ArrayList<MakorModel> mMekorotList;
     private Context mContext;
 
-    public MekorotRecyclerViewAdapter(ArrayList<MakorModel> mekorot, Context context) {
+    public MekorotRecyclerViewAdapter(ArrayList<String> psukimUris, ArrayList<MakorModel> mekorot, Context context) {
+        mPsukimUris = psukimUris;
         mMekorotList = mekorot;
         mContext = context;
     }
@@ -42,10 +45,12 @@ public class MekorotRecyclerViewAdapter
     @Override
     public void onBindViewHolder(final MekorotViewHolder holder, int position) {
         final MakorModel makorModel = mMekorotList.get(position);
-        holder.mTitle.setText(makorModel.getMakorName());
+        final String makorUri = makorModel.getMakorUri();
+        holder.mTitle.setText(
+                makorModel.getMakorName() + " (" + makorModel.getNumOfPsukimMentions() + ")");
         holder.mAuthor.setText(makorModel.getMakorAuthor());
         holder.mText.setText(makorModel.getMakorText());
-        holder.mView.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener clickListenerForEverythingButFav = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent makorDetailViewIntent = new Intent(mContext, MakorDetailView.class);
@@ -58,7 +63,30 @@ public class MekorotRecyclerViewAdapter
                 makorDetailViewIntent.putExtra(
                         mContext.getResources().getString(R.string.makor_title),
                         holder.mTitle.getText());
+                makorDetailViewIntent.putExtra(
+                        mContext.getResources().getString(R.string.makor_uri),
+                        makorUri);
+                makorDetailViewIntent.putStringArrayListExtra(
+                        mContext.getResources().getString(R.string.psukim_uris_extra),
+                        mPsukimUris);
                 mContext.startActivity(makorDetailViewIntent);
+            }
+        };
+        holder.mText.setOnClickListener(clickListenerForEverythingButFav);
+        holder.mAuthor.setOnClickListener(clickListenerForEverythingButFav);
+        holder.mTitle.setOnClickListener(clickListenerForEverythingButFav);
+        holder.mLikeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (makorModel.getIsClicked()) {
+                    makorModel.setIsClicked(false);
+                    holder.mLikeButton.setImageDrawable(
+                            mContext.getDrawable(R.drawable.ic_favorite_border_black_18dp));
+                } else {
+                    makorModel.setIsClicked(true);
+                    holder.mLikeButton.setImageDrawable(
+                            mContext.getDrawable(R.drawable.ic_favorite_black_18dp));
+                }
             }
         });
     }
@@ -74,6 +102,7 @@ public class MekorotRecyclerViewAdapter
         private TextView mTitle;
         private TextView mAuthor;
         private TextView mText;
+        private ImageView mLikeButton;
 
         private MekorotViewHolder(View itemView) {
             super(itemView);
@@ -81,6 +110,7 @@ public class MekorotRecyclerViewAdapter
             mTitle = (TextView) itemView.findViewById(R.id.makor_name);
             mAuthor = (TextView) itemView.findViewById(R.id.makor_author);
             mText = (TextView) itemView.findViewById(R.id.makor_text);
+            mLikeButton = (ImageView) itemView.findViewById(R.id.favorite_icon);
         }
     }
 }
