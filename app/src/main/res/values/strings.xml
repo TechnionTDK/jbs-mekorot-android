@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Sulamot</string>
     <string name="action_favorite">favorite action</string>
-    <string name="action_settings">settings action</string>
+    <string name="action_settings">הגדרות</string>
     <string name="enter_perek">אנא הכנס/י פרק</string>
     <string name="enter_parasha">אנא הכנס/י פרשה</string>
     <string name="perek">פרק</string>
