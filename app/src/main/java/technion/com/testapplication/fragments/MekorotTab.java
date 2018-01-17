@@ -41,6 +41,7 @@ public class MekorotTab extends Fragment {
 
     public interface MekorotChangesListener {
         public void setFilterIcon(Dialog dialog);
+        public void setTabResultsNum(int numOfResults);
     }
 
     @Override
@@ -156,6 +157,7 @@ public class MekorotTab extends Fragment {
             mRecyclerView.setLayoutManager(manager);
             mRecyclerView.setAdapter(mAdapter);
             setFilterDialog();
+            mCallback.setTabResultsNum(mekorot.size());
         }
     }
 
