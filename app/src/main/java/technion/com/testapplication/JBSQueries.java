@@ -186,7 +186,7 @@ public class JBSQueries {
                 "      PREFIX jbo: <http://jbs.technion.ac.il/ontology/>\n" +
                 "      PREFIX dco: <http://purl.org/dc/terms/>\n" +
                 "      \n" +
-                "      SELECT DISTINCT(?source) SAMPLE(?label) as ?label SAMPLE(?text) as ?text       SAMPLE(?sums) as ?sums SAMPLE(?spanss) as ?spanss SAMPLE (?labels) as ?labels      SAMPLE(?sum) as ?sum SAMPLE(?description) as ?description\n" +
+                "      SELECT DISTINCT(?source) SAMPLE(?label) as ?label SAMPLE(?text) as ?text       SAMPLE(?sums) as ?sums SAMPLE(?spanss) as ?spanss SAMPLE (?labels) as ?labels      SAMPLE(?sum) as ?sum SAMPLE(?description) as ?description \tSAMPLE(?numOfPsukim) as ?numOfPsukim\n" +
                 "   WHERE {\n" +
                 "   \n" +
                 "   \n" +
@@ -196,6 +196,7 @@ public class JBSQueries {
                 "       (group_concat(?numOfMentions;separator=\",\") as ?sums)\n" +
                 "    (group_concat(?spans;separator=\",\") as ?spanss)\n" +
                 "       (group_concat(?target_label ;separator=\",\") as ?labels)\n" +
+                "    COUNT(?target_label) as ?numOfPsukim\n" +
                 "    WHERE {\n" +
                 "    \n" +
                 "    \n" +
