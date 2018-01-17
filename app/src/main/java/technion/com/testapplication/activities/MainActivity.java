@@ -36,7 +36,8 @@ import technion.com.testapplication.async.FetchParashotAndPrakimTask;
 import technion.com.testapplication.fragments.MekorotTab;
 import technion.com.testapplication.fragments.PsukimTab;
 
-public class MainActivity extends AppCompatActivity implements PsukimTab.OnMoveToMekorotTabListener, MekorotTab.MekorotChangesListener{
+public class MainActivity extends AppCompatActivity
+        implements PsukimTab.OnMoveToMekorotTabListener, MekorotTab.MekorotChangesListener {
 
     private ArrayList<String> mParashotAndUris;
     private ArrayList<String> mPrakimAndUris;
@@ -304,6 +305,7 @@ public class MainActivity extends AppCompatActivity implements PsukimTab.OnMoveT
      * Used in order to move from the current psukim activity to the mekorot activity.
      * This is called from the psukim fragment, after the psukim fragment is called by the
      * main activity's on tab change listener (after we move to the mekorot fragment)
+     *
      * @param psukimUris
      */
     @Override
@@ -331,5 +333,14 @@ public class MainActivity extends AppCompatActivity implements PsukimTab.OnMoveT
                 dialog.show();
             }
         });
+    }
+
+    @Override
+    public void setTabResultsNum(int numOfResults) {
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout.Tab mekorotTab = tabLayout.getTabAt(1);
+        if (mekorotTab != null) {
+            mekorotTab.setText(getResources().getString(R.string.mekorot) + " (" + Integer.toString(numOfResults)+ ")");
+        }
     }
 }
