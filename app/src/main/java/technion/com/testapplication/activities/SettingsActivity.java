@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import technion.com.testapplication.JBSQueries;
-import technion.com.testapplication.PreferencesUtils;
+import technion.com.testapplication.utils.PreferencesUtils;
 import technion.com.testapplication.R;
 import technion.com.testapplication.async.FetchParashotAndPrakimTask;
 

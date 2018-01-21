@@ -1,4 +1,4 @@
-package technion.com.testapplication;
+package technion.com.testapplication.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

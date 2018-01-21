@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import technion.com.testapplication.FontUtils;
+import technion.com.testapplication.utils.FontUtils;
 import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.R;
 import technion.com.testapplication.async.FetchHighlightsForMakorTask;

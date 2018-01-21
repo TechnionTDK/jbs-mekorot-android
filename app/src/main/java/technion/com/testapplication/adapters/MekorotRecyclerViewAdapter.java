@@ -1,4 +1,4 @@
-package technion.com.testapplication;
+package technion.com.testapplication.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,8 +11,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import technion.com.testapplication.R;
 import technion.com.testapplication.activities.MakorDetailView;
 import technion.com.testapplication.models.MakorModel;
+import technion.com.testapplication.utils.FontUtils;
 
 /**
  * Created by tomerlevinson on 23/12/2017.

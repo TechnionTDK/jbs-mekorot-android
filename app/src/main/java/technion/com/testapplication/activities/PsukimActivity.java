@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import technion.com.testapplication.PsukimRecyclerViewAdapter;
+import technion.com.testapplication.adapters.PsukimRecyclerViewAdapter;
 import technion.com.testapplication.R;
 import technion.com.testapplication.models.PasukModel;
 

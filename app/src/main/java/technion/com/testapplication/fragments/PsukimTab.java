@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import technion.com.testapplication.JBSQueries;
-import technion.com.testapplication.PsukimRecyclerViewAdapter;
+import technion.com.testapplication.adapters.PsukimRecyclerViewAdapter;
 import technion.com.testapplication.R;
 import technion.com.testapplication.async.FetchPsukimTask;
 import technion.com.testapplication.models.PasukModel;

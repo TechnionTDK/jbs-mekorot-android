@@ -20,7 +20,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import technion.com.testapplication.JBSQueries;
-import technion.com.testapplication.MekorotRecyclerViewAdapter;
+import technion.com.testapplication.adapters.MekorotRecyclerViewAdapter;
 import technion.com.testapplication.R;
 import technion.com.testapplication.models.MakorModel;
 

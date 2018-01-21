@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import technion.com.testapplication.JBSQueries;
-import technion.com.testapplication.MekorotRecyclerViewAdapter;
+import technion.com.testapplication.adapters.MekorotRecyclerViewAdapter;
 import technion.com.testapplication.R;
 import technion.com.testapplication.async.FetchMekorotByScoreTask;
 import technion.com.testapplication.models.CategoryModel;

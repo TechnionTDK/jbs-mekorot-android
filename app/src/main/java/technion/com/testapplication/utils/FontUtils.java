@@ -1,4 +1,4 @@
-package technion.com.testapplication;
+package technion.com.testapplication.utils;
 
 import android.content.Context;
 import android.graphics.Typeface;

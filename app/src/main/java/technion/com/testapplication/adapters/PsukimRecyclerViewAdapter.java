@@ -1,4 +1,4 @@
-package technion.com.testapplication;
+package technion.com.testapplication.adapters;
 
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import technion.com.testapplication.R;
 import technion.com.testapplication.models.PasukModel;
 
 /**

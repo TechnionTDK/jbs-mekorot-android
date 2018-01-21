@@ -31,7 +31,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import technion.com.testapplication.R;
-import technion.com.testapplication.ViewPagerAdapter;
+import technion.com.testapplication.adapters.ViewPagerAdapter;
 import technion.com.testapplication.async.FetchParashotAndPrakimTask;
 import technion.com.testapplication.fragments.MekorotTab;
 import technion.com.testapplication.fragments.PsukimTab;
