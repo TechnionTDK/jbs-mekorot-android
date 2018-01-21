@@ -44,6 +44,7 @@ public class MekorotTab extends Fragment {
 
     public interface MekorotChangesListener {
         public void setFilterIcon(Dialog dialog);
+
         public void setTabResultsNum(int numOfResults);
     }
 
@@ -116,7 +117,8 @@ public class MekorotTab extends Fragment {
                                             mDialogSelectedItemsNames, mPrefixedPsukimUris);
                                     shouldFilter = true;
                                 } else {
-                                    mekorotQuery = JBSQueries.getMekorotWithAllData(mPrefixedPsukimUris);
+                                    mekorotQuery = JBSQueries.getMekorotWithAllData(
+                                            mPrefixedPsukimUris);
                                 }
                                 String categoriesQuery = JBSQueries.getCategoriesByPsukimWithReferenceNumber(
                                         mPrefixedPsukimUris);
@@ -155,14 +157,15 @@ public class MekorotTab extends Fragment {
             ArrayList<MakorModel> makorModels = new ArrayList<>();
             Iterator it = mekorot.entrySet().iterator();
             while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry)it.next();
+                Map.Entry pair = (Map.Entry) it.next();
                 MakorModel makorModel = (MakorModel) pair.getValue();
                 makorModels.add(makorModel);
                 it.remove(); // avoids a ConcurrentModificationException
             }
             mMekorotCategories = mekorotCategories;
             mRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view);
-            mAdapter = new MekorotRecyclerViewAdapter(mPrefixedPsukimUris, makorModels, getContext());
+            mAdapter = new MekorotRecyclerViewAdapter(mPrefixedPsukimUris, makorModels,
+                    getContext());
             LinearLayoutManager manager = new LinearLayoutManager(getContext());
             mRecyclerView.setHasFixedSize(true);
             mRecyclerView.setLayoutManager(manager);
