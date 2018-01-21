@@ -18,6 +18,7 @@
         <activity android:name=".activities.PsukimActivity"/>
         <activity android:name=".activities.MekorotActivity"/>
         <activity android:name=".activities.MakorDetailView"/>
+        <activity android:name=".activities.SettingsActivity"/>
     </application>
 
 </manifest>

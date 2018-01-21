@@ -179,4 +179,12 @@ public class MekorotTab extends Fragment {
         return inflater.inflate(R.layout.mekorot_tab, container, false);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mAdapter != null) {
+            mAdapter.notifyDataSetChanged();
+        }
+
+    }
 }

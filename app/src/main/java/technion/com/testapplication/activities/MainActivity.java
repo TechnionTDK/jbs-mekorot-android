@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity
     private static final int MEKOROT_FRAG_POSITION = 1;
     private static boolean mIsNewQuerySubmitted = false;
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -68,6 +67,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
+                Intent settingsActivityIntent = new Intent(getApplicationContext(), SettingsActivity.class);
+                startActivity(settingsActivityIntent);
                 return true;
             case R.id.action_favorite:
                 return false;
@@ -128,7 +129,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
-
 
     /**
      * Set fonts for the title and other elements in the activity.

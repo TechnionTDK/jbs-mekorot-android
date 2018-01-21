@@ -2,6 +2,7 @@ package technion.com.testapplication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,9 +10,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.Console;
 import java.util.ArrayList;
+import java.util.Set;
 
 import technion.com.testapplication.activities.MakorDetailView;
+import technion.com.testapplication.activities.SettingsActivity;
 import technion.com.testapplication.models.MakorModel;
 
 /**
@@ -24,7 +28,8 @@ public class MekorotRecyclerViewAdapter
     private ArrayList<MakorModel> mMekorotList;
     private Context mContext;
 
-    public MekorotRecyclerViewAdapter(ArrayList<String> psukimUris, ArrayList<MakorModel> mekorot, Context context) {
+    public MekorotRecyclerViewAdapter(ArrayList<String> psukimUris, ArrayList<MakorModel> mekorot,
+                                      Context context) {
         mPsukimUris = psukimUris;
         mMekorotList = mekorot;
         mContext = context;
@@ -55,6 +60,20 @@ public class MekorotRecyclerViewAdapter
             holder.mAuthor.setVisibility(View.GONE);
         }
         holder.mText.setText(makorModel.getMakorText());
+        String selectedFont = null;
+        Set<String> selectedFontSet = PreferencesUtils.retrieveStoredStringSet(
+                SettingsActivity.PREFERENCES_FILE_NAME, SettingsActivity.SELECTED_FONT_KEY, mContext);
+        if (selectedFontSet != null && selectedFontSet.size() > 0) {
+            for (String param : selectedFontSet) {
+                selectedFont = param;
+            }
+        } else {
+            holder.mText.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
+        }
+        if (selectedFont != null) {
+            Typeface custom_font = Typeface.createFromAsset(mContext.getAssets(), selectedFont);
+            holder.mText.setTypeface(custom_font);
+        }
         View.OnClickListener clickListenerForEverythingButFav = new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -2,6 +2,7 @@ package technion.com.testapplication.activities;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -16,8 +17,10 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import technion.com.testapplication.JBSQueries;
+import technion.com.testapplication.PreferencesUtils;
 import technion.com.testapplication.R;
 import technion.com.testapplication.async.FetchHighlightsForMakorTask;
 
@@ -71,23 +74,24 @@ public class MakorDetailView extends AppCompatActivity {
         String makorText = makorTextView.getText().toString();
         String[] splitMakorText = makorText.split("\\s+");
         SpannableString spannableMakorText = new SpannableString(makorText);
-        for (String subsetToHighlight: psukimSubstrings) {
+        for (String subsetToHighlight : psukimSubstrings) {
             String[] splitSubset = subsetToHighlight.split("-");
             int startWord = Integer.parseInt(splitSubset[0]);
             int endWord = Integer.parseInt(splitSubset[1]);
             int wordCount = 0;
             int startIndex = 0;
             while (wordCount < startWord) {
-                startIndex+= splitMakorText[wordCount].length() + 1;
+                startIndex += splitMakorText[wordCount].length() + 1;
                 wordCount++;
             }
             wordCount = 0;
             int endIndex = startIndex;
             while (wordCount <= (endWord - startWord)) {
-                endIndex+= splitMakorText[startWord + wordCount].length()+1;
+                endIndex += splitMakorText[startWord + wordCount].length() + 1;
                 wordCount++;
             }
-            spannableMakorText.setSpan(new BackgroundColorSpan(Color.YELLOW), startIndex, endIndex, 0);
+            spannableMakorText.setSpan(new BackgroundColorSpan(Color.YELLOW), startIndex, endIndex,
+                    0);
         }
         makorTextView.setText(spannableMakorText);
     }
@@ -115,6 +119,22 @@ public class MakorDetailView extends AppCompatActivity {
         toolbarTitleTV.setText(mMakorTitle);
         TextView makorText = (TextView) findViewById(R.id.makor_text);
         makorText.setText(mMakorText);
+        String selectedFont = null;
+        Set<String> selectedFontSet = PreferencesUtils.retrieveStoredStringSet(
+                SettingsActivity.PREFERENCES_FILE_NAME, SettingsActivity.SELECTED_FONT_KEY,
+                getApplicationContext());
+        if (selectedFontSet != null && selectedFontSet.size() > 0) {
+            for (String param : selectedFontSet) {
+                selectedFont = param;
+            }
+        } else {
+            makorText.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
+        }
+        if (selectedFont != null) {
+            Typeface custom_font = Typeface.createFromAsset(getApplicationContext().getAssets(),
+                    selectedFont);
+            makorText.setTypeface(custom_font);
+        }
         makorText.setMovementMethod(new ScrollingMovementMethod());
         String fetchHighlightsForMakor = JBSQueries.getPsukimToHighlightFromMakor(mMakorUri,
                 mMakorPsukim);
