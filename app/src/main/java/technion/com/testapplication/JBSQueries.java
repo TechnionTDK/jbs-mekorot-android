@@ -116,6 +116,27 @@ public class JBSQueries {
                 + "} GROUP BY ?category order by DESC(?num)";
     }
 
+    public static String getMekorotAuthors(ArrayList<String> mekorotUris) {
+        ArrayList<String> prefixedMekorotUris = new ArrayList<>();
+        for (int i = 0; i < mekorotUris.size(); i++) {
+            String makorUri = mekorotUris.get(i);
+            makorUri = makorUri.substring(makorUri.lastIndexOf("/") + 1);
+            makorUri = "jbr:" + makorUri;
+            prefixedMekorotUris.add(i, makorUri);
+        }
+        String mekorotList = "";
+        for (String makor : prefixedMekorotUris) {
+            mekorotList += makor + " ";
+        }
+        return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>                           \n" +
+                "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n" +
+                "            PREFIX dco: <http://purl.org/dc/terms/>                                     \n" +
+                "SELECT ?makor ?author WHERE {\n" +
+                "values ?makor { " + mekorotList + " }\n" +
+                "OPTIONAL {?makor jbo:book ?book. ?book jbo:author ?author.}\n" +
+                "}\n";
+    }
+
     public static String getCategoriesByPsukim(ArrayList<String> psukim) {
         String psukimList = "";
         for (String pasuk : psukim) {

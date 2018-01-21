@@ -10,6 +10,9 @@ import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.sparql.engine.http.QueryEngineHTTP;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.R;
@@ -22,7 +25,8 @@ import technion.com.testapplication.models.MakorModel;
  * This class is intended for fetching mekorot by task.
  */
 public class FetchMekorotByScoreTask
-        extends AsyncTask<String, Void, Pair<ArrayList<MakorModel>, ArrayList<CategoryModel>>> {
+        extends
+        AsyncTask<String, Void, Pair<HashMap<String, MakorModel>, ArrayList<CategoryModel>>> {
     private Fragment mFragment;
     private boolean mShouldFilter;
     private ProgressDialog mProgressDialog;
@@ -44,17 +48,19 @@ public class FetchMekorotByScoreTask
     }
 
     @Override
-    protected Pair<ArrayList<MakorModel>, ArrayList<CategoryModel>> doInBackground(
+    protected Pair<HashMap<String, MakorModel>, ArrayList<CategoryModel>> doInBackground(
             String... params) {
-        ArrayList<MakorModel> sortedMekorot = new ArrayList<>();
+        HashMap<String, MakorModel> sortedMekorot = new HashMap<>();
         ArrayList<CategoryModel> bookSubjects = new ArrayList<>();
+        ArrayList<String> mekorotUris = new ArrayList<>();
+        HashMap<String, String> mekorotUrisAuthors = new HashMap<>();
         try {
-            QueryEngineHTTP queryEngineHTTP = new QueryEngineHTTP(JBSQueries.JBS_ENDPOINT,
+            QueryEngineHTTP sortedMekorotQuery = new QueryEngineHTTP(JBSQueries.JBS_ENDPOINT,
                     params[0]);
             QueryEngineHTTP queryEngineHTTPCategories = new QueryEngineHTTP(JBSQueries.JBS_ENDPOINT,
                     params[1]);
             try {
-                ResultSet resultSet = queryEngineHTTP.execSelect();
+                ResultSet resultSet = sortedMekorotQuery.execSelect();
                 while (resultSet.hasNext()) {
                     QuerySolution rb = resultSet.nextSolution();
                     String numOfPsukimString;
@@ -70,16 +76,40 @@ public class FetchMekorotByScoreTask
                     } else {
                         makorUri = rb.get(JBSQueries.MAKOR).toString();
                     }
+                    mekorotUris.add(makorUri);
                     MakorModel makorModel = new MakorModel(
-                            makorName,
                             makorName,
                             makorText,
                             makorUri,
                             numOfPsukimString);
-                    sortedMekorot.add(makorModel);
+                    sortedMekorot.put(makorUri, makorModel);
                 }
             } finally {
-                queryEngineHTTP.close();
+                sortedMekorotQuery.close();
+            }
+            String mekorotAuthorsQuery = JBSQueries.getMekorotAuthors(mekorotUris);
+            QueryEngineHTTP mekorotAuthorsSelect = new QueryEngineHTTP(JBSQueries.JBS_ENDPOINT,
+                    mekorotAuthorsQuery);
+            try {
+                ResultSet resultSet = mekorotAuthorsSelect.execSelect();
+                while (resultSet.hasNext()) {
+                    QuerySolution rb = resultSet.nextSolution();
+                    String makorUri = rb.get("makor").toString();
+                    String authorFull = rb.get("author").toString();
+                    String author = authorFull.substring(authorFull.lastIndexOf("-") + 1);
+                    String[] authorNameArray = author.split("_");
+                    String authorName = "";
+                    for (int i=0; i < authorNameArray.length; i++) {
+                        if (i != authorNameArray.length - 1) {
+                            authorName += authorNameArray[i] + " ";
+                        } else {
+                            authorName += authorNameArray[i];
+                        }
+                    }
+                    mekorotUrisAuthors.put(makorUri, authorName);
+                }
+            } finally {
+                sortedMekorotQuery.close();
             }
             try {
                 ResultSet resultSet = queryEngineHTTPCategories.execSelect();
@@ -102,20 +132,32 @@ public class FetchMekorotByScoreTask
         } catch (Exception err) {
             err.printStackTrace();
         }
-        Pair<ArrayList<MakorModel>, ArrayList<CategoryModel>> queryResultsPair = Pair.create(
+        Pair<HashMap<String, MakorModel>, ArrayList<CategoryModel>> queryResultsPair = Pair.create(
                 sortedMekorot,
                 bookSubjects);
+        Iterator it = mekorotUrisAuthors.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            String makorUri = (String) pair.getKey();
+            String makorAuthor = (String) pair.getValue();
+            if (sortedMekorot.get(makorUri) != null) {
+                MakorModel makorModelForAuthor = sortedMekorot.get(makorUri);
+                makorModelForAuthor.setMakorAuthor(makorAuthor);
+                sortedMekorot.put(makorUri, makorModelForAuthor);
+            }
+            it.remove(); // avoids a ConcurrentModificationException
+        }
         return queryResultsPair;
     }
 
     @Override
     protected void onPostExecute(
-            Pair<ArrayList<MakorModel>, ArrayList<CategoryModel>> mekorotModelCategoryPair) {
+            Pair<HashMap<String, MakorModel>, ArrayList<CategoryModel>> mekorotModelCategoryPair) {
         super.onPostExecute(mekorotModelCategoryPair);
         if (mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }
-        ArrayList<MakorModel> mekorotModels = mekorotModelCategoryPair.first;
+        HashMap<String, MakorModel> mekorotModels = mekorotModelCategoryPair.first;
         ArrayList<CategoryModel> mekorotCategories = mekorotModelCategoryPair.second;
         if (mFragment instanceof MekorotTab) {
             ((MekorotTab) mFragment).setRecyclerViewAdapter(mekorotModels, mekorotCategories);

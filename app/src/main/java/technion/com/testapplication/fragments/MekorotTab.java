@@ -13,6 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.MekorotRecyclerViewAdapter;
@@ -146,18 +149,26 @@ public class MekorotTab extends Fragment {
         fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQuery);
     }
 
-    public void setRecyclerViewAdapter(ArrayList<MakorModel> mekorot,
+    public void setRecyclerViewAdapter(HashMap<String, MakorModel> mekorot,
                                        ArrayList<CategoryModel> mekorotCategories) {
         if (getView() != null) {
+            ArrayList<MakorModel> makorModels = new ArrayList<>();
+            Iterator it = mekorot.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry)it.next();
+                MakorModel makorModel = (MakorModel) pair.getValue();
+                makorModels.add(makorModel);
+                it.remove(); // avoids a ConcurrentModificationException
+            }
             mMekorotCategories = mekorotCategories;
             mRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view);
-            mAdapter = new MekorotRecyclerViewAdapter(mPrefixedPsukimUris, mekorot, getContext());
+            mAdapter = new MekorotRecyclerViewAdapter(mPrefixedPsukimUris, makorModels, getContext());
             LinearLayoutManager manager = new LinearLayoutManager(getContext());
             mRecyclerView.setHasFixedSize(true);
             mRecyclerView.setLayoutManager(manager);
             mRecyclerView.setAdapter(mAdapter);
             setFilterDialog();
-            mCallback.setTabResultsNum(mekorot.size());
+            mCallback.setTabResultsNum(makorModels.size());
         }
     }
 

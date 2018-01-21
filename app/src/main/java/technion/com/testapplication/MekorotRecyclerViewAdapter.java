@@ -48,7 +48,12 @@ public class MekorotRecyclerViewAdapter
         final String makorUri = makorModel.getMakorUri();
         holder.mTitle.setText(
                 makorModel.getMakorName() + " (" + makorModel.getNumOfPsukimMentions() + ")");
-        holder.mAuthor.setText(makorModel.getMakorAuthor());
+        if (makorModel.getMakorAuthor() != null) {
+            holder.mAuthor.setText(makorModel.getMakorAuthor());
+        } else {
+            holder.mAuthor.setText("");
+            holder.mAuthor.setVisibility(View.GONE);
+        }
         holder.mText.setText(makorModel.getMakorText());
         View.OnClickListener clickListenerForEverythingButFav = new View.OnClickListener() {
             @Override
