@@ -253,6 +253,7 @@ public class MainActivity extends AppCompatActivity
                 TabLayout.Tab tab = tabs.getTabAt(PSUKIM_FRAG_POSITION);
                 if (tab != null) {
                     tab.select();
+                    setTabResultsNum(0);
                 }
                 psukimTabFrag.loadPuskim(perekOrParashaUri, perekOrParashaName);
                 hideSoftKeyboard(MainActivity.this,
