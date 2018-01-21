@@ -31,6 +31,7 @@ public class PsukimTab extends Fragment {
 
     public interface OnMoveToMekorotTabListener {
         public void onMoveToMekorotTab(ArrayList<String> psukimUris);
+
         public void onPsukimSelected(boolean areNewSelected);
     }
 
