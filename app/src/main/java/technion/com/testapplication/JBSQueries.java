@@ -14,6 +14,7 @@ public class JBSQueries {
     public static final String PASUK = "pasuk";
     public static final String PASUK_TEXT = "pasuk_text";
     public static final String MAKOR = "makor";
+    public static final String AUTHOR = "author";
     public static final String MAKOR_NAME = "label";
     public static final String MAKOR_TEXT = "text";
     public static final String NUM_OF_PSUKIM_AS_SUM = "sum";

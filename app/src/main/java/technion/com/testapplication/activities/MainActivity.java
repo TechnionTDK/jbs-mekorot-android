@@ -206,6 +206,11 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    /**
+     * Used in order to hide the keyboard.
+     * @param activity
+     * @param view
+     */
     public static void hideSoftKeyboard(Activity activity, View view) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(
                 Context.INPUT_METHOD_SERVICE);

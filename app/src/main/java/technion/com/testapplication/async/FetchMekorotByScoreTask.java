@@ -95,12 +95,12 @@ public class FetchMekorotByScoreTask
                 ResultSet resultSet = mekorotAuthorsSelect.execSelect();
                 while (resultSet.hasNext()) {
                     QuerySolution rb = resultSet.nextSolution();
-                    String makorUri = rb.get("makor").toString();
-                    RDFNode authorNode = rb.get("author");
+                    String makorUri = rb.get(JBSQueries.MAKOR).toString();
+                    RDFNode authorNode = rb.get(JBSQueries.AUTHOR);
                     String authorFull = "";
                     String authorName = "";
                     if (authorNode != null) {
-                        authorFull = rb.get("author").toString();
+                        authorFull = authorNode.toString();
                         String author = authorFull.substring(authorFull.lastIndexOf("-") + 1);
                         String[] authorNameArray = author.split("_");
                         authorName = "";
@@ -148,7 +148,7 @@ public class FetchMekorotByScoreTask
             String makorAuthor = (String) pair.getValue();
             if (sortedMekorot.get(makorUri) != null) {
                 MakorModel makorModelForAuthor = sortedMekorot.get(makorUri);
-                if (makorAuthor != "") {
+                if (!makorAuthor.equals("")) {
                     makorModelForAuthor.setMakorAuthor(makorAuthor);
                 }
                 sortedMekorot.put(makorUri, makorModelForAuthor);

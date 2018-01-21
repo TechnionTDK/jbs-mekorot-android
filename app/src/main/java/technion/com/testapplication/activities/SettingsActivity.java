@@ -83,6 +83,9 @@ public class SettingsActivity extends AppCompatActivity {
         setFontFamilyDialog();
     }
 
+    /**
+     * Setting up the font family dialog.
+     */
     private void setFontFamilyDialog() {
         LinearLayout setFontSizeLL = (LinearLayout) findViewById(R.id.choose_font);
         setFontSizeLL.setOnClickListener(new View.OnClickListener() {
@@ -145,6 +148,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Setting up the font size dialog.
+     */
     private void setSetFontSizeDialog() {
         LinearLayout setFontSizeLL = (LinearLayout) findViewById(R.id.choose_font_size);
         setFontSizeLL.setOnClickListener(new View.OnClickListener() {
