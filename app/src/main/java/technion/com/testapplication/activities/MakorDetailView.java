@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.method.ScrollingMovementMethod;
 import android.text.style.BackgroundColorSpan;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -134,6 +135,23 @@ public class MakorDetailView extends AppCompatActivity {
             Typeface custom_font = Typeface.createFromAsset(getApplicationContext().getAssets(),
                     selectedFont);
             makorText.setTypeface(custom_font);
+        }
+
+        String selectedFontSize = null;
+        Set<String> selectedFontSizeSet = PreferencesUtils.retrieveStoredStringSet(
+                SettingsActivity.PREFERENCES_FILE_NAME, SettingsActivity.SELECTED_FONT_SIZE_KEY,
+                getApplicationContext());
+        if (selectedFontSizeSet != null) {
+            for (String param : selectedFontSizeSet) {
+                selectedFontSize = param;
+            }
+        } else {
+            makorText.setTextSize(TypedValue.COMPLEX_UNIT_SP,
+                    Integer.parseInt(SettingsActivity.FONT_SIZE_SMALL));
+        }
+        if (selectedFontSize != null) {
+            makorText.setTextSize(TypedValue.COMPLEX_UNIT_SP,
+                    Integer.parseInt(selectedFontSize));
         }
         makorText.setMovementMethod(new ScrollingMovementMethod());
         String fetchHighlightsForMakor = JBSQueries.getPsukimToHighlightFromMakor(mMakorUri,

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +63,24 @@ public class MekorotRecyclerViewAdapter
         holder.mText.setText(makorModel.getMakorText());
         String selectedFont = null;
         Set<String> selectedFontSet = PreferencesUtils.retrieveStoredStringSet(
-                SettingsActivity.PREFERENCES_FILE_NAME, SettingsActivity.SELECTED_FONT_KEY, mContext);
+                SettingsActivity.PREFERENCES_FILE_NAME, SettingsActivity.SELECTED_FONT_KEY,
+                mContext);
+        String selectedFontSize = null;
+        Set<String> selectedFontSizeSet = PreferencesUtils.retrieveStoredStringSet(
+                SettingsActivity.PREFERENCES_FILE_NAME, SettingsActivity.SELECTED_FONT_SIZE_KEY,
+                mContext);
+        if (selectedFontSizeSet != null) {
+            for (String param : selectedFontSizeSet) {
+                selectedFontSize = param;
+            }
+        } else {
+            holder.mText.setTextSize(TypedValue.COMPLEX_UNIT_SP,
+                    Integer.parseInt(SettingsActivity.FONT_SIZE_SMALL));
+        }
+        if (selectedFontSize != null) {
+            holder.mText.setTextSize(TypedValue.COMPLEX_UNIT_SP,
+                    Integer.parseInt(selectedFontSize));
+        }
         if (selectedFontSet != null && selectedFontSet.size() > 0) {
             for (String param : selectedFontSet) {
                 selectedFont = param;

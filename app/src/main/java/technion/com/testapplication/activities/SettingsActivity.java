@@ -29,9 +29,13 @@ public class SettingsActivity extends AppCompatActivity {
     public static final String HEADING_FONT_PATH = "fonts/shofarregular-webfont.ttf";
     public static final String FONT_NUMBER_ONE = "fonts/keteryg-medium-webfont.ttf";
     public static final String FONT_NUMBER_TWO = "fonts/shofarregular-webfont.ttf";
+    public static final String FONT_SIZE_SMALL = "10";
+    public static final String FONT_SIZE_MEDIUM = "14";
+    public static final String FONT_SIZE_LARGE = "16";
     public static final String FONT_NUMBER_THREE = "fonts/stamashkenazclm-webfont.ttf";
     public static final String PREFERENCES_FILE_NAME = "settings";
     public static final String SELECTED_FONT_KEY = "selected_font";
+    public static final String SELECTED_FONT_SIZE_KEY = "selected_font_size";
 
 
     @Override
@@ -77,17 +81,18 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
-                String[] fontSizes = new String[]{"ללא פונט","כתר", "שופר", "אברהם"};
-                Set<String> chosenBeforeFontSet = PreferencesUtils.retrieveStoredStringSet(PREFERENCES_FILE_NAME, SELECTED_FONT_KEY,
+                String[] fontSizes = new String[]{"ללא פונט", "כתר", "שופר", "אברהם"};
+                Set<String> chosenBeforeFontSet = PreferencesUtils.retrieveStoredStringSet(
+                        PREFERENCES_FILE_NAME, SELECTED_FONT_KEY,
                         getApplicationContext());
                 int selectedFont = 0;
                 if (chosenBeforeFontSet != null) {
                     for (String chosenBeforeFont : chosenBeforeFontSet) {
                         if (chosenBeforeFont.equals(FONT_NUMBER_ONE)) {
                             selectedFont = 1;
-                        } else if(chosenBeforeFont.equals(FONT_NUMBER_TWO)) {
+                        } else if (chosenBeforeFont.equals(FONT_NUMBER_TWO)) {
                             selectedFont = 2;
-                        } else if(chosenBeforeFont.equals(FONT_NUMBER_THREE)) {
+                        } else if (chosenBeforeFont.equals(FONT_NUMBER_THREE)) {
                             selectedFont = 3;
                         }
                     }
@@ -141,26 +146,40 @@ public class SettingsActivity extends AppCompatActivity {
                         "בינוני",
                         "גדול"
                 };
-                final boolean[] checkedFontSizes = new boolean[]{
-                        false,
-                        false,
-                        false
-                };
-                builder.setMultiChoiceItems(fontSizes, checkedFontSizes,
-                        new DialogInterface.OnMultiChoiceClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which,
-                                                boolean isChecked) {
-                                checkedFontSizes[which] = isChecked;
-                            }
-                        });
+                Set<String> chosenBeforeFontSizeSet = PreferencesUtils.retrieveStoredStringSet(
+                        PREFERENCES_FILE_NAME, SELECTED_FONT_SIZE_KEY,
+                        getApplicationContext());
+                int selectedFontSize = 0;
+                if (chosenBeforeFontSizeSet != null) {
+                    for (String chosenBeforeFont : chosenBeforeFontSizeSet) {
+                        if (chosenBeforeFont.equals(FONT_SIZE_SMALL)) {
+                            selectedFontSize = 0;
+                        } else if (chosenBeforeFont.equals(FONT_SIZE_MEDIUM)) {
+                            selectedFontSize = 1;
+                        } else if (chosenBeforeFont.equals(FONT_SIZE_LARGE)) {
+                            selectedFontSize = 2;
+                        }
+                    }
+                }
+                builder.setSingleChoiceItems(fontSizes, selectedFontSize, null);
                 builder.setCancelable(false);
                 builder.setTitle(getResources().getString(R.string.choose_font_size));
                 builder.setPositiveButton(getResources().getString(R.string.choose_button),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // Save in shared preferences here
+                                int selectedPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
+                                Set<String> newParamSet = new HashSet<>();
+                                if (selectedPosition == 0) {
+                                    newParamSet.add(FONT_SIZE_SMALL);
+                                } else if (selectedPosition == 1) {
+                                    newParamSet.add(FONT_SIZE_MEDIUM);
+                                } else if (selectedPosition == 2) {
+                                    newParamSet.add(FONT_SIZE_LARGE);
+                                }
+                                PreferencesUtils.storeStringSet(PREFERENCES_FILE_NAME,
+                                        SELECTED_FONT_SIZE_KEY, newParamSet, true,
+                                        getApplicationContext());
                             }
                         });
 
