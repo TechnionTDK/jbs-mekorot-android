@@ -7,6 +7,7 @@ import android.util.Pair;
 
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.sparql.engine.http.QueryEngineHTTP;
 
 import java.util.ArrayList;
@@ -95,21 +96,26 @@ public class FetchMekorotByScoreTask
                 while (resultSet.hasNext()) {
                     QuerySolution rb = resultSet.nextSolution();
                     String makorUri = rb.get("makor").toString();
-                    String authorFull = rb.get("author").toString();
-                    String author = authorFull.substring(authorFull.lastIndexOf("-") + 1);
-                    String[] authorNameArray = author.split("_");
+                    RDFNode authorNode = rb.get("author");
+                    String authorFull = "";
                     String authorName = "";
-                    for (int i=0; i < authorNameArray.length; i++) {
-                        if (i != authorNameArray.length - 1) {
-                            authorName += authorNameArray[i] + " ";
-                        } else {
-                            authorName += authorNameArray[i];
+                    if (authorNode != null) {
+                        authorFull = rb.get("author").toString();
+                        String author = authorFull.substring(authorFull.lastIndexOf("-") + 1);
+                        String[] authorNameArray = author.split("_");
+                        authorName = "";
+                        for (int i=0; i < authorNameArray.length; i++) {
+                            if (i != authorNameArray.length - 1) {
+                                authorName += authorNameArray[i] + " ";
+                            } else {
+                                authorName += authorNameArray[i];
+                            }
                         }
                     }
                     mekorotUrisAuthors.put(makorUri, authorName);
                 }
             } finally {
-                sortedMekorotQuery.close();
+                mekorotAuthorsSelect.close();
             }
             try {
                 ResultSet resultSet = queryEngineHTTPCategories.execSelect();
@@ -142,7 +148,9 @@ public class FetchMekorotByScoreTask
             String makorAuthor = (String) pair.getValue();
             if (sortedMekorot.get(makorUri) != null) {
                 MakorModel makorModelForAuthor = sortedMekorot.get(makorUri);
-                makorModelForAuthor.setMakorAuthor(makorAuthor);
+                if (makorAuthor != "") {
+                    makorModelForAuthor.setMakorAuthor(makorAuthor);
+                }
                 sortedMekorot.put(makorUri, makorModelForAuthor);
             }
             it.remove(); // avoids a ConcurrentModificationException
