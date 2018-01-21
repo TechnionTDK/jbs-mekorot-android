@@ -13,9 +13,16 @@ public class JBSQueries {
     public static final String JBS_URI = "uri";
     public static final String PASUK = "pasuk";
     public static final String PASUK_TEXT = "pasuk_text";
+    public static final String MAKOR = "makor";
+    public static final String AUTHOR = "author";
     public static final String MAKOR_NAME = "label";
     public static final String MAKOR_TEXT = "text";
+    public static final String NUM_OF_PSUKIM_AS_SUM = "sum";
+    public static final String MAKOR_SOURCE_URI = "source";
     public static final String BOOK_SUBJECT = "book_subject";
+    public static final String CATEGORY = "category";
+    public static final String CATEGORY_REFERENCE_NUM = "num";
+    public static final String NUM_OF_PSUKIM = "numOfPsukim";
 
 
     public static final String GET_ALL_PSUKIM_FROM_PARASHA =
@@ -77,6 +84,58 @@ public class JBSQueries {
                 " ?pasuk a jbo:Pasuk; jbo:within jbr:" + parashaUri + "; jbo:position ?position; jbo:text ?pasuk_text.\n" +
                 " ?perush jbo:interprets ?pasuk; jbo:text ?text.\n" +
                 "} ORDER BY ASC(xsd:integer(?position))";
+    }
+
+    public static String getPsukimToHighlightFromMakor(String makorUri, ArrayList<String> psukim) {
+        String psukimList = "";
+        for (String pasuk : psukim) {
+            psukimList += pasuk + " ";
+        }
+        return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>                           \n"
+                + "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n"
+                + "            PREFIX dco: <http://purl.org/dc/terms/>                                     \n"
+                + "SELECT ?makor ?pasuk ?span WHERE {\n"
+                + "values ?makor { " + makorUri + " }\n"
+                + "values ?pasuk { " + psukimList + " }\n"
+                + "?mention a jbo:Mention.\n"
+                + "?mention jbo:source ?makor; jbo:target ?pasuk; jbo:span ?span.\n"
+                + "}\n";
+    }
+
+    public static String getCategoriesByPsukimWithReferenceNumber(ArrayList<String> psukim) {
+        String psukimList = "";
+        for (String pasuk : psukim) {
+            psukimList += pasuk + " ";
+        }
+        return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>                           \n"
+                + "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n"
+                + "            PREFIX dco: <http://purl.org/dc/terms/>                                     \n"
+                + "SELECT ?category (COUNT(DISTINCT ?makor) AS ?num)  WHERE {\n"
+                + "values ?pasuk { " + psukimList + " }\n"
+                + "?makor jbo:mentions ?pasuk; jbo:book ?book.\n"
+                + "?book dco:subject ?category.\n"
+                + "} GROUP BY ?category order by DESC(?num)";
+    }
+
+    public static String getMekorotAuthors(ArrayList<String> mekorotUris) {
+        ArrayList<String> prefixedMekorotUris = new ArrayList<>();
+        for (int i = 0; i < mekorotUris.size(); i++) {
+            String makorUri = mekorotUris.get(i);
+            makorUri = makorUri.substring(makorUri.lastIndexOf("/") + 1);
+            makorUri = "jbr:" + makorUri;
+            prefixedMekorotUris.add(i, makorUri);
+        }
+        String mekorotList = "";
+        for (String makor : prefixedMekorotUris) {
+            mekorotList += makor + " ";
+        }
+        return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>                           \n" +
+                "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n" +
+                "            PREFIX dco: <http://purl.org/dc/terms/>                                     \n" +
+                "SELECT ?makor ?author WHERE {\n" +
+                "values ?makor { " + mekorotList + " }\n" +
+                "OPTIONAL {?makor jbo:book ?book. ?book jbo:author ?author.}\n" +
+                "}\n";
     }
 
     public static String getCategoriesByPsukim(ArrayList<String> psukim) {
@@ -142,14 +201,14 @@ public class JBSQueries {
         for (String pasuk : psukim) {
             psukimList += pasuk + " ";
         }
-        for (String subject: subjects) {
+        for (String subject : subjects) {
             subjectList += subject + " ";
         }
         return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>\n" +
                 "      PREFIX jbo: <http://jbs.technion.ac.il/ontology/>\n" +
                 "      PREFIX dco: <http://purl.org/dc/terms/>\n" +
                 "      \n" +
-                "      SELECT DISTINCT(?source) SAMPLE(?label) as ?label SAMPLE(?text) as ?text       SAMPLE(?sums) as ?sums SAMPLE(?spanss) as ?spanss SAMPLE (?labels) as ?labels      SAMPLE(?sum) as ?sum SAMPLE(?description) as ?description\n" +
+                "      SELECT DISTINCT(?source) SAMPLE(?label) as ?label SAMPLE(?text) as ?text       SAMPLE(?sums) as ?sums SAMPLE(?spanss) as ?spanss SAMPLE (?labels) as ?labels      SAMPLE(?sum) as ?sum SAMPLE(?description) as ?description \tSAMPLE(?numOfPsukim) as ?numOfPsukim\n" +
                 "   WHERE {\n" +
                 "   \n" +
                 "   \n" +
@@ -159,6 +218,7 @@ public class JBSQueries {
                 "       (group_concat(?numOfMentions;separator=\",\") as ?sums)\n" +
                 "    (group_concat(?spans;separator=\",\") as ?spanss)\n" +
                 "       (group_concat(?target_label ;separator=\",\") as ?labels)\n" +
+                "    COUNT(?target_label) as ?numOfPsukim\n" +
                 "    WHERE {\n" +
                 "    \n" +
                 "    \n" +
@@ -177,7 +237,7 @@ public class JBSQueries {
                 "\n" +
                 "\n" +
                 "\n" +
-                "       values ?pasuk {"+ psukimList +"}\n" +
+                "       values ?pasuk {" + psukimList + "}\n" +
                 "       \n" +
                 "       ?pasuk a jbo:Pasuk.\n" +
                 "\n" +
@@ -197,7 +257,7 @@ public class JBSQueries {
                 "   \n" +
                 "   ?source jbo:text ?text.\n" +
                 "   \n" +
-                "    ?source jbo:book ?source_book.values ?subjects {" + subjectList +" }.\n" +
+                "    ?source jbo:book ?source_book.values ?subjects {" + subjectList + " }.\n" +
                 "    \n" +
                 "   ?source_book dco:subject ?subjects.?source_book jbo:description ?description.\n" +
                 "    ?pasuk rdfs:label ?target_label.\n" +
@@ -208,7 +268,7 @@ public class JBSQueries {
                 " UNION {\n" +
                 "\n" +
                 "\n" +
-                " values ?container {"+ psukimList +"}\n" +
+                " values ?container {" + psukimList + "}\n" +
                 " \n" +
                 " values ?types {jbo:Section jbo:ParashaTorah}\n" +
                 "\n" +
@@ -239,7 +299,7 @@ public class JBSQueries {
                 "   \n" +
                 "   ?source jbo:text ?text.\n" +
                 "   \n" +
-                "    ?source jbo:book ?source_book.values ?subjects { "+ subjectList  +" }.\n" +
+                "    ?source jbo:book ?source_book.values ?subjects { " + subjectList + " }.\n" +
                 "    \n" +
                 "   ?source_book dco:subject ?subjects.?source_book jbo:description ?description.\n" +
                 "    ?pasuk rdfs:label ?target_label.\n" +
@@ -250,7 +310,7 @@ public class JBSQueries {
                 " UNION {\n" +
                 " \n" +
                 " \n" +
-                " values ?books {" + psukimList +"}\n" +
+                " values ?books {" + psukimList + "}\n" +
                 " \n" +
                 " values ?types { jbo:BookTorah }\n" +
                 " \n" +
@@ -281,7 +341,7 @@ public class JBSQueries {
                 "   \n" +
                 "   ?source jbo:text ?text.\n" +
                 "   \n" +
-                "    ?source jbo:book ?source_book.values ?subjects {" + subjectList+ "}.\n" +
+                "    ?source jbo:book ?source_book.values ?subjects {" + subjectList + "}.\n" +
                 "    \n" +
                 "   ?source_book dco:subject ?subjects.?source_book jbo:description ?description.\n" +
                 "    ?pasuk rdfs:label ?target_label.\n" +
@@ -298,11 +358,43 @@ public class JBSQueries {
                 "  }\n" +
                 "  \n" +
                 "  \n" +
-                " group by ?source ?label ?text ?description\n" +
+                " group by ?source ?label ?text ?description ?numOfMentions\n" +
                 "       }\n" +
                 "       \n" +
                 "       \n" +
                 " order by DESC(?sum) offset 0 limit 500";
+    }
+
+    public static String getMekorotWithAllData(ArrayList<String> psukim) {
+        String psukimList = "";
+        for (String pasuk : psukim) {
+            psukimList += pasuk + " ";
+        }
+        return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>                           \n" +
+                "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n" +
+                "            PREFIX dco: <http://purl.org/dc/terms/>                                     \n" +
+                "SELECT ?label ?text ?makor (COUNT(?pasuk) AS ?numOfPsukim) (SUM(xsd:integer(?numOfMentions)) as ?score) WHERE {\n" +
+                "values ?pasuk {" + psukimList + "}\n" +
+                "?mention a jbo:Mention.\n" +
+                "?mention jbo:source ?makor; jbo:target ?pasuk; jbo:numOfMentions ?numOfMentions.\n" +
+                "?makor rdfs:label ?label.\n" +
+                "?makor jbo:text ?text.\n" +
+                "} GROUP BY ?text ?label ?makor ORDER BY DESC(?score)\n";
+    }
+
+    public static String getMekorotWithNumOfPsukimRefernces(ArrayList<String> psukim) {
+        String psukimList = "";
+        for (String pasuk : psukim) {
+            psukimList += pasuk + " ";
+        }
+        return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>                           \n" +
+                "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n" +
+                "            PREFIX dco: <http://purl.org/dc/terms/>                                     \n" +
+                "SELECT ?makor (COUNT(?pasuk) AS ?numOfPsukim) (SUM(xsd:integer(?numOfMentions)) as ?score) WHERE {\n" +
+                "values ?pasuk {" + psukimList + "}\n" +
+                "?mention a jbo:Mention.\n" +
+                "?mention jbo:source ?makor; jbo:target ?pasuk; jbo:numOfMentions ?numOfMentions.\n" +
+                "} GROUP BY ?makor ORDER BY DESC(?score)\n";
     }
 
     public static String getMekorot(ArrayList<String> psukim) {
@@ -310,7 +402,7 @@ public class JBSQueries {
         for (String pasuk : psukim) {
             psukimList += pasuk + " ";
         }
-        return  " PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>  \n" +
+        return " PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>  \n" +
                 " PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>  \n" +
                 " PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>  \n" +
                 " PREFIX foaf: <http://xmlns.com/foaf/0.1/>  \n" +
@@ -335,7 +427,7 @@ public class JBSQueries {
                 + "         (group_concat(distinct ?span;separator=\",\") AS ?spans)\n"
                 + "         WHERE { \n"
                 + "          {\n"
-                + "                 values ?pasuk {"+ psukimList +"}\n"
+                + "                 values ?pasuk {" + psukimList + "}\n"
                 + "                 ?pasuk a jbo:Pasuk.\n"
                 + "                 ?mentions rdf:type jbo:Mention.\n"
                 + "                 ?mentions jbo:target ?pasuk.\n"
@@ -348,7 +440,7 @@ public class JBSQueries {
                 + "                 ?source_book jbo:description ?description.\n"
                 + "                 ?pasuk rdfs:label ?target_label }\n"
                 + "          UNION {\n"
-                + "                 values ?container {"+ psukimList + "}\n"
+                + "                 values ?container {" + psukimList + "}\n"
                 + "                 values ?types {jbo:Section jbo:ParashaTorah}\n"
                 + "                 ?container a ?types.\n"
                 + "                 ?pasuk jbo:within ?container.\n"
@@ -365,7 +457,7 @@ public class JBSQueries {
                 + "                 ?pasuk rdfs:label ?target_label\n"
                 + "         }\n"
                 + "         UNION {\n"
-                + "             values ?books {"+ psukimList +"}\n"
+                + "             values ?books {" + psukimList + "}\n"
                 + "             values ?types { jbo:BookTorah }\n"
                 + "             ?books a ?types.\n"
                 + "             ?pasuk jbo:book ?books.\n"

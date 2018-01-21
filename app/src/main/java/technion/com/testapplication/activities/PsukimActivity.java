@@ -17,11 +17,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import technion.com.testapplication.JBSQueries;
-import technion.com.testapplication.async.FetchPsukimTask;
-import technion.com.testapplication.models.PasukModel;
-import technion.com.testapplication.PsukimRecyclerViewAdapter;
+import technion.com.testapplication.adapters.PsukimRecyclerViewAdapter;
 import technion.com.testapplication.R;
+import technion.com.testapplication.models.PasukModel;
 
 /**
  * Created by tomerlevinson on 13/12/2017.
@@ -79,10 +77,9 @@ public class PsukimActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView toolbarTitleTV = (TextView) findViewById(R.id.toolbar_title);
         toolbarTitleTV.setText(mPerekOrParashaName);
-        String psukimByParashaQuery = JBSQueries.getAllPsukimFromParashaQuery(mPerekOrParashaUri);
-        FetchPsukimTask fetchPsukimTask = new FetchPsukimTask(this);
-        fetchPsukimTask.execute(psukimByParashaQuery);
-
+//        String psukimByParashaQuery = JBSQueries.getAllPsukimFromParashaQuery(mPerekOrParashaUri);
+//        FetchPsukimTask fetchPsukimTask = new FetchPsukimTask(this);
+//        fetchPsukimTask.execute(psukimByParashaQuery);
     }
 
     private void setFooter() {

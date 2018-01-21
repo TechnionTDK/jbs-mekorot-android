@@ -8,11 +8,15 @@ public class MakorModel {
     private String mMakorName;
     private String mMakorAuthor;
     private String mMakorText;
+    private String mNumOfPsukimMentions;
+    private String mMakorUri;
+    private boolean mIsClicked = false;
 
-    public MakorModel(String name, String author, String text) {
+    public MakorModel(String name, String text, String uri, String numOfPsukimMentions) {
         mMakorName = name;
-        mMakorAuthor = author;
         mMakorText = text;
+        mMakorUri = uri;
+        mNumOfPsukimMentions = numOfPsukimMentions;
     }
 
     public String getMakorAuthor() {
@@ -25,5 +29,25 @@ public class MakorModel {
 
     public String getMakorText() {
         return mMakorText;
+    }
+
+    public String getNumOfPsukimMentions() {
+        return mNumOfPsukimMentions;
+    }
+
+    public String getMakorUri() {
+        return mMakorUri;
+    }
+
+    public boolean getIsClicked() {
+        return mIsClicked;
+    }
+
+    public void setIsClicked(boolean isClicked) {
+        mIsClicked = isClicked;
+    }
+
+    public void setMakorAuthor(String makorAuthor) {
+        mMakorAuthor = makorAuthor;
     }
 }

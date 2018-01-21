@@ -1,19 +1,24 @@
 package technion.com.testapplication.async;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
 import android.util.Pair;
 
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.sparql.engine.http.QueryEngineHTTP;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.R;
-import technion.com.testapplication.activities.MekorotActivity;
+import technion.com.testapplication.fragments.MekorotTab;
+import technion.com.testapplication.models.CategoryModel;
 import technion.com.testapplication.models.MakorModel;
 
 /**
@@ -21,77 +26,149 @@ import technion.com.testapplication.models.MakorModel;
  * This class is intended for fetching mekorot by task.
  */
 public class FetchMekorotByScoreTask
-        extends AsyncTask<String, Void, Pair<ArrayList<MakorModel>, ArrayList<String>>> {
-    private Activity mActivity;
+        extends
+        AsyncTask<String, Void, Pair<HashMap<String, MakorModel>, ArrayList<CategoryModel>>> {
+    private Fragment mFragment;
+    private boolean mShouldFilter;
     private ProgressDialog mProgressDialog;
+    private static final String NUM_OF_REFERENCES_REGEX = "^";
+    private static final String BOOK_URI_SEPARATOR = "/";
 
-    public FetchMekorotByScoreTask(Activity activity) {
-        mActivity = activity;
-        mProgressDialog = new ProgressDialog(activity);
+    public FetchMekorotByScoreTask(Fragment fragment, boolean shouldFilter) {
+        mShouldFilter = shouldFilter;
+        mFragment = fragment;
+        mProgressDialog = new ProgressDialog(mFragment.getContext());
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
         this.mProgressDialog.setMessage(
-                mActivity.getResources().getString(R.string.please_wait_he));
+                mFragment.getContext().getResources().getString(R.string.please_wait_he));
         this.mProgressDialog.show();
     }
 
     @Override
-    protected Pair<ArrayList<MakorModel>, ArrayList<String>> doInBackground(String... params) {
-        ArrayList<MakorModel> sortedMekorot = new ArrayList<>();
-        ArrayList<String> bookSubjects = new ArrayList<>();
+    protected Pair<HashMap<String, MakorModel>, ArrayList<CategoryModel>> doInBackground(
+            String... params) {
+        HashMap<String, MakorModel> sortedMekorot = new HashMap<>();
+        ArrayList<CategoryModel> bookSubjects = new ArrayList<>();
+        ArrayList<String> mekorotUris = new ArrayList<>();
+        HashMap<String, String> mekorotUrisAuthors = new HashMap<>();
         try {
-            QueryEngineHTTP queryEngineHTTP = new QueryEngineHTTP(JBSQueries.JBS_ENDPOINT,
+            QueryEngineHTTP sortedMekorotQuery = new QueryEngineHTTP(JBSQueries.JBS_ENDPOINT,
                     params[0]);
             QueryEngineHTTP queryEngineHTTPCategories = new QueryEngineHTTP(JBSQueries.JBS_ENDPOINT,
                     params[1]);
             try {
-                ResultSet resultSet = queryEngineHTTP.execSelect();
+                ResultSet resultSet = sortedMekorotQuery.execSelect();
                 while (resultSet.hasNext()) {
                     QuerySolution rb = resultSet.nextSolution();
+                    String numOfPsukimString;
+                    String makorName = rb.get(JBSQueries.MAKOR_NAME).toString();
+                    String makorText = rb.get(JBSQueries.MAKOR_TEXT).toString();
+                    String makorUri;
+                    String numOfPsukimLiteralAsString = rb.get(
+                            JBSQueries.NUM_OF_PSUKIM).toString();
+                    numOfPsukimString = numOfPsukimLiteralAsString.substring(0,
+                            numOfPsukimLiteralAsString.indexOf(NUM_OF_REFERENCES_REGEX));
+                    if (mShouldFilter) {
+                        makorUri = rb.get(JBSQueries.MAKOR_SOURCE_URI).toString();
+                    } else {
+                        makorUri = rb.get(JBSQueries.MAKOR).toString();
+                    }
+                    mekorotUris.add(makorUri);
                     MakorModel makorModel = new MakorModel(
-                            rb.get(JBSQueries.MAKOR_NAME).toString(),
-                            rb.get(JBSQueries.MAKOR_NAME).toString(),
-                            rb.get(JBSQueries.MAKOR_TEXT).toString());
-                    sortedMekorot.add(makorModel);
+                            makorName,
+                            makorText,
+                            makorUri,
+                            numOfPsukimString);
+                    sortedMekorot.put(makorUri, makorModel);
                 }
             } finally {
-                queryEngineHTTP.close();
+                sortedMekorotQuery.close();
+            }
+            String mekorotAuthorsQuery = JBSQueries.getMekorotAuthors(mekorotUris);
+            QueryEngineHTTP mekorotAuthorsSelect = new QueryEngineHTTP(JBSQueries.JBS_ENDPOINT,
+                    mekorotAuthorsQuery);
+            try {
+                ResultSet resultSet = mekorotAuthorsSelect.execSelect();
+                while (resultSet.hasNext()) {
+                    QuerySolution rb = resultSet.nextSolution();
+                    String makorUri = rb.get(JBSQueries.MAKOR).toString();
+                    RDFNode authorNode = rb.get(JBSQueries.AUTHOR);
+                    String authorFull = "";
+                    String authorName = "";
+                    if (authorNode != null) {
+                        authorFull = authorNode.toString();
+                        String author = authorFull.substring(authorFull.lastIndexOf("-") + 1);
+                        String[] authorNameArray = author.split("_");
+                        authorName = "";
+                        for (int i=0; i < authorNameArray.length; i++) {
+                            if (i != authorNameArray.length - 1) {
+                                authorName += authorNameArray[i] + " ";
+                            } else {
+                                authorName += authorNameArray[i];
+                            }
+                        }
+                    }
+                    mekorotUrisAuthors.put(makorUri, authorName);
+                }
+            } finally {
+                mekorotAuthorsSelect.close();
             }
             try {
                 ResultSet resultSet = queryEngineHTTPCategories.execSelect();
                 while (resultSet.hasNext()) {
                     QuerySolution rb = resultSet.nextSolution();
-                    String bookSubjectUri = rb.get(JBSQueries.BOOK_SUBJECT).toString();
+                    String bookSubjectUri = rb.get(JBSQueries.CATEGORY).toString();
+                    String referenceNumNodeAsString = rb.get(
+                            JBSQueries.CATEGORY_REFERENCE_NUM).toString();
+                    String bookReferenceNum = referenceNumNodeAsString.substring(0,
+                            referenceNumNodeAsString.indexOf(
+                                    NUM_OF_REFERENCES_REGEX));
                     String bookSubject = bookSubjectUri.substring(
-                            bookSubjectUri.lastIndexOf("/") + 1);
-                    bookSubjects.add(bookSubject);
+                            bookSubjectUri.lastIndexOf(BOOK_URI_SEPARATOR) + 1);
+                    CategoryModel categoryModel = new CategoryModel(bookSubject, bookReferenceNum);
+                    bookSubjects.add(categoryModel);
                 }
             } finally {
                 queryEngineHTTPCategories.close();
             }
-
         } catch (Exception err) {
             err.printStackTrace();
         }
-        Pair<ArrayList<MakorModel>, ArrayList<String>> queryResultsPair = Pair.create(sortedMekorot,
+        Pair<HashMap<String, MakorModel>, ArrayList<CategoryModel>> queryResultsPair = Pair.create(
+                sortedMekorot,
                 bookSubjects);
+        Iterator it = mekorotUrisAuthors.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            String makorUri = (String) pair.getKey();
+            String makorAuthor = (String) pair.getValue();
+            if (sortedMekorot.get(makorUri) != null) {
+                MakorModel makorModelForAuthor = sortedMekorot.get(makorUri);
+                if (!makorAuthor.equals("")) {
+                    makorModelForAuthor.setMakorAuthor(makorAuthor);
+                }
+                sortedMekorot.put(makorUri, makorModelForAuthor);
+            }
+            it.remove(); // avoids a ConcurrentModificationException
+        }
         return queryResultsPair;
     }
 
     @Override
     protected void onPostExecute(
-            Pair<ArrayList<MakorModel>, ArrayList<String>> mekorotModelCategoryPair) {
+            Pair<HashMap<String, MakorModel>, ArrayList<CategoryModel>> mekorotModelCategoryPair) {
         super.onPostExecute(mekorotModelCategoryPair);
         if (mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }
-        ArrayList<MakorModel> mekorotModels = mekorotModelCategoryPair.first;
-        ArrayList<String> mekorotCategories = mekorotModelCategoryPair.second;
-        if (mActivity instanceof MekorotActivity) {
-            ((MekorotActivity) mActivity).setRecyclerViewAdapter(mekorotModels, mekorotCategories);
+        HashMap<String, MakorModel> mekorotModels = mekorotModelCategoryPair.first;
+        ArrayList<CategoryModel> mekorotCategories = mekorotModelCategoryPair.second;
+        if (mFragment instanceof MekorotTab) {
+            ((MekorotTab) mFragment).setRecyclerViewAdapter(mekorotModels, mekorotCategories);
         }
     }
 }

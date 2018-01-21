@@ -12,10 +12,30 @@
         android:layout_height="?attr/actionBarSize"
         android:elevation="4dp">
 
+        <TextView
+            android:id="@+id/heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="סולמות"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:textSize="18sp"
+            android:layout_marginRight="10dip"
+            android:layout_marginLeft="10dip"
+            android:textColor="@color/White"
+            android:layout_gravity="right"/>
+        <ImageView
+            android:id="@+id/filter_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginLeft="10dip"
+            android:src="@drawable/ic_filter_list_white_24dp"/>
         <Spinner
             android:id="@+id/spinner_nav"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dip"
             android:layout_gravity="right"/>
         <android.support.v7.widget.AppCompatAutoCompleteTextView
             android:id="@+id/autoCompleteTextView"
@@ -25,46 +45,36 @@
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="10dip"
             android:gravity="right"
-            android:textColor="@color/White"
-            android:textDirection="rtl"
             android:inputType="textAutoComplete"
+            android:textColor="@color/White"
             android:textColorHint="@color/White"
-            android:theme="@style/Autocomplete"
-            android:textSize="15sp" />
+            android:textDirection="rtl"
+            android:textSize="15sp"
+            android:theme="@style/Autocomplete"/>
 
 
     </android.support.v7.widget.Toolbar>
 
     <LinearLayout android:layout_width="match_parent"
                   android:layout_height="match_parent"
-                  android:weightSum="1"
-                  android:orientation="vertical">
-        <TextView
-            android:id="@+id/txtData"
+                  android:orientation="vertical"
+                  android:weightSum="1">
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100dip"
-            android:gravity="center"
-            android:text="סולמות"
-            android:textSize="36sp"
-            android:src="@drawable/ic_search_black_48dp"
-            android:textStyle="bold"
-        />
-        <TextView
-            android:id="@+id/btnJSON"
+            android:background="@color/DodgerBlue"
+            android:minHeight="?attr/actionBarSize"
+            app:tabGravity="fill"
+            app:tabMode="fixed"
+            app:tabSelectedTextColor="@color/Black"
+            app:tabTextColor="@color/White"/>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dip"
-            android:gravity="center"
-            android:text="בחר/י פרק או פרשה וחפש/י"
-            android:src="@drawable/ic_search_black_48dp"
-            android:textSize="22sp"
-            android:textStyle="italic"/>
-        <ImageView android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   android:layout_marginTop="10dip"
-                   android:gravity="center"
-                   android:src="@drawable/ic_search_black_48dp"
-        />
+            android:layout_height="match_parent"/>
+
+
     </LinearLayout>
 </LinearLayout>

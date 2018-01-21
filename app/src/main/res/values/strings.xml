@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">Sulamot</string>
     <string name="action_favorite">favorite action</string>
-    <string name="action_settings">settings action</string>
+    <string name="action_settings">הגדרות</string>
+    <string name="action_home">סולמות</string>
     <string name="enter_perek">אנא הכנס/י פרק</string>
     <string name="enter_parasha">אנא הכנס/י פרשה</string>
     <string name="perek">פרק</string>
@@ -12,15 +13,20 @@
     <string name="prakim_and_uri_extra">prakimAndUri</string>
     <string name="parasha">פרשה</string>
     <string name="psukim_uris_extra">psukimUris</string>
+    <string name="makor_uri">makorUri</string>
     <string name="makor_text">makorText</string>
     <string name="makor_author">makorAuthor</string>
     <string name="makor_title">makorTitle</string>
     <string name="mekorot_reference">אזכור במקורות</string>
     <string name="choose_category_to_filter">בחר/י קטגוריות לסינון</string>
+    <string name="choose_font_size">בחר גודל פונט</string>
+    <string name="choose_font_style">בחר פונט</string>
     <string name="choose_button">בחר</string>
     <string name="cancel_button">בטל</string>
     <string name="num_of_mekorot">"תוצאות: "</string>
     <string name="jbr_prefix">jbr:</string>
+    <string name="psukim">פסוקים</string>
+    <string name="mekorot">מקורות</string>
     <string-array name="spinner_items">
         <item> פרק</item>
         <item> פרשה</item>

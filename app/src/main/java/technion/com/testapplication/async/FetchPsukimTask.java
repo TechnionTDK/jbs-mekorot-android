@@ -1,8 +1,8 @@
 package technion.com.testapplication.async;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
 
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
@@ -11,27 +11,27 @@ import java.util.ArrayList;
 
 import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.R;
+import technion.com.testapplication.fragments.PsukimTab;
 import technion.com.testapplication.models.PasukModel;
-import technion.com.testapplication.activities.PsukimActivity;
 
 /**
  * Created by tomerlevinson on 16/12/2017.
  * Used in order to fetch psukim list of a certain parasha or perek.
  */
 public class FetchPsukimTask extends AsyncTask<String, Void, ArrayList<PasukModel>> {
-    private Activity mActivity;
+    private Fragment mPsukimFrag;
     private ProgressDialog mProgressDialog;
 
-    public FetchPsukimTask(Activity activity) {
-        mActivity = activity;
-        mProgressDialog = new ProgressDialog(activity);
+    public FetchPsukimTask(Fragment frag) {
+        mPsukimFrag = frag;
+        mProgressDialog = new ProgressDialog(frag.getContext());
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
         this.mProgressDialog.setMessage(
-                mActivity.getResources().getString(R.string.please_wait_he));
+                mPsukimFrag.getContext().getResources().getString(R.string.please_wait_he));
         this.mProgressDialog.show();
     }
 
@@ -71,8 +71,8 @@ public class FetchPsukimTask extends AsyncTask<String, Void, ArrayList<PasukMode
         if (mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }
-        if (mActivity instanceof PsukimActivity) {
-            ((PsukimActivity) mActivity).setRecyclerViewAdapter(pasukModelList);
+        if (mPsukimFrag instanceof PsukimTab) {
+            ((PsukimTab) mPsukimFrag).setRecyclerViewAdapter(pasukModelList);
         }
     }
 }

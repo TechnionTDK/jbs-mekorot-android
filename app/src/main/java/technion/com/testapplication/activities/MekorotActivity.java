@@ -20,9 +20,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import technion.com.testapplication.JBSQueries;
-import technion.com.testapplication.MekorotRecyclerViewAdapter;
+import technion.com.testapplication.adapters.MekorotRecyclerViewAdapter;
 import technion.com.testapplication.R;
-import technion.com.testapplication.async.FetchMekorotByScoreTask;
 import technion.com.testapplication.models.MakorModel;
 
 /**
@@ -64,6 +63,7 @@ public class MekorotActivity extends AppCompatActivity {
      * set the filter dialog that will have inside of it all the
      * relavent categories deducted from the psukim selected
      * in the psukim activity.
+     *
      * @param activity
      */
     private void setFilterDialog(final Activity activity) {
@@ -115,9 +115,9 @@ public class MekorotActivity extends AppCompatActivity {
                                 }
                                 String categoriesQuery = JBSQueries.getCategoriesByPsukim(
                                         mPrefixedPsukimUris);
-                                FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(
-                                        activity);
-                                fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQuery);
+//                                FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(
+//                                        activity);
+//                                fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQuery);
                             }
                         }).setNegativeButton(getResources().getString(R.string.cancel_button),
                         new DialogInterface.OnClickListener() {
@@ -133,7 +133,6 @@ public class MekorotActivity extends AppCompatActivity {
                 dialog.show();
             }
         });
-
     }
 
     private void setToolbar() {
@@ -163,8 +162,8 @@ public class MekorotActivity extends AppCompatActivity {
         }
         String mekorotQuery = JBSQueries.getMekorot(mPrefixedPsukimUris);
         String categoriesQuery = JBSQueries.getCategoriesByPsukim(mPrefixedPsukimUris);
-        FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(this);
-        fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQuery);
+//        FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(this);
+//        fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQuery);
     }
 
     @Override
@@ -188,7 +187,7 @@ public class MekorotActivity extends AppCompatActivity {
                                        ArrayList<String> mekorotCategories) {
         mMekorotCategories = mekorotCategories;
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mAdapter = new MekorotRecyclerViewAdapter(mekorot, this);
+//        mAdapter = new MekorotRecyclerViewAdapter(mekorot, this);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(manager);
