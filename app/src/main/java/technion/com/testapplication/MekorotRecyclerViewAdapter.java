@@ -2,21 +2,16 @@ package technion.com.testapplication;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.Console;
 import java.util.ArrayList;
-import java.util.Set;
 
 import technion.com.testapplication.activities.MakorDetailView;
-import technion.com.testapplication.activities.SettingsActivity;
 import technion.com.testapplication.models.MakorModel;
 
 /**
@@ -54,6 +49,7 @@ public class MekorotRecyclerViewAdapter
         final String makorUri = makorModel.getMakorUri();
         holder.mTitle.setText(
                 makorModel.getMakorName() + " (" + makorModel.getNumOfPsukimMentions() + ")");
+        // Set Makor author if exists
         if (makorModel.getMakorAuthor() != null) {
             holder.mAuthor.setText(makorModel.getMakorAuthor());
         } else {
@@ -61,37 +57,13 @@ public class MekorotRecyclerViewAdapter
             holder.mAuthor.setVisibility(View.GONE);
         }
         holder.mText.setText(makorModel.getMakorText());
-        String selectedFont = null;
-        Set<String> selectedFontSet = PreferencesUtils.retrieveStoredStringSet(
-                SettingsActivity.PREFERENCES_FILE_NAME, SettingsActivity.SELECTED_FONT_KEY,
-                mContext);
-        String selectedFontSize = null;
-        Set<String> selectedFontSizeSet = PreferencesUtils.retrieveStoredStringSet(
-                SettingsActivity.PREFERENCES_FILE_NAME, SettingsActivity.SELECTED_FONT_SIZE_KEY,
-                mContext);
-        if (selectedFontSizeSet != null) {
-            for (String param : selectedFontSizeSet) {
-                selectedFontSize = param;
-            }
-        } else {
-            holder.mText.setTextSize(TypedValue.COMPLEX_UNIT_SP,
-                    Integer.parseInt(SettingsActivity.FONT_SIZE_SMALL));
-        }
-        if (selectedFontSize != null) {
-            holder.mText.setTextSize(TypedValue.COMPLEX_UNIT_SP,
-                    Integer.parseInt(selectedFontSize));
-        }
-        if (selectedFontSet != null && selectedFontSet.size() > 0) {
-            for (String param : selectedFontSet) {
-                selectedFont = param;
-            }
-        } else {
-            holder.mText.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
-        }
-        if (selectedFont != null) {
-            Typeface custom_font = Typeface.createFromAsset(mContext.getAssets(), selectedFont);
-            holder.mText.setTypeface(custom_font);
-        }
+
+        // Set makor style if exists
+        FontUtils.setTextFont(holder.mText, mContext);
+
+        // Set makor font size
+        FontUtils.setTextSize(holder.mText, mContext);
+
         View.OnClickListener clickListenerForEverythingButFav = new View.OnClickListener() {
             @Override
             public void onClick(View v) {

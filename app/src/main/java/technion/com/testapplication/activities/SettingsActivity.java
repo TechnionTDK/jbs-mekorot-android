@@ -29,10 +29,18 @@ public class SettingsActivity extends AppCompatActivity {
     public static final String HEADING_FONT_PATH = "fonts/shofarregular-webfont.ttf";
     public static final String FONT_NUMBER_ONE = "fonts/keteryg-medium-webfont.ttf";
     public static final String FONT_NUMBER_TWO = "fonts/shofarregular-webfont.ttf";
+    public static final String FONT_NUMBER_THREE = "fonts/stamashkenazclm-webfont.ttf";
+    public static final String DEFAULT_FONT = "sans-serif-light";
+    public static final String DEFAULT_FONT_DISPLAY_NAME = "ללא פונט";
+    public static final String FONT_NUMBER_ONE_DISPLAY_NAME = "כתר";
+    public static final String FONT_NUMBER_TWO_DISPLAY_NAME = "שופר";
+    public static final String FONT_NUMBER_THREE_DISPLAY_NAME = "אברהם";
     public static final String FONT_SIZE_SMALL = "10";
     public static final String FONT_SIZE_MEDIUM = "14";
     public static final String FONT_SIZE_LARGE = "16";
-    public static final String FONT_NUMBER_THREE = "fonts/stamashkenazclm-webfont.ttf";
+    public static final String FONT_SIZE_SMALL_DISPLAY_NAME = "קטן";
+    public static final String FONT_SIZE_MEDIUM_DISPLAY_NAME = "בינוני";
+    public static final String FONT_SIZE_LARGE_DISPLAY_NAME = "גדול";
     public static final String PREFERENCES_FILE_NAME = "settings";
     public static final String SELECTED_FONT_KEY = "selected_font";
     public static final String SELECTED_FONT_SIZE_KEY = "selected_font_size";
@@ -81,7 +89,10 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
-                String[] fontSizes = new String[]{"ללא פונט", "כתר", "שופר", "אברהם"};
+                String[] fontSizes = new String[]{DEFAULT_FONT_DISPLAY_NAME,
+                        FONT_NUMBER_ONE_DISPLAY_NAME,
+                        FONT_NUMBER_TWO_DISPLAY_NAME,
+                        FONT_NUMBER_THREE_DISPLAY_NAME};
                 Set<String> chosenBeforeFontSet = PreferencesUtils.retrieveStoredStringSet(
                         PREFERENCES_FILE_NAME, SELECTED_FONT_KEY,
                         getApplicationContext());
@@ -123,7 +134,6 @@ public class SettingsActivity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // No need to do anything
                             }
                         });
 
@@ -142,9 +152,9 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
                 String[] fontSizes = new String[]{
-                        "קטן",
-                        "בינוני",
-                        "גדול"
+                        FONT_SIZE_SMALL_DISPLAY_NAME,
+                        FONT_SIZE_MEDIUM_DISPLAY_NAME,
+                        FONT_SIZE_LARGE_DISPLAY_NAME
                 };
                 Set<String> chosenBeforeFontSizeSet = PreferencesUtils.retrieveStoredStringSet(
                         PREFERENCES_FILE_NAME, SELECTED_FONT_SIZE_KEY,
@@ -187,7 +197,6 @@ public class SettingsActivity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // Update shared preferences.
                             }
                         });
 

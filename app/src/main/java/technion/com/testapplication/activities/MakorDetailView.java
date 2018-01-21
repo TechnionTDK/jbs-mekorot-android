@@ -2,7 +2,6 @@ package technion.com.testapplication.activities;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -11,17 +10,15 @@ import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.method.ScrollingMovementMethod;
 import android.text.style.BackgroundColorSpan;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Set;
 
+import technion.com.testapplication.FontUtils;
 import technion.com.testapplication.JBSQueries;
-import technion.com.testapplication.PreferencesUtils;
 import technion.com.testapplication.R;
 import technion.com.testapplication.async.FetchHighlightsForMakorTask;
 
@@ -120,39 +117,13 @@ public class MakorDetailView extends AppCompatActivity {
         toolbarTitleTV.setText(mMakorTitle);
         TextView makorText = (TextView) findViewById(R.id.makor_text);
         makorText.setText(mMakorText);
-        String selectedFont = null;
-        Set<String> selectedFontSet = PreferencesUtils.retrieveStoredStringSet(
-                SettingsActivity.PREFERENCES_FILE_NAME, SettingsActivity.SELECTED_FONT_KEY,
-                getApplicationContext());
-        if (selectedFontSet != null && selectedFontSet.size() > 0) {
-            for (String param : selectedFontSet) {
-                selectedFont = param;
-            }
-        } else {
-            makorText.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
-        }
-        if (selectedFont != null) {
-            Typeface custom_font = Typeface.createFromAsset(getApplicationContext().getAssets(),
-                    selectedFont);
-            makorText.setTypeface(custom_font);
-        }
 
-        String selectedFontSize = null;
-        Set<String> selectedFontSizeSet = PreferencesUtils.retrieveStoredStringSet(
-                SettingsActivity.PREFERENCES_FILE_NAME, SettingsActivity.SELECTED_FONT_SIZE_KEY,
-                getApplicationContext());
-        if (selectedFontSizeSet != null) {
-            for (String param : selectedFontSizeSet) {
-                selectedFontSize = param;
-            }
-        } else {
-            makorText.setTextSize(TypedValue.COMPLEX_UNIT_SP,
-                    Integer.parseInt(SettingsActivity.FONT_SIZE_SMALL));
-        }
-        if (selectedFontSize != null) {
-            makorText.setTextSize(TypedValue.COMPLEX_UNIT_SP,
-                    Integer.parseInt(selectedFontSize));
-        }
+        // Set text font from shared preferences.
+        FontUtils.setTextFont(makorText, getApplicationContext());
+
+        // Set text size from shared prefernces.
+        FontUtils.setTextSize(makorText, getApplicationContext());
+
         makorText.setMovementMethod(new ScrollingMovementMethod());
         String fetchHighlightsForMakor = JBSQueries.getPsukimToHighlightFromMakor(mMakorUri,
                 mMakorPsukim);
