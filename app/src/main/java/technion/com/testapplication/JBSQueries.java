@@ -95,8 +95,8 @@ public class JBSQueries {
                 + "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n"
                 + "            PREFIX dco: <http://purl.org/dc/terms/>                                     \n"
                 + "SELECT ?makor ?pasuk ?span WHERE {\n"
-                + "values ?makor { "+ makorUri +" }\n"
-                + "values ?pasuk { "+ psukimList +" }\n"
+                + "values ?makor { " + makorUri + " }\n"
+                + "values ?pasuk { " + psukimList + " }\n"
                 + "?mention a jbo:Mention.\n"
                 + "?mention jbo:source ?makor; jbo:target ?pasuk; jbo:span ?span.\n"
                 + "}\n";
@@ -111,7 +111,7 @@ public class JBSQueries {
                 + "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n"
                 + "            PREFIX dco: <http://purl.org/dc/terms/>                                     \n"
                 + "SELECT ?category (COUNT(DISTINCT ?makor) AS ?num)  WHERE {\n"
-                + "values ?pasuk { "+ psukimList  +" }\n"
+                + "values ?pasuk { " + psukimList + " }\n"
                 + "?makor jbo:mentions ?pasuk; jbo:book ?book.\n"
                 + "?book dco:subject ?category.\n"
                 + "} GROUP BY ?category order by DESC(?num)";
@@ -201,7 +201,7 @@ public class JBSQueries {
         for (String pasuk : psukim) {
             psukimList += pasuk + " ";
         }
-        for (String subject: subjects) {
+        for (String subject : subjects) {
             subjectList += subject + " ";
         }
         return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>\n" +
@@ -237,7 +237,7 @@ public class JBSQueries {
                 "\n" +
                 "\n" +
                 "\n" +
-                "       values ?pasuk {"+ psukimList +"}\n" +
+                "       values ?pasuk {" + psukimList + "}\n" +
                 "       \n" +
                 "       ?pasuk a jbo:Pasuk.\n" +
                 "\n" +
@@ -257,7 +257,7 @@ public class JBSQueries {
                 "   \n" +
                 "   ?source jbo:text ?text.\n" +
                 "   \n" +
-                "    ?source jbo:book ?source_book.values ?subjects {" + subjectList +" }.\n" +
+                "    ?source jbo:book ?source_book.values ?subjects {" + subjectList + " }.\n" +
                 "    \n" +
                 "   ?source_book dco:subject ?subjects.?source_book jbo:description ?description.\n" +
                 "    ?pasuk rdfs:label ?target_label.\n" +
@@ -268,7 +268,7 @@ public class JBSQueries {
                 " UNION {\n" +
                 "\n" +
                 "\n" +
-                " values ?container {"+ psukimList +"}\n" +
+                " values ?container {" + psukimList + "}\n" +
                 " \n" +
                 " values ?types {jbo:Section jbo:ParashaTorah}\n" +
                 "\n" +
@@ -299,7 +299,7 @@ public class JBSQueries {
                 "   \n" +
                 "   ?source jbo:text ?text.\n" +
                 "   \n" +
-                "    ?source jbo:book ?source_book.values ?subjects { "+ subjectList  +" }.\n" +
+                "    ?source jbo:book ?source_book.values ?subjects { " + subjectList + " }.\n" +
                 "    \n" +
                 "   ?source_book dco:subject ?subjects.?source_book jbo:description ?description.\n" +
                 "    ?pasuk rdfs:label ?target_label.\n" +
@@ -310,7 +310,7 @@ public class JBSQueries {
                 " UNION {\n" +
                 " \n" +
                 " \n" +
-                " values ?books {" + psukimList +"}\n" +
+                " values ?books {" + psukimList + "}\n" +
                 " \n" +
                 " values ?types { jbo:BookTorah }\n" +
                 " \n" +
@@ -341,7 +341,7 @@ public class JBSQueries {
                 "   \n" +
                 "   ?source jbo:text ?text.\n" +
                 "   \n" +
-                "    ?source jbo:book ?source_book.values ?subjects {" + subjectList+ "}.\n" +
+                "    ?source jbo:book ?source_book.values ?subjects {" + subjectList + "}.\n" +
                 "    \n" +
                 "   ?source_book dco:subject ?subjects.?source_book jbo:description ?description.\n" +
                 "    ?pasuk rdfs:label ?target_label.\n" +
@@ -402,7 +402,7 @@ public class JBSQueries {
         for (String pasuk : psukim) {
             psukimList += pasuk + " ";
         }
-        return  " PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>  \n" +
+        return " PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>  \n" +
                 " PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>  \n" +
                 " PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>  \n" +
                 " PREFIX foaf: <http://xmlns.com/foaf/0.1/>  \n" +
@@ -427,7 +427,7 @@ public class JBSQueries {
                 + "         (group_concat(distinct ?span;separator=\",\") AS ?spans)\n"
                 + "         WHERE { \n"
                 + "          {\n"
-                + "                 values ?pasuk {"+ psukimList +"}\n"
+                + "                 values ?pasuk {" + psukimList + "}\n"
                 + "                 ?pasuk a jbo:Pasuk.\n"
                 + "                 ?mentions rdf:type jbo:Mention.\n"
                 + "                 ?mentions jbo:target ?pasuk.\n"
@@ -440,7 +440,7 @@ public class JBSQueries {
                 + "                 ?source_book jbo:description ?description.\n"
                 + "                 ?pasuk rdfs:label ?target_label }\n"
                 + "          UNION {\n"
-                + "                 values ?container {"+ psukimList + "}\n"
+                + "                 values ?container {" + psukimList + "}\n"
                 + "                 values ?types {jbo:Section jbo:ParashaTorah}\n"
                 + "                 ?container a ?types.\n"
                 + "                 ?pasuk jbo:within ?container.\n"
@@ -457,7 +457,7 @@ public class JBSQueries {
                 + "                 ?pasuk rdfs:label ?target_label\n"
                 + "         }\n"
                 + "         UNION {\n"
-                + "             values ?books {"+ psukimList +"}\n"
+                + "             values ?books {" + psukimList + "}\n"
                 + "             values ?types { jbo:BookTorah }\n"
                 + "             ?books a ?types.\n"
                 + "             ?pasuk jbo:book ?books.\n"
