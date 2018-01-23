@@ -47,6 +47,8 @@ public class MakorDetailView extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_settings:
                 // User chose the "Settings" item, show the app settings UI...
+                Intent settingsActivityIntent = new Intent(getApplicationContext(), SettingsActivity.class);
+                startActivity(settingsActivityIntent);
                 return true;
 
             case R.id.action_favorite:
@@ -130,6 +132,16 @@ public class MakorDetailView extends AppCompatActivity {
         FetchHighlightsForMakorTask fetchHighlightsForMakorTask = new FetchHighlightsForMakorTask(
                 this, MakorDetailView.this);
         fetchHighlightsForMakorTask.execute(fetchHighlightsForMakor);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        TextView makorText = (TextView) findViewById(R.id.makor_text);
+        // Set text font from shared preferences.
+        FontUtils.setTextFont(makorText, getApplicationContext());
+
+        // Set text size from shared prefernces.
+        FontUtils.setTextSize(makorText, getApplicationContext());
     }
 }
