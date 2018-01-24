@@ -27,7 +27,7 @@ public class PsukimTab extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     OnMoveToMekorotTabListener mCallback;
-    private ArrayList<String> mCurrentPsukim = new ArrayList<>();
+    private static ArrayList<String> mCurrentPsukim = new ArrayList<>();
 
     public interface OnMoveToMekorotTabListener {
         public void onMoveToMekorotTab(ArrayList<String> psukimUris);
@@ -118,4 +118,11 @@ public class PsukimTab extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if (mCurrentPsukim != null) {
+            mCurrentPsukim.clear();
+        }
+    }
 }
