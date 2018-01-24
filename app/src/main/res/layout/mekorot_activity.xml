@@ -49,7 +49,7 @@
                 android:gravity="left"
                 android:padding="10dp"
                 android:layout_weight="0.5"
-                android:text="בצע/י סינון"
+                android:text="בצע סינון"
                 android:textColor="@color/White"
                 android:textSize="15sp"/>
             <TextView

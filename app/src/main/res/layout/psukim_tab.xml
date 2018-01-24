@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:padding="10dp"
-            android:text="בחר/י הכל"
+            android:text="בחר הכל"
             android:textColor="@color/Black"/>
         <ImageView
             android:id="@+id/choose_all_image"

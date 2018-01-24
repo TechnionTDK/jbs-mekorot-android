@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:padding="10dp"
-                android:text="בחר/י הכל"
+                android:text="בחר הכל"
                 android:textColor="@color/Black"/>
             <ImageView
                 android:id="@+id/choose_all_image"
@@ -70,7 +70,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:text="המשכ/י למקורות"
+                android:text="המשך למקורות"
                 android:textColor="@color/White"
                 android:textSize="16sp"/>
         </LinearLayout>
