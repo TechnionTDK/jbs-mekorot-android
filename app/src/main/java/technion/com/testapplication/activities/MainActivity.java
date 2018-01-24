@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity
     private static final int PSUKIM_FRAG_POSITION = 0;
     private static final int MEKOROT_FRAG_POSITION = 1;
     private static boolean mIsNewQuerySubmitted = false;
+    private PsukimTab mPsukimTab;
+    private MekorotTab mMekorotTab;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -169,10 +171,10 @@ public class MainActivity extends AppCompatActivity
     public void setTabs() {
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-
-        // Add Fragments to adapter one by one
-        mViewPagerAdapter.addFragment(new PsukimTab(), getResources().getString(R.string.psukim));
-        mViewPagerAdapter.addFragment(new MekorotTab(), getResources().getString(R.string.mekorot));
+        mPsukimTab = new PsukimTab();
+        mMekorotTab = new MekorotTab();
+        mViewPagerAdapter.addFragment(mPsukimTab, getResources().getString(R.string.psukim));
+        mViewPagerAdapter.addFragment(mMekorotTab, getResources().getString(R.string.mekorot));
         mViewPager.setAdapter(mViewPagerAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -204,6 +206,15 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getSupportFragmentManager()
+                .putFragment(outState, PsukimTab.class.getName(), mPsukimTab);
+        getSupportFragmentManager()
+                .putFragment(outState, MekorotTab.class.getName(), mMekorotTab);
     }
 
     /**
@@ -291,6 +302,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            Intent intent = new Intent(MainActivity.this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            return;
+        }
         setContentView(R.layout.activity_main);
         // Get Parashot
         Intent intent = getIntent();
@@ -348,5 +365,15 @@ public class MainActivity extends AppCompatActivity
         if (mekorotTab != null) {
             mekorotTab.setText(getResources().getString(R.string.mekorot) + " (" + Integer.toString(numOfResults)+ ")");
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mViewPager.getCurrentItem() != 0) {
+            mViewPager.setCurrentItem(mViewPager.getCurrentItem() - 1,false);
+        }else{
+            finish();
+        }
+
     }
 }
