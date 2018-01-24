@@ -35,9 +35,9 @@ public class SettingsActivity extends AppCompatActivity {
     public static final String FONT_NUMBER_ONE_DISPLAY_NAME = "כתר";
     public static final String FONT_NUMBER_TWO_DISPLAY_NAME = "שופר";
     public static final String FONT_NUMBER_THREE_DISPLAY_NAME = "אברהם";
-    public static final String FONT_SIZE_SMALL = "10";
-    public static final String FONT_SIZE_MEDIUM = "14";
-    public static final String FONT_SIZE_LARGE = "16";
+    public static final String FONT_SIZE_SMALL = "16";
+    public static final String FONT_SIZE_MEDIUM = "18";
+    public static final String FONT_SIZE_LARGE = "20";
     public static final String FONT_SIZE_SMALL_DISPLAY_NAME = "קטן";
     public static final String FONT_SIZE_MEDIUM_DISPLAY_NAME = "בינוני";
     public static final String FONT_SIZE_LARGE_DISPLAY_NAME = "גדול";
