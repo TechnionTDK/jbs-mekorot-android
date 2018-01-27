@@ -65,6 +65,12 @@ public class MekorotTab extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    public void clear() {
+        if (mRecyclerView != null) {
+            mRecyclerView.removeAllViewsInLayout();
+        }
+
+    }
     private void setFilterDialog() {
         final Fragment mekorotTabFrag = this;
         ArrayList<String> prettifiedCategories = new ArrayList<>();

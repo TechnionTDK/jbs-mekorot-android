@@ -10,6 +10,7 @@ import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -30,6 +31,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import technion.com.testapplication.PsukimListDialog;
 import technion.com.testapplication.R;
 import technion.com.testapplication.adapters.ViewPagerAdapter;
 import technion.com.testapplication.async.FetchParashotAndPrakimTask;
@@ -37,7 +39,8 @@ import technion.com.testapplication.fragments.MekorotTab;
 import technion.com.testapplication.fragments.PsukimTab;
 
 public class MainActivity extends AppCompatActivity
-        implements PsukimTab.OnMoveToMekorotTabListener, MekorotTab.MekorotChangesListener {
+        implements PsukimTab.OnMoveToMekorotTabListener,
+        MekorotTab.MekorotChangesListener {
 
     private ArrayList<String> mParashotAndUris;
     private ArrayList<String> mPrakimAndUris;
@@ -56,6 +59,7 @@ public class MainActivity extends AppCompatActivity
     private static boolean mIsNewQuerySubmitted = false;
     private PsukimTab mPsukimTab;
     private MekorotTab mMekorotTab;
+    private FloatingActionButton mFab;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -69,7 +73,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                Intent settingsActivityIntent = new Intent(getApplicationContext(), SettingsActivity.class);
+                Intent settingsActivityIntent = new Intent(getApplicationContext(),
+                        SettingsActivity.class);
                 startActivity(settingsActivityIntent);
                 return true;
             case R.id.action_favorite:
@@ -160,7 +165,7 @@ public class MainActivity extends AppCompatActivity
         final Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        setSpinner();
+//        setSpinner();
         setFonts();
         setFilterIconClickable(false);
     }
@@ -176,7 +181,18 @@ public class MainActivity extends AppCompatActivity
         mViewPagerAdapter.addFragment(mPsukimTab, getResources().getString(R.string.psukim));
         mViewPagerAdapter.addFragment(mMekorotTab, getResources().getString(R.string.mekorot));
         mViewPager.setAdapter(mViewPagerAdapter);
-
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PsukimListDialog psukimListDialog = new PsukimListDialog(MainActivity.this, mPrakim,
+                        mParashot, parashotURILabelPairs, prakimURILabelPairs, mViewPagerAdapter,
+                        MainActivity.this);
+                psukimListDialog.show();
+                setTabResultsNum(0);
+                mIsNewQuerySubmitted = true;
+            }
+        });
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#000000"));
@@ -186,12 +202,14 @@ public class MainActivity extends AppCompatActivity
                 if (tab.getPosition() == 0) {
                     //Psukim tab
                     setFilterIconClickable(false);
+                    mFab.show();
                 } else if (tab.getPosition() == 1) {
                     //Mekorot tab
                     PsukimTab psukimTabFrag = (PsukimTab) mViewPagerAdapter.getItem(
                             PSUKIM_FRAG_POSITION);
                     psukimTabFrag.moveToMekorot();
                     setFilterIconClickable(true);
+                    mFab.hide();
                 }
             }
 
@@ -219,6 +237,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * Used in order to hide the keyboard.
+     *
      * @param activity
      * @param view
      */
@@ -320,7 +339,11 @@ public class MainActivity extends AppCompatActivity
                 ContextCompat.getColor(this, R.color.LightBlue));
         forceRTLIfSupported();
         setToolbar();
-        setAutoCompleteTextView();
+        Spinner spinner = (Spinner) findViewById(R.id.spinner_nav);
+        AutoCompleteTextView actv = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView);
+        spinner.setVisibility(View.GONE);
+        actv.setVisibility(View.GONE);
+//        setAutoCompleteTextView();
         setTabs();
     }
 
@@ -333,13 +356,14 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onMoveToMekorotTab(ArrayList<String> psukimUris) {
+        MekorotTab mekorotTabFrag = (MekorotTab) mViewPagerAdapter.getItem(
+                MEKOROT_FRAG_POSITION);
         if (mIsNewQuerySubmitted) {
-            MekorotTab mekorotTabFrag = (MekorotTab) mViewPagerAdapter.getItem(
-                    MEKOROT_FRAG_POSITION);
             mekorotTabFrag.runMekorotAndCategoriesQueries(psukimUris);
             mIsNewQuerySubmitted = false;
+        } else {
+            mekorotTabFrag.clear();
         }
-
     }
 
     @Override
@@ -363,15 +387,16 @@ public class MainActivity extends AppCompatActivity
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         TabLayout.Tab mekorotTab = tabLayout.getTabAt(1);
         if (mekorotTab != null) {
-            mekorotTab.setText(getResources().getString(R.string.mekorot) + " (" + Integer.toString(numOfResults)+ ")");
+            mekorotTab.setText(getResources().getString(R.string.mekorot) + " (" + Integer.toString(
+                    numOfResults) + ")");
         }
     }
 
     @Override
     public void onBackPressed() {
         if (mViewPager.getCurrentItem() != 0) {
-            mViewPager.setCurrentItem(mViewPager.getCurrentItem() - 1,false);
-        }else{
+            mViewPager.setCurrentItem(mViewPager.getCurrentItem() - 1, false);
+        } else {
             finish();
         }
 
