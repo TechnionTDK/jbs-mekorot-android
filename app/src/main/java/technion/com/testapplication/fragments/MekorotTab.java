@@ -68,6 +68,7 @@ public class MekorotTab extends Fragment {
     public void clear() {
         if (mRecyclerView != null) {
             mRecyclerView.removeAllViewsInLayout();
+            mRecyclerView.setAdapter(null);
         }
 
     }
