@@ -393,8 +393,13 @@ public class MainActivity extends AppCompatActivity
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         TabLayout.Tab mekorotTab = tabLayout.getTabAt(1);
         if (mekorotTab != null) {
-            mekorotTab.setText(getResources().getString(R.string.mekorot) + " (" + Integer.toString(
-                    numOfResults) + ")");
+            if (numOfResults == 0) {
+                mekorotTab.setText(getResources().getString(R.string.mekorot));
+            } else {
+                mekorotTab.setText(getResources().getString(R.string.mekorot) + " (" + Integer.toString(
+                        numOfResults) + ")");
+            }
+
         }
     }
 
