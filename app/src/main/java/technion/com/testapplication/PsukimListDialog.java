@@ -3,9 +3,7 @@ package technion.com.testapplication;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.PorterDuff;
 import android.support.design.widget.TabLayout;
-import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -112,11 +110,11 @@ public class PsukimListDialog extends Dialog implements View.OnClickListener {
 
     private void setSpinner() {
         Spinner spinner = (Spinner) this.findViewById(R.id.spinner_nav);
-        spinner.getBackground().setColorFilter(ContextCompat.getColor(mContext, R.color.Black),
-                PorterDuff.Mode.SRC_ATOP);
+//        spinner.getBackground().setColorFilter(ContextCompat.getColor(mContext, R.color.Black),
+//                PorterDuff.Mode.SRC_ATOP);
 
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(mContext,
-                R.layout.spinner_layout,
+                R.layout.spinner_item_main,
                 mContext.getResources().getStringArray(R.array.spinner_items));
         spinnerArrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerArrayAdapter);
@@ -133,6 +131,7 @@ public class PsukimListDialog extends Dialog implements View.OnClickListener {
                         mAdapter.clear();
                     }
                     mAdapter.addAll(mPrakim);
+                    mAdapter.getFilter().filter("");
                     mAdapter.notifyDataSetChanged();
                 } else {
                     editText.setHint(mContext.getResources().getString(R.string.enter_parasha));
@@ -140,6 +139,7 @@ public class PsukimListDialog extends Dialog implements View.OnClickListener {
                         mAdapter.clear();
                     }
                     mAdapter.addAll(mParashot);
+                    mAdapter.getFilter().filter("");
                     mAdapter.notifyDataSetChanged();
                 }
             }
