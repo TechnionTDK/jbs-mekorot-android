@@ -208,7 +208,6 @@ public class MainActivity extends AppCompatActivity
                     PsukimTab psukimTabFrag = (PsukimTab) mViewPagerAdapter.getItem(
                             PSUKIM_FRAG_POSITION);
                     psukimTabFrag.moveToMekorot();
-                    setFilterIconClickable(true);
                     mFab.hide();
                 }
             }
@@ -361,8 +360,15 @@ public class MainActivity extends AppCompatActivity
         if (mIsNewQuerySubmitted) {
             mekorotTabFrag.runMekorotAndCategoriesQueries(psukimUris);
             mIsNewQuerySubmitted = false;
+            setFilterIconClickable(true);
         } else {
-            mekorotTabFrag.clear();
+            if (psukimUris.size() == 0) {
+                mekorotTabFrag.clear();
+                setTabResultsNum(0);
+                setFilterIconClickable(false);
+            } else {
+                setFilterIconClickable(true);
+            }
         }
     }
 
