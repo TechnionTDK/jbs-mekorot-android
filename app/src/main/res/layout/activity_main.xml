@@ -85,7 +85,7 @@
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         app:layout_anchor="@id/pager"
-        app:layout_anchorGravity="bottom|right"
+        app:layout_anchorGravity="bottom|left"
         android:layout_width="56dp"
         android:layout_height="56dp"
         app:backgroundTint="@color/DodgerBlue"

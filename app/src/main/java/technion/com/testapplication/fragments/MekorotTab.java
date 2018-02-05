@@ -13,13 +13,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import technion.com.testapplication.JBSQueries;
-import technion.com.testapplication.adapters.MekorotRecyclerViewAdapter;
 import technion.com.testapplication.R;
+import technion.com.testapplication.adapters.MekorotRecyclerViewAdapter;
 import technion.com.testapplication.async.FetchMekorotByScoreTask;
 import technion.com.testapplication.models.CategoryModel;
 import technion.com.testapplication.models.MakorModel;
@@ -169,6 +171,8 @@ public class MekorotTab extends Fragment {
                 makorModels.add(makorModel);
                 it.remove(); // avoids a ConcurrentModificationException
             }
+            Collections.sort(makorModels, new CustomComparator());
+            Collections.reverse(makorModels);
             mMekorotCategories = mekorotCategories;
             mRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view);
             mAdapter = new MekorotRecyclerViewAdapter(mPrefixedPsukimUris, makorModels,
@@ -179,6 +183,13 @@ public class MekorotTab extends Fragment {
             mRecyclerView.setAdapter(mAdapter);
             setFilterDialog();
             mCallback.setTabResultsNum(makorModels.size());
+        }
+    }
+
+    public class CustomComparator implements Comparator<MakorModel> {
+        @Override
+        public int compare(MakorModel o1, MakorModel o2) {
+            return Integer.parseInt(o1.getNumOfPsukimMentions()) - Integer.parseInt(o2.getNumOfPsukimMentions());
         }
     }
 
