@@ -8,7 +8,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
-import android.text.method.ScrollingMovementMethod;
 import android.text.style.BackgroundColorSpan;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,10 +16,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import technion.com.testapplication.utils.FontUtils;
 import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.R;
 import technion.com.testapplication.async.FetchHighlightsForMakorTask;
+import technion.com.testapplication.utils.FontUtils;
 
 /**
  * Created by tomerlevinson on 23/12/2017.
@@ -126,7 +125,6 @@ public class MakorDetailView extends AppCompatActivity {
         // Set text size from shared prefernces.
         FontUtils.setTextSize(makorText, getApplicationContext());
 
-        makorText.setMovementMethod(new ScrollingMovementMethod());
         String fetchHighlightsForMakor = JBSQueries.getPsukimToHighlightFromMakor(mMakorUri,
                 mMakorPsukim);
         FetchHighlightsForMakorTask fetchHighlightsForMakorTask = new FetchHighlightsForMakorTask(
