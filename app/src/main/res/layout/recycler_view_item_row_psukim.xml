@@ -5,22 +5,23 @@
               android:layout_height="wrap_content"
               android:background="#FFF"
               android:clickable="true"
-              android:layout_weight="1"
-              android:orientation="horizontal">
+              android:orientation="horizontal"
+              android:weightSum="1">
+
+    <ImageView
+        android:id="@+id/pasuk_selection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="0.25"
+        android:src="@drawable/ic_check_box_outline_blank_black_24dp"/>
 
     <TextView
         android:id="@+id/pasuk_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="start"
         android:layout_weight="0.75"
         android:padding="10dp"
         tools:text="TextView"/>
-    <ImageView
-        android:id="@+id/pasuk_selection"
-        android:layout_width="wrap_content"
-        android:layout_weight="0.25"
-        android:layout_gravity="center"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_check_box_outline_blank_black_24dp"/>
-
 </LinearLayout>

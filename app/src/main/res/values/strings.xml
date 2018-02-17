@@ -28,7 +28,7 @@
     <string name="psukim">פסוקים</string>
     <string name="mekorot">מקורות</string>
     <string-array name="spinner_items">
-        <item> פרק</item>
         <item> פרשה</item>
+        <item> פרק</item>
     </string-array>
 </resources>
