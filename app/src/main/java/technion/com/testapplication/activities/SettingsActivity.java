@@ -17,10 +17,8 @@ import android.widget.TextView;
 import java.util.HashSet;
 import java.util.Set;
 
-import technion.com.testapplication.JBSQueries;
-import technion.com.testapplication.utils.PreferencesUtils;
 import technion.com.testapplication.R;
-import technion.com.testapplication.async.FetchParashotAndPrakimTask;
+import technion.com.testapplication.utils.PreferencesUtils;
 
 /**
  * Created by tomerlevinson on 21/01/2018.
@@ -30,11 +28,15 @@ public class SettingsActivity extends AppCompatActivity {
     public static final String FONT_NUMBER_ONE = "fonts/keteryg-medium-webfont.ttf";
     public static final String FONT_NUMBER_TWO = "fonts/shofarregular-webfont.ttf";
     public static final String FONT_NUMBER_THREE = "fonts/stamashkenazclm-webfont.ttf";
+    public static final String FONT_NUMBER_FOUR = "fonts/FrankRuhlLibre-Regular.ttf";
+    public static final String FONT_NUMBER_FIVE = "fonts/miriwin-webfont.ttf";
     public static final String DEFAULT_FONT = "sans-serif-light";
     public static final String DEFAULT_FONT_DISPLAY_NAME = "ללא פונט";
     public static final String FONT_NUMBER_ONE_DISPLAY_NAME = "כתר";
     public static final String FONT_NUMBER_TWO_DISPLAY_NAME = "שופר";
     public static final String FONT_NUMBER_THREE_DISPLAY_NAME = "אברהם";
+    public static final String FONT_NUMBER_FOUR_DISPLAY_NAME = "פרנק";
+    public static final String FONT_NUMBER_FIVE_DISPLAY_NAME = "מירי";
     public static final String FONT_SIZE_SMALL = "16";
     public static final String FONT_SIZE_MEDIUM = "18";
     public static final String FONT_SIZE_LARGE = "20";
@@ -51,6 +53,7 @@ public class SettingsActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.settings_menu, menu);
         menu.findItem(R.id.action_favorite).setVisible(false);
+        menu.findItem(R.id.action_settings).setVisible(false);
         return true;
     }
 
@@ -58,9 +61,7 @@ public class SettingsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                FetchParashotAndPrakimTask task = new FetchParashotAndPrakimTask(this);
-                task.execute(JBSQueries.GET_ALL_PARASHOT, JBSQueries.GET_ALL_PRAKIM);
-                return true;
+                return false;
             case R.id.action_favorite:
                 return false;
             default:
@@ -95,7 +96,9 @@ public class SettingsActivity extends AppCompatActivity {
                 String[] fontSizes = new String[]{DEFAULT_FONT_DISPLAY_NAME,
                         FONT_NUMBER_ONE_DISPLAY_NAME,
                         FONT_NUMBER_TWO_DISPLAY_NAME,
-                        FONT_NUMBER_THREE_DISPLAY_NAME};
+                        FONT_NUMBER_THREE_DISPLAY_NAME,
+                        FONT_NUMBER_FOUR_DISPLAY_NAME,
+                        FONT_NUMBER_FIVE_DISPLAY_NAME};
                 Set<String> chosenBeforeFontSet = PreferencesUtils.retrieveStoredStringSet(
                         PREFERENCES_FILE_NAME, SELECTED_FONT_KEY,
                         getApplicationContext());
@@ -108,6 +111,10 @@ public class SettingsActivity extends AppCompatActivity {
                             selectedFont = 2;
                         } else if (chosenBeforeFont.equals(FONT_NUMBER_THREE)) {
                             selectedFont = 3;
+                        } else if (chosenBeforeFont.equals(FONT_NUMBER_FOUR)) {
+                            selectedFont = 4;
+                        } else if (chosenBeforeFont.equals(FONT_NUMBER_FIVE)) {
+                            selectedFont = 5;
                         }
                     }
                 }
@@ -126,6 +133,10 @@ public class SettingsActivity extends AppCompatActivity {
                                     newParamSet.add(FONT_NUMBER_TWO);
                                 } else if (selectedPosition == 3) {
                                     newParamSet.add(FONT_NUMBER_THREE);
+                                } else if (selectedPosition == 4) {
+                                    newParamSet.add(FONT_NUMBER_FOUR);
+                                } else if (selectedPosition == 5) {
+                                    newParamSet.add(FONT_NUMBER_FIVE);
                                 }
                                 PreferencesUtils.storeStringSet(PREFERENCES_FILE_NAME,
                                         SELECTED_FONT_KEY, newParamSet, true,
@@ -208,7 +219,6 @@ public class SettingsActivity extends AppCompatActivity {
 
                 AlertDialog dialog = builder.create();
                 dialog.show();
-
             }
         });
 
