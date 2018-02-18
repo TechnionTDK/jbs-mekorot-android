@@ -15,9 +15,12 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import technion.com.testapplication.IndexWrapper;
 import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.R;
+import technion.com.testapplication.WholeWordIndexFinder;
 import technion.com.testapplication.async.FetchHighlightsForMakorTask;
 import technion.com.testapplication.utils.FontUtils;
 
@@ -77,20 +80,19 @@ public class MakorDetailView extends AppCompatActivity {
             String[] splitSubset = subsetToHighlight.split("-");
             int startWord = Integer.parseInt(splitSubset[0]);
             int endWord = Integer.parseInt(splitSubset[1]);
-            int wordCount = 0;
-            int startIndex = 0;
-            while (wordCount < startWord) {
-                startIndex += splitMakorText[wordCount].length() + 1;
-                wordCount++;
+            String keyword = "";
+            for (int i=startWord; i <=endWord; i++) {
+                if (i == endWord) {
+                    keyword+= splitMakorText[i];
+                } else {
+                    keyword += splitMakorText[i] + " ";
+                }
             }
-            wordCount = 0;
-            int endIndex = startIndex;
-            while (wordCount <= (endWord - startWord)) {
-                endIndex += splitMakorText[startWord + wordCount].length() + 1;
-                wordCount++;
+            List<IndexWrapper> indicesList = (new WholeWordIndexFinder(makorText)).findIndexesForKeyword(keyword);
+            for (IndexWrapper indexWrapper: indicesList) {
+                spannableMakorText.setSpan(new BackgroundColorSpan(Color.YELLOW), indexWrapper.getStart(), indexWrapper.getEnd(),
+                        0);
             }
-            spannableMakorText.setSpan(new BackgroundColorSpan(Color.YELLOW), startIndex, endIndex,
-                    0);
         }
         makorTextView.setText(spannableMakorText);
     }
