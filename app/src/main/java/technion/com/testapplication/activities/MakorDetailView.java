@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,10 +13,15 @@ import android.text.style.BackgroundColorSpan;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import technion.com.testapplication.IndexWrapper;
 import technion.com.testapplication.JBSQueries;
@@ -33,6 +39,8 @@ public class MakorDetailView extends AppCompatActivity {
     private String mMakorText;
     private String mMakorUri;
     private ArrayList<String> mMakorPsukim;
+    private ArrayList<Integer> mScrollToList;
+    private int mClickedIndex = 0;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -76,6 +84,7 @@ public class MakorDetailView extends AppCompatActivity {
         String makorText = makorTextView.getText().toString();
         String[] splitMakorText = makorText.split("\\s+");
         SpannableString spannableMakorText = new SpannableString(makorText);
+        mScrollToList = new ArrayList<>();
         for (String subsetToHighlight : psukimSubstrings) {
             String[] splitSubset = subsetToHighlight.split("-");
             int startWord = Integer.parseInt(splitSubset[0]);
@@ -90,11 +99,39 @@ public class MakorDetailView extends AppCompatActivity {
             }
             List<IndexWrapper> indicesList = (new WholeWordIndexFinder(makorText)).findIndexesForKeyword(keyword);
             for (IndexWrapper indexWrapper: indicesList) {
+                int lineNum = makorTextView.getLayout().getLineForOffset(indexWrapper.getStart());
+                mScrollToList.add(lineNum);
+            }
+
+            for (IndexWrapper indexWrapper: indicesList) {
                 spannableMakorText.setSpan(new BackgroundColorSpan(Color.YELLOW), indexWrapper.getStart(), indexWrapper.getEnd(),
                         0);
             }
         }
+        Set<Integer> hs = new HashSet<>();
+        hs.addAll(mScrollToList);
+        mScrollToList.clear();
+        mScrollToList.addAll(hs);
+        Collections.sort(mScrollToList);
         makorTextView.setText(spannableMakorText);
+        FloatingActionButton nextButton = (FloatingActionButton) findViewById(R.id.fab);
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mClickedIndex < mScrollToList.size()) {
+                    final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
+                    scrollView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            TextView makorTextView = (TextView) findViewById(R.id.makor_text);
+                            int y = makorTextView.getLayout().getLineTop(mScrollToList.get(mClickedIndex));
+                            scrollView.scrollTo(0, y);
+                            mClickedIndex++;
+                        }
+                    });
+                }
+            }
+        });
     }
 
     @Override
