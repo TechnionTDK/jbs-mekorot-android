@@ -129,6 +129,18 @@ public class MakorDetailView extends AppCompatActivity {
                             mClickedIndex++;
                         }
                     });
+                } else {
+                    mClickedIndex = 0;
+                    final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
+                    scrollView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            TextView makorTextView = (TextView) findViewById(R.id.makor_text);
+                            int y = makorTextView.getLayout().getLineTop(mScrollToList.get(mClickedIndex));
+                            scrollView.scrollTo(0, y);
+                            mClickedIndex++;
+                        }
+                    });
                 }
             }
         });
