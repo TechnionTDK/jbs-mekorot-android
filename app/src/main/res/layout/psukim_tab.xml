@@ -11,15 +11,9 @@
         android:background="#FFF"
         android:clickable="true"
         android:elevation="2dp"
+        android:gravity="right"
         android:orientation="horizontal"
         android:weightSum="1">
-        <ImageView
-            android:id="@+id/choose_all_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="0.25"
-            android:src="@drawable/ic_check_box_outline_blank_black_24dp"/>
         <TextView
             android:id="@+id/choose_all_text"
             android:layout_width="match_parent"
@@ -29,6 +23,13 @@
             android:padding="10dp"
             android:text="בחר הכל"
             android:textColor="@color/Black"/>
+        <ImageView
+            android:id="@+id/choose_all_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0.25"
+            android:src="@drawable/ic_check_box_outline_blank_black_24dp"/>
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"

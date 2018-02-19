@@ -15,6 +15,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.Toolbar;
 import android.util.Pair;
 import android.view.Menu;
@@ -60,12 +61,12 @@ public class MainActivity extends AppCompatActivity
     private PsukimTab mPsukimTab;
     private MekorotTab mMekorotTab;
     private FloatingActionButton mFab;
+    private ActionMenuView amvMenu;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
-        menu.findItem(R.id.action_favorite).setVisible(false);
+        inflater.inflate(R.menu.main_menu, amvMenu.getMenu());
         return true;
     }
 
@@ -163,9 +164,16 @@ public class MainActivity extends AppCompatActivity
      */
     public void setToolbar() {
         final Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        amvMenu = (ActionMenuView) myToolbar.findViewById(R.id.amvMenu);
+        amvMenu.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                return onOptionsItemSelected(menuItem);
+            }
+        });
+
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-//        setSpinner();
         setFonts();
         setFilterIconClickable(false);
     }
