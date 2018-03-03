@@ -18,9 +18,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
-import android.widget.Spinner;
 
 import java.util.ArrayList;
 
@@ -28,12 +26,15 @@ import technion.com.testapplication.PsukimListDialog;
 import technion.com.testapplication.R;
 import technion.com.testapplication.adapters.ViewPagerAdapter;
 import technion.com.testapplication.async.FetchParashotAndPrakimTask;
+import technion.com.testapplication.fragments.FavoritesTab;
 import technion.com.testapplication.fragments.MekorotTab;
 import technion.com.testapplication.fragments.PsukimTab;
+import technion.com.testapplication.utils.PreferencesUtils;
 
 public class MainActivity extends AppCompatActivity
         implements PsukimTab.OnMoveToMekorotTabListener,
-        MekorotTab.MekorotChangesListener {
+        MekorotTab.MekorotChangesListener,
+        FavoritesTab.FavoritesChangeListener{
 
     private ArrayList<String> mParashotAndUris;
     private ArrayList<String> mPrakimAndUris;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity
     private static boolean mIsNewQuerySubmitted = false;
     private PsukimTab mPsukimTab;
     private MekorotTab mMekorotTab;
+    private FavoritesTab mFavoritesTab;
     private FloatingActionButton mFab;
     private ActionMenuView amvMenu;
 
@@ -126,9 +128,12 @@ public class MainActivity extends AppCompatActivity
         mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         mPsukimTab = new PsukimTab();
         mMekorotTab = new MekorotTab();
+        mFavoritesTab = new FavoritesTab();
         mViewPagerAdapter.addFragment(mPsukimTab, getResources().getString(R.string.psukim));
         mViewPagerAdapter.addFragment(mMekorotTab, getResources().getString(R.string.mekorot));
+        mViewPagerAdapter.addFragment(mFavoritesTab, getResources().getString(R.string.favorites));
         mViewPager.setAdapter(mViewPagerAdapter);
+        mViewPager.setOffscreenPageLimit(2);
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,6 +162,13 @@ public class MainActivity extends AppCompatActivity
                             PSUKIM_FRAG_POSITION);
                     psukimTabFrag.moveToMekorot();
                     mFab.hide();
+                } else if (tab.getPosition() == 2) {
+                    // Favorites tab
+                    mFab.hide();
+                    setFilterIconClickable(false);
+                    PreferencesUtils.getSharedPreferencesByFileName("favorites", getApplicationContext());
+                    FavoritesTab favoritesTab = (FavoritesTab) mViewPagerAdapter.getItem(2);
+                    favoritesTab.setRecyclerViewAdapter();
                 }
             }
 
@@ -212,7 +224,6 @@ public class MainActivity extends AppCompatActivity
             return;
         }
         setContentView(R.layout.activity_main);
-        // Get Parashot
         Intent intent = getIntent();
         mParashotAndUris = (ArrayList<String>) intent.getExtras().get(
                 getResources().getString(R.string.parashot_and_uri_extra));
@@ -223,10 +234,6 @@ public class MainActivity extends AppCompatActivity
                 ContextCompat.getColor(this, R.color.MainActivityBG));
         forceRTLIfSupported();
         setToolbar();
-        Spinner spinner = (Spinner) findViewById(R.id.spinner_nav);
-        AutoCompleteTextView actv = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView);
-        spinner.setVisibility(View.GONE);
-        actv.setVisibility(View.GONE);
         setTabs();
     }
 
@@ -254,6 +261,7 @@ public class MainActivity extends AppCompatActivity
                 setFilterIconClickable(true);
             }
         }
+        mekorotTabFrag.notifyFromFavorites();
     }
 
     @Override
@@ -291,8 +299,12 @@ public class MainActivity extends AppCompatActivity
                 mekorotTab.setText(getResources().getString(R.string.mekorot) + " (" + Integer.toString(
                         numOfResults) + ")");
             }
-
         }
+    }
+
+    @Override
+    public void updateFavoritesNum(int numOfFavorites) {
+        setFavoriteTabResultsNum(numOfFavorites);
     }
 
     /**
@@ -306,5 +318,20 @@ public class MainActivity extends AppCompatActivity
             finish();
         }
 
+    }
+
+    @Override
+    public void setFavoriteTabResultsNum(int numOfResults) {
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout.Tab favoritesTab = tabLayout.getTabAt(2);
+        if (favoritesTab != null) {
+            if (numOfResults == 0) {
+                favoritesTab.setText(getResources().getString(R.string.favorites));
+            } else {
+                favoritesTab.setText(getResources().getString(R.string.favorites) + " (" + Integer.toString(
+                        numOfResults) + ")");
+            }
+
+        }
     }
 }

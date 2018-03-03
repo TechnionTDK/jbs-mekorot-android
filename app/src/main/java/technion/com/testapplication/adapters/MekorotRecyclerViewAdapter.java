@@ -2,8 +2,7 @@ package technion.com.testapplication.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +11,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import technion.com.testapplication.R;
 import technion.com.testapplication.activities.MakorDetailView;
+import technion.com.testapplication.fragments.MekorotTab;
 import technion.com.testapplication.models.MakorModel;
 import technion.com.testapplication.utils.FontUtils;
+import technion.com.testapplication.utils.PreferencesUtils;
 
 /**
  * Created by tomerlevinson on 23/12/2017.
@@ -27,12 +30,14 @@ public class MekorotRecyclerViewAdapter
     private ArrayList<String> mPsukimUris;
     private ArrayList<MakorModel> mMekorotList;
     private Context mContext;
+    MekorotTab.MekorotChangesListener mCallback;
 
     public MekorotRecyclerViewAdapter(ArrayList<String> psukimUris, ArrayList<MakorModel> mekorot,
-                                      Context context) {
+                                      Context context, MekorotTab.MekorotChangesListener callback) {
         mPsukimUris = psukimUris;
         mMekorotList = mekorot;
         mContext = context;
+        mCallback = callback;
     }
 
     public int getMekorotSize() {
@@ -93,6 +98,9 @@ public class MekorotRecyclerViewAdapter
         holder.mText.setOnClickListener(clickListenerForEverythingButFav);
         holder.mAuthor.setOnClickListener(clickListenerForEverythingButFav);
         holder.mTitle.setOnClickListener(clickListenerForEverythingButFav);
+        final Set<String> authorTextUriSet = PreferencesUtils.retrieveStoredStringSet(
+                mContext.getResources().getString(R.string.favorites_file_name),
+                makorModel.getMakorUri(), mContext);
         holder.mLikeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,13 +108,48 @@ public class MekorotRecyclerViewAdapter
                     makorModel.setIsClicked(false);
                     holder.mLikeButton.setImageDrawable(
                             mContext.getDrawable(R.drawable.ic_favorite_border_black_18dp));
+                    PreferencesUtils.deleteStoredDataByKey(
+                            mContext.getResources().getString(R.string.favorites_file_name),
+                            makorModel.getMakorUri(),
+                            mContext);
+                    SharedPreferences favoritesFile = PreferencesUtils.getSharedPreferencesByFileName(
+                            mContext.getResources().getString(R.string.favorites_file_name),
+                            mContext);
+                    if (favoritesFile != null && favoritesFile.getAll() != null) {
+                        mCallback.updateFavoritesNum(favoritesFile.getAll().size());
+                    }
                 } else {
                     makorModel.setIsClicked(true);
                     holder.mLikeButton.setImageDrawable(
                             mContext.getDrawable(R.drawable.ic_favorite_black_18dp));
+                    Set<String> newParamSet = new HashSet<>();
+                    newParamSet.add(mContext.getResources().getString(
+                            R.string.favorites_name_prefix) + makorModel.getMakorName());
+                    newParamSet.add(mContext.getResources().getString(
+                            R.string.favorites_text_prefix) + makorModel.getMakorText());
+                    newParamSet.add(mContext.getResources().getString(
+                            R.string.favorites_uri_prefix) + makorModel.getMakorUri());
+                    PreferencesUtils.storeStringSet(
+                            mContext.getResources().getString(R.string.favorites_file_name),
+                            makorModel.getMakorUri(),
+                            newParamSet, true, mContext);
+                    SharedPreferences favoritesFile = PreferencesUtils.getSharedPreferencesByFileName(
+                            mContext.getResources().getString(R.string.favorites_file_name),
+                            mContext);
+                    if (favoritesFile != null && favoritesFile.getAll() != null) {
+                        mCallback.updateFavoritesNum(
+                                favoritesFile.getAll().size());
+                    }
                 }
             }
         });
+        if (authorTextUriSet != null && authorTextUriSet.size() > 0) {
+            holder.mLikeButton.setImageDrawable(
+                    mContext.getDrawable(R.drawable.ic_favorite_black_18dp));
+        } else {
+            holder.mLikeButton.setImageDrawable(
+                    mContext.getDrawable(R.drawable.ic_favorite_border_black_18dp));
+        }
     }
 
     @Override

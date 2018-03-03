@@ -25,7 +25,7 @@ public class JBSQueries {
     public static final String CATEGORY = "category";
     public static final String CATEGORY_REFERENCE_NUM = "num";
     public static final String NUM_OF_PSUKIM = "numOfPsukim";
-
+    public static final String READ_URL = "http://tdk-p6.cs.technion.ac.il:3000/read?uri=";
 
     public static final String GET_ALL_PSUKIM_FROM_PARASHA =
             "SELECT ?pasuk ?position ?pasuk_text sum(strlen(?text)) as ?total_perush_size WHERE {" +

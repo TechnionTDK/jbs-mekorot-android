@@ -48,6 +48,8 @@ public class MekorotTab extends Fragment {
         public void setFilterIcon(Dialog dialog);
 
         public void setTabResultsNum(int numOfResults);
+
+        public void updateFavoritesNum(int numOfFavorites);
     }
 
     @Override
@@ -59,7 +61,6 @@ public class MekorotTab extends Fragment {
             throw new ClassCastException(activity.toString()
                     + " must implement MekorotChangesListener");
         }
-
     }
 
     @Override
@@ -74,6 +75,7 @@ public class MekorotTab extends Fragment {
         }
 
     }
+
     private void setFilterDialog() {
         final Fragment mekorotTabFrag = this;
         ArrayList<String> prettifiedCategories = new ArrayList<>();
@@ -145,6 +147,12 @@ public class MekorotTab extends Fragment {
         mCallback.setFilterIcon(dialog);
     }
 
+    public void notifyFromFavorites() {
+        if (mAdapter != null) {
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
     public void runMekorotAndCategoriesQueries(ArrayList<String> psukimUris) {
         mPrefixedPsukimUris = new ArrayList<>();
         for (int i = 0; i < psukimUris.size(); i++) {
@@ -171,12 +179,12 @@ public class MekorotTab extends Fragment {
                 makorModels.add(makorModel);
                 it.remove(); // avoids a ConcurrentModificationException
             }
-            Collections.sort(makorModels, new CustomComparator());
+            Collections.sort(makorModels, new MakorComparator());
             Collections.reverse(makorModels);
             mMekorotCategories = mekorotCategories;
             mRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view);
             mAdapter = new MekorotRecyclerViewAdapter(mPrefixedPsukimUris, makorModels,
-                    getContext());
+                    getContext(), mCallback);
             LinearLayoutManager manager = new LinearLayoutManager(getContext());
             mRecyclerView.setHasFixedSize(true);
             mRecyclerView.setLayoutManager(manager);
@@ -186,10 +194,11 @@ public class MekorotTab extends Fragment {
         }
     }
 
-    public class CustomComparator implements Comparator<MakorModel> {
+    public class MakorComparator implements Comparator<MakorModel> {
         @Override
-        public int compare(MakorModel o1, MakorModel o2) {
-            return Integer.parseInt(o1.getNumOfPsukimMentions()) - Integer.parseInt(o2.getNumOfPsukimMentions());
+        public int compare(MakorModel makorModel, MakorModel makorModel1) {
+            return Integer.parseInt(makorModel.getNumOfPsukimMentions()) - Integer.parseInt(
+                    makorModel1.getNumOfPsukimMentions());
         }
     }
 
