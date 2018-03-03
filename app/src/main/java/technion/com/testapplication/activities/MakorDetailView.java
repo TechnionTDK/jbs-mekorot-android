@@ -3,7 +3,6 @@ package technion.com.testapplication.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -110,7 +110,39 @@ public class MakorDetailView extends AppCompatActivity {
         mScrollToList.addAll(hs);
         Collections.sort(mScrollToList);
         makorTextView.setText(spannableMakorText);
-        FloatingActionButton nextButton = (FloatingActionButton) findViewById(R.id.fab);
+        Button nextButton = (Button) findViewById(R.id.next);
+        Button previousButton = (Button) findViewById(R.id.previous);
+        previousButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mClickedIndex > 0) {
+                    final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
+                    scrollView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            TextView makorTextView = (TextView) findViewById(R.id.makor_text);
+                            int y = makorTextView.getLayout().getLineTop(
+                                    mScrollToList.get(mClickedIndex));
+                            scrollView.scrollTo(0, y);
+                            mClickedIndex--;
+                        }
+                    });
+                } else {
+                    mClickedIndex = mScrollToList.size() - 1;
+                    final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
+                    scrollView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            TextView makorTextView = (TextView) findViewById(R.id.makor_text);
+                            int y = makorTextView.getLayout().getLineTop(
+                                    mScrollToList.get(mClickedIndex));
+                            scrollView.scrollTo(0, y);
+                            mClickedIndex--;
+                        }
+                    });
+                }
+            }
+        });
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
