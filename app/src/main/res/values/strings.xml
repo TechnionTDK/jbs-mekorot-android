@@ -27,6 +27,12 @@
     <string name="jbr_prefix">jbr:</string>
     <string name="psukim">פסוקים</string>
     <string name="mekorot">מקורות</string>
+    <string name="favorites">נבחרים</string>
+    <string name="favorites_uri_prefix">uri***</string>
+    <string name="favorites_name_prefix">name***</string>
+    <string name="favorites_text_prefix">text***</string>
+    <string name="favorites_file_name">favorites</string>
+    <string name="choose_sharing_option">בחר אופן שיתוף</string>
     <string-array name="spinner_items">
         <item> פרשה</item>
         <item> פרק</item>
