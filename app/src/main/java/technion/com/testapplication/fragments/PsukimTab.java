@@ -88,11 +88,16 @@ public class PsukimTab extends Fragment {
         if (mAdapter != null) {
             psukimUris = ((PsukimRecyclerViewAdapter) mAdapter).getAllPsukimUris();
         }
-        if (Arrays.asList(psukimUris).containsAll(
-                Arrays.asList(mCurrentPsukim)) && psukimUris.size() == mCurrentPsukim.size()) {
+        if (psukimUris.size() == 0) {
             mCallback.onPsukimSelected(false);
-        } else {
-            mCallback.onPsukimSelected(true);
+        }
+        else {
+            if (Arrays.asList(psukimUris).containsAll(
+                    Arrays.asList(mCurrentPsukim)) && psukimUris.size() == mCurrentPsukim.size()) {
+                mCallback.onPsukimSelected(false);
+            } else {
+                mCallback.onPsukimSelected(true);
+            }
         }
         mCurrentPsukim.clear();
         mCurrentPsukim.addAll(psukimUris);

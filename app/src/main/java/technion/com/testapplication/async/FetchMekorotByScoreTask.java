@@ -68,8 +68,14 @@ public class FetchMekorotByScoreTask
                     String makorName = rb.get(JBSQueries.MAKOR_NAME).toString();
                     String makorText = rb.get(JBSQueries.MAKOR_TEXT).toString();
                     String makorUri;
-                    String numOfPsukimLiteralAsString = rb.get(
-                            JBSQueries.NUM_OF_PSUKIM).toString();
+                    String numOfPsukimLiteralAsString ="";
+                    if (mShouldFilter) {
+                        numOfPsukimLiteralAsString = rb.get(
+                                "sum").toString();
+                    } else {
+                        numOfPsukimLiteralAsString = rb.get(
+                                JBSQueries.SCORE).toString();
+                    }
                     numOfPsukimString = numOfPsukimLiteralAsString.substring(0,
                             numOfPsukimLiteralAsString.indexOf(NUM_OF_REFERENCES_REGEX));
                     if (mShouldFilter) {

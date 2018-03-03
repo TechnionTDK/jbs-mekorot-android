@@ -1,80 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:orientation="vertical">
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/my_toolbar"
-        style="@style/Base_ToolbarStyle"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:elevation="4dp">
-
-        <TextView
-            android:id="@+id/heading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="סולמות"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:textSize="18sp"
-            android:layout_marginRight="10dip"
-            android:layout_marginLeft="10dip"
-            android:textColor="@color/White"
-            android:layout_gravity="right"/>
-        <ImageView
-            android:id="@+id/filter_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_marginLeft="10dip"
-            android:src="@drawable/ic_filter_list_white_24dp"/>
-        <Spinner
-            android:id="@+id/spinner_nav"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dip"
-            android:layout_gravity="right"/>
-        <android.support.v7.widget.AppCompatAutoCompleteTextView
-            android:id="@+id/autoCompleteTextView"
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/main_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:app="http://schemas.android.com/apk/res-auto"
+                  android:layout_width="fill_parent"
+                  android:layout_height="fill_parent"
+                  android:orientation="vertical">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/my_toolbar"
+            style="@style/Base_ToolbarStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="10dip"
-            android:gravity="right"
-            android:inputType="textAutoComplete"
-            android:textColor="@color/White"
-            android:textColorHint="@color/White"
-            android:textDirection="rtl"
-            android:textSize="15sp"
-            android:theme="@style/Autocomplete"/>
+            android:layout_height="?attr/actionBarSize"
+            android:elevation="4dp"
+            android:gravity="start">
+
+            <TextView
+                android:id="@+id/heading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginLeft="10dip"
+                android:layout_marginRight="15dip"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:text="סולמות"
+                android:textColor="@color/White"
+                android:textSize="@dimen/heading_text_size"/>
+            <android.support.v7.widget.ActionMenuView
+                android:id="@+id/amvMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_gravity="left"
+                android:gravity="left"/>
+            <ImageView
+                android:id="@+id/filter_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginLeft="10dip"
+                android:src="@drawable/ic_filter_list_white_24dp"/>
+
+            <Spinner
+                android:id="@+id/spinner_nav"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginLeft="10dip"/>
+            <android.support.v7.widget.AppCompatAutoCompleteTextView
+                android:id="@+id/autoCompleteTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="10dip"
+                android:gravity="right"
+                android:inputType="textAutoComplete"
+                android:textColor="@color/White"
+                android:textColorHint="@color/White"
+                android:textDirection="rtl"
+                android:textSize="15sp"
+                android:theme="@style/Autocomplete"/>
 
 
-    </android.support.v7.widget.Toolbar>
+        </android.support.v7.widget.Toolbar>
 
-    <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:orientation="vertical"
-                  android:weightSum="1">
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tabs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/DodgerBlue"
-            android:minHeight="?attr/actionBarSize"
-            app:tabGravity="fill"
-            app:tabMode="fixed"
-            app:tabSelectedTextColor="@color/Black"
-            app:tabTextColor="@color/White"/>
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:orientation="vertical"
+                      android:weightSum="1">
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/DodgerBlue"
+                android:minHeight="?attr/actionBarSize"
+                app:tabGravity="fill"
+                app:tabMode="fixed"
+                app:tabSelectedTextColor="@color/Black"
+                app:tabTextColor="@color/White"/>
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/pager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            <android.support.v4.view.ViewPager
+                android:id="@+id/pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
 
 
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_add_white_18dp"
+        app:backgroundTint="@color/DodgerBlue"
+        app:fabSize="normal"
+        app:layout_anchor="@id/pager"
+        app:layout_anchorGravity="bottom|left"/>
+
+</android.support.design.widget.CoordinatorLayout>

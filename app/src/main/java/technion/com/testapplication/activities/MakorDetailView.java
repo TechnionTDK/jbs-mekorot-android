@@ -1,26 +1,33 @@
 package technion.com.testapplication.activities;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
-import android.text.method.ScrollingMovementMethod;
 import android.text.style.BackgroundColorSpan;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import technion.com.testapplication.utils.FontUtils;
+import technion.com.testapplication.IndexWrapper;
 import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.R;
+import technion.com.testapplication.WholeWordIndexFinder;
 import technion.com.testapplication.async.FetchHighlightsForMakorTask;
+import technion.com.testapplication.utils.FontUtils;
 
 /**
  * Created by tomerlevinson on 23/12/2017.
@@ -31,6 +38,8 @@ public class MakorDetailView extends AppCompatActivity {
     private String mMakorText;
     private String mMakorUri;
     private ArrayList<String> mMakorPsukim;
+    private ArrayList<Integer> mScrollToList;
+    private int mClickedIndex = 0;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -39,6 +48,7 @@ public class MakorDetailView extends AppCompatActivity {
         menu.findItem(R.id.action_share).setVisible(false);
         menu.findItem(R.id.action_info).setVisible(false);
         menu.findItem(R.id.action_favorite).setVisible(false);
+        menu.findItem(R.id.action_settings).setVisible(false);
         return true;
     }
 
@@ -47,8 +57,13 @@ public class MakorDetailView extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_settings:
                 // User chose the "Settings" item, show the app settings UI...
-                Intent settingsActivityIntent = new Intent(getApplicationContext(), SettingsActivity.class);
+                Intent settingsActivityIntent = new Intent(getApplicationContext(),
+                        SettingsActivity.class);
                 startActivity(settingsActivityIntent);
+                return true;
+
+            case android.R.id.home:
+                onBackPressed();
                 return true;
 
             case R.id.action_favorite:
@@ -74,26 +89,71 @@ public class MakorDetailView extends AppCompatActivity {
         String makorText = makorTextView.getText().toString();
         String[] splitMakorText = makorText.split("\\s+");
         SpannableString spannableMakorText = new SpannableString(makorText);
+        mScrollToList = new ArrayList<>();
         for (String subsetToHighlight : psukimSubstrings) {
             String[] splitSubset = subsetToHighlight.split("-");
             int startWord = Integer.parseInt(splitSubset[0]);
             int endWord = Integer.parseInt(splitSubset[1]);
-            int wordCount = 0;
-            int startIndex = 0;
-            while (wordCount < startWord) {
-                startIndex += splitMakorText[wordCount].length() + 1;
-                wordCount++;
+            String keyword = "";
+            for (int i = startWord; i <= endWord; i++) {
+                if (i == endWord) {
+                    keyword += splitMakorText[i];
+                } else {
+                    keyword += splitMakorText[i] + " ";
+                }
             }
-            wordCount = 0;
-            int endIndex = startIndex;
-            while (wordCount <= (endWord - startWord)) {
-                endIndex += splitMakorText[startWord + wordCount].length() + 1;
-                wordCount++;
+            List<IndexWrapper> indicesList = (new WholeWordIndexFinder(
+                    makorText)).findIndexesForKeyword(keyword);
+            for (IndexWrapper indexWrapper : indicesList) {
+                int lineNum = makorTextView.getLayout().getLineForOffset(indexWrapper.getStart());
+                mScrollToList.add(lineNum);
             }
-            spannableMakorText.setSpan(new BackgroundColorSpan(Color.YELLOW), startIndex, endIndex,
-                    0);
+
+            for (IndexWrapper indexWrapper : indicesList) {
+                spannableMakorText.setSpan(new BackgroundColorSpan(
+                                ContextCompat.getColor(getApplicationContext(), R.color.Highlight)),
+                        indexWrapper.getStart(), indexWrapper.getEnd(),
+                        0);
+            }
         }
+        Set<Integer> hs = new HashSet<>();
+        hs.addAll(mScrollToList);
+        mScrollToList.clear();
+        mScrollToList.addAll(hs);
+        Collections.sort(mScrollToList);
         makorTextView.setText(spannableMakorText);
+        FloatingActionButton nextButton = (FloatingActionButton) findViewById(R.id.fab);
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mClickedIndex < mScrollToList.size()) {
+                    final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
+                    scrollView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            TextView makorTextView = (TextView) findViewById(R.id.makor_text);
+                            int y = makorTextView.getLayout().getLineTop(
+                                    mScrollToList.get(mClickedIndex));
+                            scrollView.scrollTo(0, y);
+                            mClickedIndex++;
+                        }
+                    });
+                } else {
+                    mClickedIndex = 0;
+                    final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
+                    scrollView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            TextView makorTextView = (TextView) findViewById(R.id.makor_text);
+                            int y = makorTextView.getLayout().getLineTop(
+                                    mScrollToList.get(mClickedIndex));
+                            scrollView.scrollTo(0, y);
+                            mClickedIndex++;
+                        }
+                    });
+                }
+            }
+        });
     }
 
     @Override
@@ -111,10 +171,11 @@ public class MakorDetailView extends AppCompatActivity {
         mMakorPsukim = (ArrayList<String>) receivedIntent.getExtras().get(
                 getResources().getString(R.string.psukim_uris_extra));
         getWindow().getDecorView().setBackgroundColor(
-                ContextCompat.getColor(this, R.color.LightBlue));
+                ContextCompat.getColor(this, R.color.MakorDetailViewBG));
         final Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         TextView toolbarTitleTV = (TextView) findViewById(R.id.toolbar_title);
         toolbarTitleTV.setText(mMakorTitle);
         TextView makorText = (TextView) findViewById(R.id.makor_text);
@@ -126,7 +187,6 @@ public class MakorDetailView extends AppCompatActivity {
         // Set text size from shared prefernces.
         FontUtils.setTextSize(makorText, getApplicationContext());
 
-        makorText.setMovementMethod(new ScrollingMovementMethod());
         String fetchHighlightsForMakor = JBSQueries.getPsukimToHighlightFromMakor(mMakorUri,
                 mMakorPsukim);
         FetchHighlightsForMakorTask fetchHighlightsForMakorTask = new FetchHighlightsForMakorTask(

@@ -144,4 +144,17 @@
     <color name="Navy">#000080</color>
     <color name="Black">#000000</color>
 
+    <!-- App specific colors-->
+    <color name="Highlight">#FFFF00</color>
+    <color name="MekorotCardBG">#B0E0E6</color>
+    <color name="MakorDetailViewBG">#ADD8E6</color>
+    <color name="MakorNameInCard">#000000</color>
+    <color name="MakorAuthorInCard">#2F4F4F</color>
+    <color name="PsuimListBG">#FFFFFF</color>
+    <color name="SplashScreenSulamotText">#FFFFFF</color>
+    <color name="SplashScreenSulamotTextShadow">#000000</color>
+    <color name="FilterIconUnavailable">#808080</color>
+    <color name="MainActivityBG">#ADD8E6</color>
+    <color name="SettingsHeading">#FFFFFF</color>
+
 </resources>

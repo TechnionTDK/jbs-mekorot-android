@@ -49,8 +49,11 @@ public class FetchPsukimTask extends AsyncTask<String, Void, ArrayList<PasukMode
 
                 while (rs.hasNext()) {
                     QuerySolution rb = rs.nextSolution();
+                    String pasukLabel = rb.get(JBSQueries.PASUK_LABEL).toString();
+                    int indexOfSecondWord = pasukLabel.indexOf(" ") + 1;
+                    String perekParashaOfPasuk = pasukLabel.substring(indexOfSecondWord);
                     PasukModel pasukModel = new PasukModel(
-                            rb.get(JBSQueries.PASUK_TEXT).toString());
+                            rb.get(JBSQueries.PASUK_TEXT).toString(), perekParashaOfPasuk);
                     pasukModel.setUri(rb.get(JBSQueries.PASUK).toString());
                     queryResults.add(pasukModel);
                 }
