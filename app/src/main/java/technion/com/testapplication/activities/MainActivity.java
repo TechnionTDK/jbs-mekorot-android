@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Set fonts for the title and other elements in the activity.
      */
-    public void setFonts() {
+    public void setHeadingFonts() {
         TextView tx = (TextView) findViewById(R.id.heading);
         Typeface custom_font = Typeface.createFromAsset(getAssets(), HEADING_FONT_PATH);
         tx.setTypeface(custom_font);
@@ -174,7 +174,6 @@ public class MainActivity extends AppCompatActivity
 
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        setFonts();
         setFilterIconClickable(false);
     }
 
