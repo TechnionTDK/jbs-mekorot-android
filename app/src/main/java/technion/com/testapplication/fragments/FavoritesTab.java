@@ -78,4 +78,13 @@ public class FavoritesTab extends Fragment {
                     new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mAdapter != null) {
+            mAdapter.notifyDataSetChanged();
+        }
+
+    }
 }
