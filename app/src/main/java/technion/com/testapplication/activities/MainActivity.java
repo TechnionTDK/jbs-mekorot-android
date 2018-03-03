@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity
     public void setFilterIconClickable(boolean isClickable) {
         ImageView filterIcon = (ImageView) findViewById(R.id.filter_icon);
         if (!isClickable) {
-            filterIcon.setColorFilter(R.color.Gray);
+            filterIcon.setColorFilter(R.color.FilterIconUnavailable);
             filterIcon.setEnabled(false);
         } else {
             filterIcon.setColorFilter(null);
@@ -342,7 +342,7 @@ public class MainActivity extends AppCompatActivity
                 getResources().getString(R.string.prakim_and_uri_extra));
         populateUriLabelPairs();
         getWindow().getDecorView().setBackgroundColor(
-                ContextCompat.getColor(this, R.color.LightBlue));
+                ContextCompat.getColor(this, R.color.MainActivityBG));
         forceRTLIfSupported();
         setToolbar();
         Spinner spinner = (Spinner) findViewById(R.id.spinner_nav);

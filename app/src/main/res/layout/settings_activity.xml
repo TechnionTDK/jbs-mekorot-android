@@ -23,7 +23,7 @@
             android:focusableInTouchMode="true"
             android:gravity="start"
             android:text="הגדרות"
-            android:textColor="@color/White"
+            android:textColor="@color/SettingsHeading"
             android:textSize="18sp"/>
 
     </android.support.v7.widget.Toolbar>

@@ -12,12 +12,12 @@
               android:layout_height="match_parent"
               android:layout_marginTop="100dip"
               android:gravity="center|top"
-              android:textColor="@color/White"
-              android:textStyle="bold"
-              android:shadowColor="@color/Black"
+              android:shadowColor="@color/SplashScreenSulamotTextShadow"
               android:shadowDx="1"
               android:shadowDy="1"
               android:shadowRadius="2"
               android:text="סולמות"
-              android:textSize="40sp"/>
+              android:textColor="@color/SplashScreenSulamotText"
+              android:textSize="40sp"
+              android:textStyle="bold"/>
 </FrameLayout>

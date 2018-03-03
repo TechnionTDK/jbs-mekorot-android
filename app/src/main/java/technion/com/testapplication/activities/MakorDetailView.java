@@ -1,7 +1,6 @@
 package technion.com.testapplication.activities;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -58,7 +57,8 @@ public class MakorDetailView extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_settings:
                 // User chose the "Settings" item, show the app settings UI...
-                Intent settingsActivityIntent = new Intent(getApplicationContext(), SettingsActivity.class);
+                Intent settingsActivityIntent = new Intent(getApplicationContext(),
+                        SettingsActivity.class);
                 startActivity(settingsActivityIntent);
                 return true;
 
@@ -95,21 +95,24 @@ public class MakorDetailView extends AppCompatActivity {
             int startWord = Integer.parseInt(splitSubset[0]);
             int endWord = Integer.parseInt(splitSubset[1]);
             String keyword = "";
-            for (int i=startWord; i <=endWord; i++) {
+            for (int i = startWord; i <= endWord; i++) {
                 if (i == endWord) {
-                    keyword+= splitMakorText[i];
+                    keyword += splitMakorText[i];
                 } else {
                     keyword += splitMakorText[i] + " ";
                 }
             }
-            List<IndexWrapper> indicesList = (new WholeWordIndexFinder(makorText)).findIndexesForKeyword(keyword);
-            for (IndexWrapper indexWrapper: indicesList) {
+            List<IndexWrapper> indicesList = (new WholeWordIndexFinder(
+                    makorText)).findIndexesForKeyword(keyword);
+            for (IndexWrapper indexWrapper : indicesList) {
                 int lineNum = makorTextView.getLayout().getLineForOffset(indexWrapper.getStart());
                 mScrollToList.add(lineNum);
             }
 
-            for (IndexWrapper indexWrapper: indicesList) {
-                spannableMakorText.setSpan(new BackgroundColorSpan(Color.YELLOW), indexWrapper.getStart(), indexWrapper.getEnd(),
+            for (IndexWrapper indexWrapper : indicesList) {
+                spannableMakorText.setSpan(new BackgroundColorSpan(
+                                ContextCompat.getColor(getApplicationContext(), R.color.Highlight)),
+                        indexWrapper.getStart(), indexWrapper.getEnd(),
                         0);
             }
         }
@@ -129,7 +132,8 @@ public class MakorDetailView extends AppCompatActivity {
                         @Override
                         public void run() {
                             TextView makorTextView = (TextView) findViewById(R.id.makor_text);
-                            int y = makorTextView.getLayout().getLineTop(mScrollToList.get(mClickedIndex));
+                            int y = makorTextView.getLayout().getLineTop(
+                                    mScrollToList.get(mClickedIndex));
                             scrollView.scrollTo(0, y);
                             mClickedIndex++;
                         }
@@ -141,7 +145,8 @@ public class MakorDetailView extends AppCompatActivity {
                         @Override
                         public void run() {
                             TextView makorTextView = (TextView) findViewById(R.id.makor_text);
-                            int y = makorTextView.getLayout().getLineTop(mScrollToList.get(mClickedIndex));
+                            int y = makorTextView.getLayout().getLineTop(
+                                    mScrollToList.get(mClickedIndex));
                             scrollView.scrollTo(0, y);
                             mClickedIndex++;
                         }
@@ -166,7 +171,7 @@ public class MakorDetailView extends AppCompatActivity {
         mMakorPsukim = (ArrayList<String>) receivedIntent.getExtras().get(
                 getResources().getString(R.string.psukim_uris_extra));
         getWindow().getDecorView().setBackgroundColor(
-                ContextCompat.getColor(this, R.color.LightBlue));
+                ContextCompat.getColor(this, R.color.MakorDetailViewBG));
         final Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);

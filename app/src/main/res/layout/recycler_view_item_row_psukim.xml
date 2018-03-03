@@ -3,7 +3,7 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:background="#FFF"
+              android:background="@color/PsuimListBG"
               android:clickable="true"
               android:orientation="horizontal"
               android:weightSum="1">
