@@ -17,8 +17,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activities.PsukimActivity"/>
-        <activity android:name=".activities.MekorotActivity"/>
         <activity android:name=".activities.MakorDetailView"
                   android:parentActivityName=".activities.MainActivity">
             <meta-data

@@ -56,29 +56,17 @@ public class MakorDetailView extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                // User chose the "Settings" item, show the app settings UI...
-                Intent settingsActivityIntent = new Intent(getApplicationContext(),
-                        SettingsActivity.class);
-                startActivity(settingsActivityIntent);
                 return true;
-
             case android.R.id.home:
                 onBackPressed();
                 return true;
-
             case R.id.action_favorite:
-                // User chose the "Favorite" action, mark the current item
-                // as a favorite...
                 return true;
             case R.id.action_share:
                 return true;
-
             case R.id.action_info:
                 return true;
-
             default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
         }

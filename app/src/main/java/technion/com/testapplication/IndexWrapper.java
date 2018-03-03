@@ -2,6 +2,7 @@ package technion.com.testapplication;
 
 /**
  * Created by tomerlevinson on 18/02/2018.
+ * Used to wrap indices in the wholeWorldIndexFinder.
  */
 public class IndexWrapper {
 
@@ -32,17 +33,22 @@ public class IndexWrapper {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         IndexWrapper other = (IndexWrapper) obj;
-        if (end != other.end)
+        if (end != other.end) {
             return false;
-        if (start != other.start)
+        }
+        if (start != other.start) {
             return false;
+        }
         return true;
     }
 

@@ -2,6 +2,7 @@ package technion.com.testapplication.models;
 
 /**
  * Created by tomerlevinson on 18/12/2017.
+ * Used to store mekorot.
  */
 public class MakorModel {
 

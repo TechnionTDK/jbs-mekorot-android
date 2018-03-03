@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 /**
  * Created by tomerlevinson on 18/12/2017.
+ * Used to store prakim.
  */
 public class ParashotAndPrakim {
     private ArrayList<String> mParashot;

@@ -2,6 +2,7 @@ package technion.com.testapplication.models;
 
 /**
  * Created by tomerlevinson on 16/12/2017.
+ * Used to store psukim.
  */
 public class PasukModel {
     private String mText;

@@ -2,6 +2,7 @@ package technion.com.testapplication.models;
 
 /**
  * Created by tomerlevinson on 14/01/2018.
+ * Used to store categories.
  */
 public class CategoryModel {
     private String mCategoryName;

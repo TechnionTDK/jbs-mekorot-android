@@ -6,7 +6,6 @@ import android.content.Context;
 import android.support.design.widget.TabLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,14 +22,13 @@ import technion.com.testapplication.fragments.PsukimTab;
 
 /**
  * Created by tomerlevinson on 27/01/2018.
+ * This is the dialog that is activated by the FAB in the main activity.
  */
 public class PsukimListDialog extends Dialog implements View.OnClickListener {
 
     private ListView list;
     private EditText filterText = null;
-    ArrayAdapter<String> adapter = null;
     private ArrayList<String> mAdapterArrayList = new ArrayList<>();
-    private static final String TAG = "CityList";
     private ArrayAdapter<String> mAdapter;
     ArrayList<String> mParashot;
     ArrayList<String> mPrakim;
@@ -97,7 +95,6 @@ public class PsukimListDialog extends Dialog implements View.OnClickListener {
                     tab.select();
                 }
                 psukimTabFrag.loadPuskim(perekOrParashaUri, perekOrParashaName);
-                Log.d(TAG, "Selected Item is = " + list.getItemAtPosition(position));
                 thisDialog.dismiss();
             }
         });
@@ -110,9 +107,6 @@ public class PsukimListDialog extends Dialog implements View.OnClickListener {
 
     private void setSpinner() {
         Spinner spinner = (Spinner) this.findViewById(R.id.spinner_nav);
-//        spinner.getBackground().setColorFilter(ContextCompat.getColor(mContext, R.color.Black),
-//                PorterDuff.Mode.SRC_ATOP);
-
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(mContext,
                 R.layout.spinner_item_main,
                 mContext.getResources().getStringArray(R.array.spinner_items));

@@ -1,13 +1,9 @@
 package technion.com.testapplication.activities;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -22,13 +18,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -45,14 +37,10 @@ public class MainActivity extends AppCompatActivity
 
     private ArrayList<String> mParashotAndUris;
     private ArrayList<String> mPrakimAndUris;
-    private ArrayList<String> mAdapterArrayList = new ArrayList<>();
     private final ArrayList<String> mParashot = new ArrayList<>();
     private final ArrayList<String> mPrakim = new ArrayList<>();
     private ArrayList<Pair<String, String>> parashotURILabelPairs = new ArrayList<>();
     private ArrayList<Pair<String, String>> prakimURILabelPairs = new ArrayList<>();
-    private ArrayAdapter<String> mAdapter;
-    private int mSpinnerCheck = 0;
-    private static final String HEADING_FONT_PATH = "fonts/shofarregular-webfont.ttf";
     private ViewPager mViewPager;
     private ViewPagerAdapter mViewPagerAdapter;
     private static final int PSUKIM_FRAG_POSITION = 0;
@@ -94,59 +82,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Set the spinner for this activity.
-     * Spinner will have two values:
-     * 1) Perek.
-     * 2) Parasha.
-     * Each choice will trigger invalidation of the autocomplete text view adapter.
+     * Sets the filter to be either clickable or not clickable depending
+     * on what we pass.
+     * @param isClickable
      */
-    public void setSpinner() {
-        Spinner spinner = (Spinner) findViewById(R.id.spinner_nav);
-        spinner.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.White),
-                PorterDuff.Mode.SRC_ATOP);
-
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, R.layout.spinner_layout,
-                getResources().getStringArray(R.array.spinner_items));
-        spinnerArrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        spinner.setAdapter(spinnerArrayAdapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                AutoCompleteTextView actv = (AutoCompleteTextView) findViewById(
-                        R.id.autoCompleteTextView);
-                if (((TextView) view).getText().equals(getResources().getString(R.string.perek))) {
-                    actv.setHint(getResources().getString(R.string.enter_perek));
-                    if (++mSpinnerCheck > 1 && !mAdapter.isEmpty()) {
-                        mAdapter.clear();
-                    }
-                    mAdapter.addAll(mPrakim);
-                    mAdapter.notifyDataSetChanged();
-                } else {
-                    actv.setHint(getResources().getString(R.string.enter_parasha));
-                    if (++mSpinnerCheck > 1 && !mAdapter.isEmpty()) {
-                        mAdapter.clear();
-                    }
-                    mAdapter.addAll(mParashot);
-                    mAdapter.notifyDataSetChanged();
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
-
-    /**
-     * Set fonts for the title and other elements in the activity.
-     */
-    public void setHeadingFonts() {
-        TextView tx = (TextView) findViewById(R.id.heading);
-        Typeface custom_font = Typeface.createFromAsset(getAssets(), HEADING_FONT_PATH);
-        tx.setTypeface(custom_font);
-    }
-
     public void setFilterIconClickable(boolean isClickable) {
         ImageView filterIcon = (ImageView) findViewById(R.id.filter_icon);
         if (!isClickable) {
@@ -173,7 +112,9 @@ public class MainActivity extends AppCompatActivity
         });
 
         setSupportActionBar(myToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
         setFilterIconClickable(false);
     }
 
@@ -242,69 +183,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Used in order to hide the keyboard.
-     *
-     * @param activity
-     * @param view
-     */
-    public static void hideSoftKeyboard(Activity activity, View view) {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(
-                Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
-    }
-
-    /**
-     * Sets the autocomplete text view and listens to item clicks
-     * in order to start a new activity.
-     */
-    public void setAutoCompleteTextView() {
-        AutoCompleteTextView actv = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView);
-        mAdapter = new ArrayAdapter<>
-                (this, android.R.layout.simple_list_item_1, mAdapterArrayList);
-        //TODO: change adapter in case of prakim.
-        actv.setAdapter(mAdapter);
-        actv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String spinnerText = ((Spinner) findViewById(
-                        R.id.spinner_nav)).getSelectedItem().toString();
-                Intent intent = new Intent(getApplicationContext(), PsukimActivity.class);
-                String perekOrParashaName = (String) ((TextView) view).getText();
-                String perekOrParashaUri = "";
-                ArrayList<Pair<String, String>> perekOrParashaPairs;
-                if (spinnerText.equals(getResources().getString(R.string.parasha))) {
-                    perekOrParashaPairs = parashotURILabelPairs;
-                } else {
-                    perekOrParashaPairs = prakimURILabelPairs;
-                }
-                for (Pair<String, String> uriLabel : perekOrParashaPairs) {
-                    if (uriLabel.first.equals(perekOrParashaName)) {
-                        perekOrParashaUri = uriLabel.second;
-                    }
-                }
-                intent.putExtra(getResources().getString(R.string.perek_or_parasha_name_extra),
-                        perekOrParashaName);
-                intent.putExtra(getResources().getString(R.string.perek_or_parasha_uri_extra),
-                        perekOrParashaUri);
-                PsukimTab psukimTabFrag = (PsukimTab) mViewPagerAdapter.getItem(
-                        PSUKIM_FRAG_POSITION);
-                perekOrParashaUri = perekOrParashaUri.substring(
-                        perekOrParashaUri.lastIndexOf("/") + 1);
-                TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
-                TabLayout.Tab tab = tabs.getTabAt(PSUKIM_FRAG_POSITION);
-                if (tab != null) {
-                    tab.select();
-                    setTabResultsNum(0);
-                }
-                psukimTabFrag.loadPuskim(perekOrParashaUri, perekOrParashaName);
-                hideSoftKeyboard(MainActivity.this,
-                        view);
-                mIsNewQuerySubmitted = true;
-            }
-        });
-    }
-
-    /**
      * Populate prakim and parashot pairs.
      */
     private void populateUriLabelPairs() {
@@ -349,7 +227,6 @@ public class MainActivity extends AppCompatActivity
         AutoCompleteTextView actv = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView);
         spinner.setVisibility(View.GONE);
         actv.setVisibility(View.GONE);
-//        setAutoCompleteTextView();
         setTabs();
     }
 
@@ -384,6 +261,10 @@ public class MainActivity extends AppCompatActivity
         mIsNewQuerySubmitted = areNewSelected;
     }
 
+    /**
+     * Sets the onClick listener for the filter icon.
+     * @param dialog
+     */
     @Override
     public void setFilterIcon(final Dialog dialog) {
         View filterIcon = findViewById(R.id.filter_icon);
@@ -395,6 +276,10 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    /**
+     * Sets the number of results to be seen at the mekorot tab.
+     * @param numOfResults
+     */
     @Override
     public void setTabResultsNum(int numOfResults) {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -410,6 +295,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * This method takes care of back pressing between tabs in the view pager.
+     */
     @Override
     public void onBackPressed() {
         if (mViewPager.getCurrentItem() != 0) {
