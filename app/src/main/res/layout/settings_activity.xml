@@ -24,7 +24,7 @@
             android:gravity="start"
             android:text="הגדרות"
             android:textColor="@color/SettingsHeading"
-            android:textSize="18sp"/>
+            android:textSize="@dimen/heading_text_size"/>
 
     </android.support.v7.widget.Toolbar>
 

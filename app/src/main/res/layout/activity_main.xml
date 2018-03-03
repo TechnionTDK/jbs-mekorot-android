@@ -28,7 +28,7 @@
                 android:focusableInTouchMode="true"
                 android:text="סולמות"
                 android:textColor="@color/White"
-                android:textSize="22sp"/>
+                android:textSize="@dimen/heading_text_size"/>
             <android.support.v7.widget.ActionMenuView
                 android:id="@+id/amvMenu"
                 android:layout_width="wrap_content"

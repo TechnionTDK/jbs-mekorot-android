@@ -1,7 +1,6 @@
 package technion.com.testapplication.activities;
 
 import android.content.DialogInterface;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -12,7 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -81,9 +79,6 @@ public class SettingsActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        TextView tx = (TextView) findViewById(R.id.heading);
-        Typeface custom_font = Typeface.createFromAsset(getAssets(), HEADING_FONT_PATH);
-        tx.setTypeface(custom_font);
         setSetFontSizeDialog();
         setFontFamilyDialog();
     }
