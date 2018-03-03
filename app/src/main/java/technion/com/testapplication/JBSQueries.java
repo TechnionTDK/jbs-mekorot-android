@@ -13,6 +13,7 @@ public class JBSQueries {
     public static final String JBS_URI = "uri";
     public static final String PASUK = "pasuk";
     public static final String PASUK_TEXT = "pasuk_text";
+    public static final String PASUK_LABEL = "label";
     public static final String MAKOR = "makor";
     public static final String AUTHOR = "author";
     public static final String MAKOR_NAME = "label";
@@ -81,8 +82,8 @@ public class JBSQueries {
                 " PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n" +
                 " PREFIX jbr: <http://jbs.technion.ac.il/resource/>\n" +
                 " PREFIX jbo: <http://jbs.technion.ac.il/ontology/>\n" +
-                " SELECT distinct ?pasuk ?position ?pasuk_text WHERE {\n" +
-                " ?pasuk a jbo:Pasuk; jbo:within jbr:" + parashaUri + "; jbo:position ?position; jbo:text ?pasuk_text.\n" +
+                " SELECT distinct ?pasuk ?position ?label ?pasuk_text WHERE {\n" +
+                " ?pasuk rdfs:label ?label. ?pasuk a jbo:Pasuk; jbo:within jbr:" + parashaUri + "; jbo:position ?position; jbo:text ?pasuk_text.\n" +
                 " ?perush jbo:interprets ?pasuk; jbo:text ?text.\n" +
                 "} ORDER BY ASC(xsd:integer(?position))";
     }

@@ -5,17 +5,22 @@ package technion.com.testapplication.models;
  */
 public class PasukModel {
     private String mText;
+    private String mLabel;
     private boolean mIsSelected = false;
     private String mUri = null;
 
-    public PasukModel(String text) {
+    public PasukModel(String text, String label) {
         this.mText = text;
+        this.mLabel = label;
     }
 
     public String getText() {
         return mText;
     }
 
+    public String getLabel() {
+        return mLabel;
+    }
     public void setSelected(boolean selected) {
         mIsSelected = selected;
     }

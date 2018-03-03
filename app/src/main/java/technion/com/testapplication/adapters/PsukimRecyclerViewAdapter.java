@@ -1,7 +1,12 @@
 package technion.com.testapplication.adapters;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +63,15 @@ public class PsukimRecyclerViewAdapter
     @Override
     public void onBindViewHolder(final PsukimViewHolder holder, int position) {
         final PasukModel pasukModel = mPsukim.get(position);
-        holder.mTextView.setText(pasukModel.getText());
+        String pasukText = pasukModel.getText();
+        String pasukLabel = pasukModel.getLabel();
+        String pasukCombined = pasukLabel + " " + pasukText;
+        SpannableString spannableString=  new SpannableString(pasukCombined);
+        spannableString.setSpan(new RelativeSizeSpan(0.60f), 0, pasukLabel.length(), 0);
+        StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
+        spannableString.setSpan(boldSpan, 0, pasukLabel.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        holder.mTextView.setText(spannableString);
         holder.mView.setBackgroundColor(pasukModel.isSelected() ? Color.CYAN : Color.WHITE);
         if (pasukModel.isSelected()) {
             holder.mImageView.setImageResource(R.drawable.ic_check_box_black_24dp);
