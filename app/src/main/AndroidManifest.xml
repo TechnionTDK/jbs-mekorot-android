@@ -19,8 +19,20 @@
         </activity>
         <activity android:name=".activities.PsukimActivity"/>
         <activity android:name=".activities.MekorotActivity"/>
-        <activity android:name=".activities.MakorDetailView"/>
-        <activity android:name=".activities.SettingsActivity"/>
+        <activity android:name=".activities.MakorDetailView"
+                  android:parentActivityName=".activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity"/>
+
+        </activity>
+        <activity android:name=".activities.SettingsActivity"
+                  android:parentActivityName=".activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity"/>
+
+        </activity>
     </application>
 
 </manifest>

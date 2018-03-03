@@ -64,6 +64,9 @@ public class SettingsActivity extends AppCompatActivity {
                 return false;
             case R.id.action_favorite:
                 return false;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
 
@@ -77,6 +80,7 @@ public class SettingsActivity extends AppCompatActivity {
         final Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         TextView tx = (TextView) findViewById(R.id.heading);
         Typeface custom_font = Typeface.createFromAsset(getAssets(), HEADING_FONT_PATH);
         tx.setTypeface(custom_font);

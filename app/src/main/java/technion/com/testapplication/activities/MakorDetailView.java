@@ -49,6 +49,7 @@ public class MakorDetailView extends AppCompatActivity {
         menu.findItem(R.id.action_share).setVisible(false);
         menu.findItem(R.id.action_info).setVisible(false);
         menu.findItem(R.id.action_favorite).setVisible(false);
+        menu.findItem(R.id.action_settings).setVisible(false);
         return true;
     }
 
@@ -59,6 +60,10 @@ public class MakorDetailView extends AppCompatActivity {
                 // User chose the "Settings" item, show the app settings UI...
                 Intent settingsActivityIntent = new Intent(getApplicationContext(), SettingsActivity.class);
                 startActivity(settingsActivityIntent);
+                return true;
+
+            case android.R.id.home:
+                onBackPressed();
                 return true;
 
             case R.id.action_favorite:
@@ -165,6 +170,7 @@ public class MakorDetailView extends AppCompatActivity {
         final Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         TextView toolbarTitleTV = (TextView) findViewById(R.id.toolbar_title);
         toolbarTitleTV.setText(mMakorTitle);
         TextView makorText = (TextView) findViewById(R.id.makor_text);
