@@ -17,7 +17,7 @@ public class WholeWordIndexFinder {
     }
 
     public List<IndexWrapper> findIndexesForKeyword(String keyword) {
-        String regex = "\\b"+keyword+"\\b";
+        String regex = "\b*"+keyword+"\b*";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(searchString);
 
