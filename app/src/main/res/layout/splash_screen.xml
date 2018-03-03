@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/DodgerBlue">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content">
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/splash_screen"
+    />
     <TextView android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:text="סולמות"
-              android:textSize="20sp"
+              android:layout_marginTop="100dip"
+              android:gravity="center|top"
               android:textColor="@color/White"
-              android:gravity="center"
-    />
-
-</LinearLayout>
+              android:textStyle="bold"
+              android:shadowColor="@color/Black"
+              android:shadowDx="1"
+              android:shadowDy="1"
+              android:shadowRadius="2"
+              android:text="סולמות"
+              android:textSize="40sp"/>
+</FrameLayout>
