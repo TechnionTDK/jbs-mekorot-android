@@ -23,7 +23,6 @@ import technion.com.testapplication.utils.PreferencesUtils;
  * Settings include font size and font family.
  */
 public class SettingsActivity extends AppCompatActivity {
-    public static final String HEADING_FONT_PATH = "fonts/shofarregular-webfont.ttf";
     public static final String FONT_NUMBER_ONE = "fonts/keteryg-medium-webfont.ttf";
     public static final String FONT_NUMBER_TWO = "fonts/shofarregular-webfont.ttf";
     public static final String FONT_NUMBER_THREE = "fonts/stamashkenazclm-webfont.ttf";
