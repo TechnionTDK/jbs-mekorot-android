@@ -13,13 +13,21 @@ Moreover, the user can view each makor and see the highlighted psukim that are r
 
 The project uses SPARQL queries to gather the data and show it in a convenient way, it uses a minimal NodeJS server, and in the frontend it uses Javascript, JQuery, CSS and Bootstrap.
 
-# Technologies used in this Project
+### Table of Contents
+**[Technologies used in this Project](#technologies-used-in-this-project)**<br>
+**[Repository structure](#repository-structure)**<br>
+**[General application flow](#general-application-flow)**<br>
+**[Further UI tweaking](#further-ui-tweaking)**<br>
+**[Creating new Queries](#creating-new-queries)**<br>
+**[Executing queries](#executing-queries)**<br>
+
+## Technologies used in this Project
 - [Java](https://docs.oracle.com/javase/specs/)
 - [SPARQL](https://www.w3.org/TR/rdf-sparql-query/)
 - [Androjena](https://code.google.com/archive/p/androjena/)
 
-# Repository structure
-## libs
+## Repository structure
+### libs
 - **androjena_0.5** - Androjena is an Android port of Hewlett-Packard's Jena Semantic Framework
 - **arqoid_0.5** - ARQoid is an Android port of Hewlett-Packard's ARQ SPARQL Query Engine
 - **arqoid_0.5_sources** 
@@ -28,63 +36,63 @@ The project uses SPARQL queries to gather the data and show it in a convenient w
 - **lucenoid_3.0.2** - Lucenoid is a high-performance, full-featured text search engine library
 - **slf4j-android-1.6.1-RC1** - The Simple Logging Facade for Java
 
-## activities
+### activities
 - **SplashActivity** - Splash screen while queries are being loaded.
 - **MainActivity** - Activity that holds all of the tabs. (Favorites, Mekorot, Psukim)
 - **MakorDetailView** - Activity that shows the contents of a specific Makor.
 - **MakorFavoriteView** - Activity that shows the contents of a favorite Makor in which you can share your Makor in either a text or link format.
 - **SettingActivity** - Settings activity for choosing font families and sizes.
 
-## adapters
+### adapters
 - **FavoritesRecyclerViewAdapter** - Adapter for the favorites tab.
 - **MekorotRecyclerViewAdapter** - Adapter for the mekorot tab.
 - **PsukimRecyclerViewAdapter** - Adapter for the psukim tab.
 - **ViewPagerAdapter** - Simple implementation of a view pager adapter.
 
-## async
+### async
 - **FetchHighlightsForMakorTask** - Fetch psukim to highlight indices in a makor (based on psukim list and a makor).
 - **FetchMekorotByScoreTask** - Fetch Mekorot by score given a set of psukim.
 - **FetchParashotAndPrakimTask** - Fetch all Parashot and Prakim.
 - **FetchPsukimTask** - Fetch psukim from a given perek or parasha.
 
-## fragments
+### fragments
 - **FavoritesTab** - Implementation of the favorites tab.
 - **MekorotTab** - Implementation of the mekorot tab.
 - **PsukimTab** - Implementation of the psukim tab.
 
-## models
+### models
 - **CategoryModel** - Stores makor category information. (name, number of references)
 - **MakorModel** - Stores makor information (name, author, text, number of psukim mentions, uri)
 - **ParashotAndPrakim** - Stores Parashot and Prakim.
 - **PasukModel** - Stores pasuk information (text, label, uri, whether the pasuk is selected)
 
-## dialogs
+### dialogs
 - **PsukimListDialog** - Dialog that is activated by the FAB in the main activity.
 
-## utils
+### utils
 - **FontUtils** - Used for font functionalities (setting size, setting text font)
 - **PreferencesUtils** - Used in order to store information in the shared preferences.
 - **WholeWordIndexFinder** - Used in order to match keyword in search strings.
 - **IndexWrapper** - Used to wrap indices in the WholeWorldIndexFinder.
 
-## other classes
+### other classes
 - **JBSQueries** - Contains all the queries used in the project.
 
-## assets
+### assets
 - **fonts** - Contains all the fonts used in the project.
 
-# General application flow
-- When the splash screen is loading, we're executing the FetchParashotAndPrakimTask in order to get the prakim and parashot.
-- Entering the MainActivity we're seeing a FAB. Clicking on it lets us choose a perek or a parasha. Once chosen the FetchPsukimTask is called in order to get the relevant psukim.
-- Once we've chosen a set of psukim we click on the Mekorot tab and the FetchMekorotByScoreTask is called in order to get the relevant mekorot and their filtering options.
-- Finally, clicking on a specific Makor we enter the MakorDetailView activity and call the FetchHighlightsForMakorTask in order to get the psukim highlights for the specific makor (based on our psukim selection from phase 2 in the flow)
+## General application flow
+- When the splash screen is loading, we're executing the _FetchParashotAndPrakimTask_ in order to get the prakim and parashot.
+- Entering the _MainActivity_ we're seeing a FAB. Clicking on it lets us choose a perek or a parasha. Once chosen the _FetchPsukimTask_ is called in order to get the relevant psukim.
+- Once we've chosen a set of psukim we click on the Mekorot tab and the _FetchMekorotByScoreTask_ is called in order to get the relevant mekorot and their filtering options.
+- Finally, clicking on a specific Makor we enter the _MakorDetailView_ activity and call the _FetchHighlightsForMakorTask_ in order to get the psukim highlights for the specific makor (based on our psukim selection from phase 2 in the flow)
 
-# Further UI tweaking
-- App colors and styling can be changed easily from values/styles.xml and values/colors.xml.
-- App texts and strings can also be easily modified from values/strings.xml.
-- App dimensions on specific UI elements can be tweaked form values/dimens.xml.
+## Further UI tweaking
+- App colors and styling can be changed easily from _values/styles.xml_ and _values/colors.xml_.
+- App texts and strings can also be easily modified _from values/strings.xml_.
+- App dimensions on specific UI elements can be tweaked form _values/dimens.xml_.
 
-# Creating new Queries
+## Creating new Queries
 In order to create and execute new Queries, you will first have to add your query to JBSQueries.java and afterwards have a look at any of the async classes aforementioned. (Thorough explanation below of the doInBackground method - mind the comments)
 
 
@@ -117,8 +125,8 @@ In order to create and execute new Queries, you will first have to add your quer
     }
 
 
-# Executing queries
-Any queries written in JBSQueries.java can be easily executed in the following link:
+## Executing queries
+Any queries written in _JBSQueries.java_ can be easily executed in the following link:
 
 [http://tdk-p6.cs.technion.ac.il:8081/search.html](http://tdk-p6.cs.technion.ac.il:8081/search.html)
 
@@ -134,6 +142,6 @@ All you'll have to do is define the following:
 
 - **And finally paste your query into the edit box**.
 
-### Note 
+#### Notes 
 - some queries are parametized, therefore you will need to replace the variables with actual strings.
 - Other queries you can play around with can be found here: [Google Doc](https://docs.google.com/document/d/1MhTRhy99P_DytAVrMufJRUMmfHu16vKDs2y2jmT3pXo/edit)
