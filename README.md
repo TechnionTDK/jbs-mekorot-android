@@ -71,7 +71,7 @@ The project uses SPARQL queries to gather the data and show it in a convenient w
 - **JBSQueries** - Contains all the queries used in the project.
 
 ## assets
-- **fonts** - contains all the fonts used in the project.
+- **fonts** - Contains all the fonts used in the project.
 
 # General application flow
 - When the splash screen is loading, we're executing the FetchParashotAndPrakimTask in order to get the prakim and parashot.
@@ -85,7 +85,7 @@ The project uses SPARQL queries to gather the data and show it in a convenient w
 - App dimensions on specific UI elements can be tweaked form values/dimens.xml.
 
 # Creating new Queries
-In order to create new Queries, you will first have to add your query to JBSQueries.java and also have a look at any of the async classes. (Thorough explanation below of the doInBackground method - mind the comments)
+In order to create and execute new Queries, you will first have to add your query to JBSQueries.java and afterwards have a look at any of the async classes aforementioned. (Thorough explanation below of the doInBackground method - mind the comments)
 
 
 	ArrayList<String> queryResults = new ArrayList<>();
