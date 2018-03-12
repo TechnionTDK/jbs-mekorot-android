@@ -126,7 +126,7 @@ All you'll have to do is define the following:
 
 - **eLinda endpoint as** [http://tdk-p6.cs.technion.ac.il:8081/](http://tdk-p6.cs.technion.ac.il:8081/)
 - **JBS graph name as** [http://jbs.technion.ac.il](http://jbs.technion.ac.il)
--Prefixes as 
+- **Prefixes as**
 
 		PREFIX jbr: <http://jbs.technion.ac.il/resource/>
 		PREFIX jbo: <http://jbs.technion.ac.il/ontology/>
