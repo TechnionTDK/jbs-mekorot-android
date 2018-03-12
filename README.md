@@ -11,7 +11,7 @@ The user can filter the shown mekorot and in case he liked them, click the like 
 
 Moreover, the user can view each makor and see the highlighted psukim that are referenced in that makor and browse through them, using the forward and backward buttons supplied in the shown makor text.
 
-The project uses SPARQL queries to gather the data and show it in a convenient way, it uses a minimal NodeJS server, and in the frontend it uses Javascript, JQuery, CSS and Bootstrap.
+The project uses SPARQL queries to gather the data and show it in a convenient way.
 
 ### Table of Contents
 **[Technologies used in this Project](#technologies-used-in-this-project)**<br>
