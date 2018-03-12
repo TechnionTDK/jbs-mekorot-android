@@ -20,6 +20,7 @@ import technion.com.testapplication.utils.PreferencesUtils;
 
 /**
  * Created by tomerlevinson on 21/01/2018.
+ * Settings include font size and font family.
  */
 public class SettingsActivity extends AppCompatActivity {
     public static final String HEADING_FONT_PATH = "fonts/shofarregular-webfont.ttf";

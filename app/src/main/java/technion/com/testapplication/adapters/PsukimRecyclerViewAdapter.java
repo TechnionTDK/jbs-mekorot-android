@@ -20,6 +20,7 @@ import technion.com.testapplication.models.PasukModel;
 
 /**
  * Created by tomerlevinson on 16/12/2017.
+ * Psukim tab recycler view adapter.
  */
 public class PsukimRecyclerViewAdapter
         extends RecyclerView.Adapter<PsukimRecyclerViewAdapter.PsukimViewHolder> {

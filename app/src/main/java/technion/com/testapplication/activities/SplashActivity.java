@@ -10,6 +10,7 @@ import technion.com.testapplication.R;
 
 /**
  * Created by tomerlevinson on 15/12/2017.
+ * Shows until the get all parashot and prakim query finishes.
  */
 public class SplashActivity extends AppCompatActivity {
     @Override

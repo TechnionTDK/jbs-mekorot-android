@@ -23,6 +23,7 @@ import technion.com.testapplication.utils.PreferencesUtils;
 
 /**
  * Created by tomerlevinson on 23/12/2017.
+ * Mekorot tab recycler view adapter.
  */
 public class MekorotRecyclerViewAdapter
         extends RecyclerView.Adapter<MekorotRecyclerViewAdapter.MekorotViewHolder> {

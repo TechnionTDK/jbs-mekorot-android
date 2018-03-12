@@ -25,6 +25,7 @@ import technion.com.testapplication.utils.PreferencesUtils;
 
 /**
  * Created by tomerlevinson on 03/03/2018.
+ * Favorites tab recycler view adapter.
  */
 public class FavoritesRecyclerViewAdapter
         extends RecyclerView.Adapter<FavoritesRecyclerViewAdapter.FavoritesViewHolder> {

@@ -67,7 +67,7 @@ The project uses SPARQL queries to gather the data and show it in a convenient w
 - **PasukModel** - Stores pasuk information (text, label, uri, whether the pasuk is selected)
 
 ### dialogs
-- **PsukimListDialog** - Dialog that is activated by the FAB in the main activity.
+- **PrakimParashotListDialog** - Dialog that is activated by the FAB in the main activity.
 
 ### utils
 - **FontUtils** - Used for font functionalities (setting size, setting text font)

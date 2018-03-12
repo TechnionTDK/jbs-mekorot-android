@@ -41,6 +41,9 @@ public class FavoritesTab extends Fragment {
         }
     }
 
+    /**
+     * Used in order to communicate with the main activity upon changes in tab number of results.
+     */
     public interface FavoritesChangeListener {
         public void setFavoriteTabResultsNum(int numOfResults);
     }

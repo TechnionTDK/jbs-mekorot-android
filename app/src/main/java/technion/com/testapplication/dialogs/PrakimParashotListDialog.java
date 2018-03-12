@@ -25,7 +25,7 @@ import technion.com.testapplication.fragments.PsukimTab;
  * Created by tomerlevinson on 27/01/2018.
  * This is the dialog that is activated by the FAB in the main activity.
  */
-public class PsukimListDialog extends Dialog implements View.OnClickListener {
+public class PrakimParashotListDialog extends Dialog implements View.OnClickListener {
 
     private ListView list;
     private EditText filterText = null;
@@ -40,11 +40,11 @@ public class PsukimListDialog extends Dialog implements View.OnClickListener {
     private ViewPagerAdapter mViewPagerAdapter;
     private Activity mHostActivity;
 
-    public PsukimListDialog(Context context, ArrayList<String> prakim, ArrayList<String> parashot,
-                            ArrayList<Pair<String, String>> parashotURILabelPairs,
-                            ArrayList<Pair<String, String>> prakimURILabelPairs,
-                            ViewPagerAdapter viewPagerAdapter,
-                            Activity activity) {
+    public PrakimParashotListDialog(Context context, ArrayList<String> prakim, ArrayList<String> parashot,
+                                    ArrayList<Pair<String, String>> parashotURILabelPairs,
+                                    ArrayList<Pair<String, String>> prakimURILabelPairs,
+                                    ViewPagerAdapter viewPagerAdapter,
+                                    Activity activity) {
         super(context);
 
         /** Design the dialog in main.xml file */
@@ -95,7 +95,7 @@ public class PsukimListDialog extends Dialog implements View.OnClickListener {
                 if (tab != null) {
                     tab.select();
                 }
-                psukimTabFrag.loadPuskim(perekOrParashaUri, perekOrParashaName);
+                psukimTabFrag.loadPuskim(perekOrParashaUri);
                 thisDialog.dismiss();
             }
         });

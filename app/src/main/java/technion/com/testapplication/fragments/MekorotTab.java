@@ -44,6 +44,12 @@ public class MekorotTab extends Fragment {
     public MekorotTab() {
     }
 
+    /**
+     * Used in order to communicate with the main activity in the following scenarios:
+     * 1) Filter icon should be enabled.
+     * 2) Set tab number of results.
+     * 3) Update number of favorites.
+     */
     public interface MekorotChangesListener {
         public void setFilterIcon(Dialog dialog);
 
@@ -76,6 +82,9 @@ public class MekorotTab extends Fragment {
 
     }
 
+    /**
+     * Sets the filter dialog in the mekorot tab.
+     */
     private void setFilterDialog() {
         final Fragment mekorotTabFrag = this;
         ArrayList<String> prettifiedCategories = new ArrayList<>();
@@ -147,12 +156,20 @@ public class MekorotTab extends Fragment {
         mCallback.setFilterIcon(dialog);
     }
 
+    /**
+     * Main activity uses this to communicate with the fragment
+     * upon a message from the favorites, that it has changed.
+     */
     public void notifyFromFavorites() {
         if (mAdapter != null) {
             mAdapter.notifyDataSetChanged();
         }
     }
 
+    /**
+     * Run the mekorot and categories query.
+     * @param psukimUris
+     */
     public void runMekorotAndCategoriesQueries(ArrayList<String> psukimUris) {
         mPrefixedPsukimUris = new ArrayList<>();
         for (int i = 0; i < psukimUris.size(); i++) {

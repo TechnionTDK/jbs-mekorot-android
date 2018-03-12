@@ -83,6 +83,10 @@ public class PsukimTab extends Fragment {
     public PsukimTab() {
     }
 
+    /**
+     * Used from the main activity in order to notify the psukim tab
+     * that we are about to move to the mekorot tab.
+     */
     public void moveToMekorot() {
         ArrayList<String> psukimUris = new ArrayList<>();
         if (mAdapter != null) {
@@ -104,7 +108,11 @@ public class PsukimTab extends Fragment {
         mCallback.onMoveToMekorotTab(psukimUris);
     }
 
-    public void loadPuskim(String perekOrParashaUri, String perekOrParashaName) {
+    /**
+     * The FAB dialog notifies the tab that it should load relevant psukim.
+     * @param perekOrParashaUri
+     */
+    public void loadPuskim(String perekOrParashaUri) {
         String psukimByParashaQuery = JBSQueries.getAllPsukimFromParashaQuery(perekOrParashaUri);
         FetchPsukimTask fetchPsukimTask = new FetchPsukimTask(this);
         fetchPsukimTask.execute(psukimByParashaQuery);

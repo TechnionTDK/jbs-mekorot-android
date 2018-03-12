@@ -11,6 +11,7 @@ import technion.com.testapplication.activities.SettingsActivity;
 
 /**
  * Created by tomerlevinson on 22/01/2018.
+ * Used in order to take care of font tasks. (Setting size, font-family)
  */
 public class FontUtils {
     public static void setTextFont(TextView tv, Context context) {

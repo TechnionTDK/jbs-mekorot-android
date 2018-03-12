@@ -22,15 +22,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import technion.com.testapplication.utils.IndexWrapper;
 import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.R;
-import technion.com.testapplication.utils.WholeWordIndexFinder;
 import technion.com.testapplication.async.FetchHighlightsForMakorTask;
 import technion.com.testapplication.utils.FontUtils;
+import technion.com.testapplication.utils.IndexWrapper;
+import technion.com.testapplication.utils.WholeWordIndexFinder;
 
 /**
  * Created by tomerlevinson on 23/12/2017.
+ * Shows the chosen Makor from the makor tab.
  */
 public class MakorDetailView extends AppCompatActivity {
     private String mMakorTitle;
@@ -40,6 +41,8 @@ public class MakorDetailView extends AppCompatActivity {
     private ArrayList<String> mMakorPsukim;
     private ArrayList<Integer> mScrollToList;
     private int mClickedIndex = 0;
+    private static final String INDICES_DELIMITER = "-";
+    private static final String SPLIT_BY_SPACES_REGEX = "\\s+";
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -72,44 +75,44 @@ public class MakorDetailView extends AppCompatActivity {
         }
     }
 
-    public void highlightPsukim(ArrayList<String> psukimSubstrings) {
-        TextView makorTextView = (TextView) findViewById(R.id.makor_text);
-        String makorText = makorTextView.getText().toString();
-        String[] splitMakorText = makorText.split("\\s+");
-        SpannableString spannableMakorText = new SpannableString(makorText);
-        mScrollToList = new ArrayList<>();
-        for (String subsetToHighlight : psukimSubstrings) {
-            String[] splitSubset = subsetToHighlight.split("-");
-            int startWord = Integer.parseInt(splitSubset[0]);
-            int endWord = Integer.parseInt(splitSubset[1]);
-            String keyword = "";
-            for (int i = startWord; i <= endWord; i++) {
-                if (i == endWord) {
-                    keyword += splitMakorText[i];
-                } else {
-                    keyword += splitMakorText[i] + " ";
-                }
-            }
-            List<IndexWrapper> indicesList = (new WholeWordIndexFinder(
-                    makorText)).findIndexesForKeyword(keyword);
-            for (IndexWrapper indexWrapper : indicesList) {
-                int lineNum = makorTextView.getLayout().getLineForOffset(indexWrapper.getStart());
-                mScrollToList.add(lineNum);
-            }
-
-            for (IndexWrapper indexWrapper : indicesList) {
-                spannableMakorText.setSpan(new BackgroundColorSpan(
-                                ContextCompat.getColor(getApplicationContext(), R.color.Highlight)),
-                        indexWrapper.getStart(), indexWrapper.getEnd(),
-                        0);
+    /**
+     * Given an indices pair of the following format:
+     * "X-Y" returns the words corresponding it from the splitMakorText.
+     * @param indicesPair - String of the format "X-Y" that represents the indices of the words in the text.
+     * @param splitMakorText - Makor array of words.
+     * @return String represting successive words in the given text between the indices X and Y.
+     */
+    private String calculatePasukReferenceFromGivenIndices(String indicesPair, String[] splitMakorText) {
+        String[] splitSubset = indicesPair.split(INDICES_DELIMITER);
+        int startWord = Integer.parseInt(splitSubset[0]);
+        int endWord = Integer.parseInt(splitSubset[1]);
+        String partialPasukText = "";
+        for (int i = startWord; i <= endWord; i++) {
+            if (i == endWord) {
+                partialPasukText += splitMakorText[i];
+            } else {
+                partialPasukText += splitMakorText[i] + " ";
             }
         }
+        return partialPasukText;
+    }
+
+    /**
+     * Removes duplicates from the scroll list and sorts it.
+     */
+    private void removeDuplicatesAndSortScrollList() {
         Set<Integer> hs = new HashSet<>();
+        // Remove duplicates from scroll list and sort it.
         hs.addAll(mScrollToList);
         mScrollToList.clear();
         mScrollToList.addAll(hs);
         Collections.sort(mScrollToList);
-        makorTextView.setText(spannableMakorText);
+    }
+
+    /**
+     * Sets the next and prev buttons for the highlights.
+     */
+    private void setPrevNextButtons() {
         Button nextButton = (Button) findViewById(R.id.next);
         Button previousButton = (Button) findViewById(R.id.previous);
         previousButton.setOnClickListener(new View.OnClickListener() {
@@ -176,11 +179,94 @@ public class MakorDetailView extends AppCompatActivity {
         });
     }
 
+    /**
+     * Sets the background color and toolbar options.
+     */
+    private void setToolbarAndColors() {
+        getWindow().getDecorView().setBackgroundColor(
+                ContextCompat.getColor(this, R.color.MakorDetailViewBG));
+        final Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        TextView toolbarTitleTV = (TextView) findViewById(R.id.toolbar_title);
+        toolbarTitleTV.setText(mMakorTitle);
+    }
+
+    /**
+     * Sets makor text according to chosen settings.
+     */
+    private void setMakorText() {
+        TextView makorText = (TextView) findViewById(R.id.makor_text);
+        makorText.setText(mMakorText);
+
+        // Set text font from shared preferences.
+        FontUtils.setTextFont(makorText, getApplicationContext());
+
+        // Set text size from shared prefernces.
+        FontUtils.setTextSize(makorText, getApplicationContext());
+    }
+
+    /**
+     * Executes the get highlights for makor query.
+     */
+    private void executeGetHighlightsForMakorQuery() {
+        String fetchHighlightsForMakor = JBSQueries.getPsukimToHighlightFromMakor(mMakorUri,
+                mMakorPsukim);
+        FetchHighlightsForMakorTask fetchHighlightsForMakorTask = new FetchHighlightsForMakorTask(
+                this, MakorDetailView.this);
+        fetchHighlightsForMakorTask.execute(fetchHighlightsForMakor);
+    }
+
+    /**
+     * 1) Go over each index range in the psukimSubstrings.
+     * 2) Highlight each index-range.
+     * 3) Calculate scroll position for next-prev buttons.
+     * @param psukimSubstrings - psukim substrings of the following format: ["X-Y", "A-B",..]
+     *                          For example: ["1-4", "50-65",...]
+     */
+    public void highlightPsukim(ArrayList<String> psukimSubstrings) {
+        TextView makorTextView = (TextView) findViewById(R.id.makor_text);
+        String makorText = makorTextView.getText().toString();
+        String[] splitMakorText = makorText.split(SPLIT_BY_SPACES_REGEX);
+        SpannableString spannableMakorText = new SpannableString(makorText);
+        mScrollToList = new ArrayList<>();
+        for (String subsetToHighlight : psukimSubstrings) {
+            String successivePsukim = calculatePasukReferenceFromGivenIndices(subsetToHighlight, splitMakorText);
+
+            // Find all indices inside makorText for the given psukim String.
+            List<IndexWrapper> indicesList = (new WholeWordIndexFinder(
+                    makorText)).findIndexesForKeyword(successivePsukim);
+
+            // Calculate for each indicesList the scroll position.
+            for (IndexWrapper indexWrapper : indicesList) {
+                int lineNum = makorTextView.getLayout().getLineForOffset(indexWrapper.getStart());
+                mScrollToList.add(lineNum);
+            }
+
+            // Highlight each indicesList members.
+            for (IndexWrapper indexWrapper : indicesList) {
+                spannableMakorText.setSpan(new BackgroundColorSpan(
+                                ContextCompat.getColor(getApplicationContext(), R.color.Highlight)),
+                        indexWrapper.getStart(), indexWrapper.getEnd(),
+                        0);
+            }
+        }
+        removeDuplicatesAndSortScrollList();
+
+        // Set highlights in makor text
+        makorTextView.setText(spannableMakorText);
+        setPrevNextButtons();
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.makor_detail_view);
         Intent receivedIntent = getIntent();
+        // Get extras from intent.
         mMakorText = receivedIntent.getStringExtra(getResources().getString(R.string.makor_text));
         mMakorAuthor = receivedIntent.getStringExtra(
                 getResources().getString(R.string.makor_author));
@@ -190,28 +276,10 @@ public class MakorDetailView extends AppCompatActivity {
         mMakorUri = getResources().getString(R.string.jbr_prefix) + mMakorUri;
         mMakorPsukim = (ArrayList<String>) receivedIntent.getExtras().get(
                 getResources().getString(R.string.psukim_uris_extra));
-        getWindow().getDecorView().setBackgroundColor(
-                ContextCompat.getColor(this, R.color.MakorDetailViewBG));
-        final Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        TextView toolbarTitleTV = (TextView) findViewById(R.id.toolbar_title);
-        toolbarTitleTV.setText(mMakorTitle);
-        TextView makorText = (TextView) findViewById(R.id.makor_text);
-        makorText.setText(mMakorText);
 
-        // Set text font from shared preferences.
-        FontUtils.setTextFont(makorText, getApplicationContext());
-
-        // Set text size from shared prefernces.
-        FontUtils.setTextSize(makorText, getApplicationContext());
-
-        String fetchHighlightsForMakor = JBSQueries.getPsukimToHighlightFromMakor(mMakorUri,
-                mMakorPsukim);
-        FetchHighlightsForMakorTask fetchHighlightsForMakorTask = new FetchHighlightsForMakorTask(
-                this, MakorDetailView.this);
-        fetchHighlightsForMakorTask.execute(fetchHighlightsForMakor);
+        setToolbarAndColors();
+        setMakorText();
+        executeGetHighlightsForMakorQuery();
     }
 
     @Override

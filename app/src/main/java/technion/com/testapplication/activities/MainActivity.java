@@ -22,7 +22,7 @@ import android.widget.ImageView;
 
 import java.util.ArrayList;
 
-import technion.com.testapplication.dialogs.PsukimListDialog;
+import technion.com.testapplication.dialogs.PrakimParashotListDialog;
 import technion.com.testapplication.R;
 import technion.com.testapplication.adapters.ViewPagerAdapter;
 import technion.com.testapplication.async.FetchParashotAndPrakimTask;
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity
      * Set toolbar for this activity.
      * This will also set the spinner.
      */
-    public void setToolbar() {
+    private void setToolbar() {
         final Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         amvMenu = (ActionMenuView) myToolbar.findViewById(R.id.amvMenu);
         amvMenu.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Set the tabs for the view pager.
      */
-    public void setTabs() {
+    private void setTabs() {
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         mPsukimTab = new PsukimTab();
@@ -138,10 +138,10 @@ public class MainActivity extends AppCompatActivity
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PsukimListDialog psukimListDialog = new PsukimListDialog(MainActivity.this, mPrakim,
+                PrakimParashotListDialog prakimParashotListDialog = new PrakimParashotListDialog(MainActivity.this, mPrakim,
                         mParashot, parashotURILabelPairs, prakimURILabelPairs, mViewPagerAdapter,
                         MainActivity.this);
-                psukimListDialog.show();
+                prakimParashotListDialog.show();
                 setTabResultsNum(0);
                 mIsNewQuerySubmitted = true;
             }
@@ -264,6 +264,11 @@ public class MainActivity extends AppCompatActivity
         mekorotTabFrag.notifyFromFavorites();
     }
 
+    /**
+     * Psukim tab communicates with main activity when psukim are selected
+     * via this method.
+     * @param areNewSelected
+     */
     @Override
     public void onPsukimSelected(boolean areNewSelected) {
         mIsNewQuerySubmitted = areNewSelected;
@@ -302,6 +307,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Favorites tab communicates with the main activity via this method in order
+     * to update the num of results shown in the tab.
+     * @param numOfFavorites
+     */
     @Override
     public void updateFavoritesNum(int numOfFavorites) {
         setFavoriteTabResultsNum(numOfFavorites);
@@ -320,6 +330,11 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    /**
+     * Favorites tab communicates with the main activity via this method in order
+     * to set the num of results shown in the tab.
+     * @param numOfResults
+     */
     @Override
     public void setFavoriteTabResultsNum(int numOfResults) {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);

@@ -33,6 +33,8 @@
     <string name="favorites_text_prefix">text***</string>
     <string name="favorites_file_name">favorites</string>
     <string name="choose_sharing_option">בחר אופן שיתוף</string>
+    <string name="full_text_share_option">טקסט מלא</string>
+    <string name="link_to_text_share_option">קישור לאתר</string>
     <string-array name="spinner_items">
         <item> פרשה</item>
         <item> פרק</item>
