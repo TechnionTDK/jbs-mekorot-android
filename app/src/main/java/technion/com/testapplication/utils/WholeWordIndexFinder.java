@@ -1,4 +1,4 @@
-package technion.com.testapplication;
+package technion.com.testapplication.utils;
 
 import java.util.ArrayList;
 import java.util.List;

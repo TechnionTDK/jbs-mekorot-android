@@ -22,10 +22,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import technion.com.testapplication.IndexWrapper;
+import technion.com.testapplication.utils.IndexWrapper;
 import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.R;
-import technion.com.testapplication.WholeWordIndexFinder;
+import technion.com.testapplication.utils.WholeWordIndexFinder;
 import technion.com.testapplication.async.FetchHighlightsForMakorTask;
 import technion.com.testapplication.utils.FontUtils;
 

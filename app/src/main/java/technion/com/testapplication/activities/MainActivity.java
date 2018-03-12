@@ -22,7 +22,7 @@ import android.widget.ImageView;
 
 import java.util.ArrayList;
 
-import technion.com.testapplication.PsukimListDialog;
+import technion.com.testapplication.dialogs.PsukimListDialog;
 import technion.com.testapplication.R;
 import technion.com.testapplication.adapters.ViewPagerAdapter;
 import technion.com.testapplication.async.FetchParashotAndPrakimTask;

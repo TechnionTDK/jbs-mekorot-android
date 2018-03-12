@@ -1,4 +1,4 @@
-package technion.com.testapplication;
+package technion.com.testapplication.dialogs;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import technion.com.testapplication.R;
 import technion.com.testapplication.adapters.ViewPagerAdapter;
 import technion.com.testapplication.fragments.PsukimTab;
 

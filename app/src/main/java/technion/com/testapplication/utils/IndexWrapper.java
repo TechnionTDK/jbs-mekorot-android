@@ -1,4 +1,4 @@
-package technion.com.testapplication;
+package technion.com.testapplication.utils;
 
 /**
  * Created by tomerlevinson on 18/02/2018.

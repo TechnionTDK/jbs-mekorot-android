@@ -23,7 +23,7 @@ import technion.com.testapplication.models.MakorModel;
 
 /**
  * Created by tomerlevinson on 18/12/2017.
- * This class is intended for fetching mekorot by task.
+ * This class is intended for fetching mekorot by score.
  */
 public class FetchMekorotByScoreTask
         extends
