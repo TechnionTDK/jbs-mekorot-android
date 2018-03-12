@@ -116,3 +116,24 @@ In order to create and execute new Queries, you will first have to add your quer
         err.printStackTrace();
     }
 
+
+# Executing queries
+Any queries written in JBSQueries.java can be easily executed in the following link:
+
+[http://tdk-p6.cs.technion.ac.il:8081/search.html](http://tdk-p6.cs.technion.ac.il:8081/search.html)
+
+All you'll have to do is define the following:
+
+- **eLinda endpoint as** [http://tdk-p6.cs.technion.ac.il:8081/](http://tdk-p6.cs.technion.ac.il:8081/)
+- **JBS graph name as** [http://jbs.technion.ac.il](http://jbs.technion.ac.il)
+-Prefixes as 
+
+		PREFIX jbr: <http://jbs.technion.ac.il/resource/>
+		PREFIX jbo: <http://jbs.technion.ac.il/ontology/>
+		PREFIX dco: <http://purl.org/dc/terms/>
+
+- **And finally paste your query into the edit box**.
+
+### Note 
+- some queries are parametized, therefore you will need to replace the variables with actual strings.
+- Other queries you can play around with can be found here: [Google Doc](https://docs.google.com/document/d/1MhTRhy99P_DytAVrMufJRUMmfHu16vKDs2y2jmT3pXo/edit)
