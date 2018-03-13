@@ -13,6 +13,9 @@ Moreover, the user can view each makor and see the highlighted psukim that are r
 
 The project uses SPARQL queries to gather the data and show it in a convenient way.
 
+### pptx Presentation
+**[Presentation](/jbs-mekorot-android.pptx)**<br>
+
 ### Table of Contents
 **[Technologies used in this Project](#technologies-used-in-this-project)**<br>
 **[Repository structure](#repository-structure)**<br>
