@@ -153,6 +153,7 @@
     <color name="PsuimListBG">#FFFFFF</color>
     <color name="SplashScreenSulamotText">#FFFFFF</color>
     <color name="SplashScreenSulamotTextShadow">#000000</color>
+    <color name="SelectedTabIndicatorColor">#000000</color>
     <color name="FilterIconUnavailable">#808080</color>
     <color name="MainActivityBG">#ADD8E6</color>
     <color name="SettingsHeading">#FFFFFF</color>

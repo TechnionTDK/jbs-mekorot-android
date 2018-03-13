@@ -34,7 +34,7 @@ import technion.com.testapplication.utils.PreferencesUtils;
 public class MainActivity extends AppCompatActivity
         implements PsukimTab.OnMoveToMekorotTabListener,
         MekorotTab.MekorotChangesListener,
-        FavoritesTab.FavoritesChangeListener{
+        FavoritesTab.FavoritesChangeListener {
 
     private ArrayList<String> mParashotAndUris;
     private ArrayList<String> mPrakimAndUris;
@@ -52,6 +52,12 @@ public class MainActivity extends AppCompatActivity
     private FavoritesTab mFavoritesTab;
     private FloatingActionButton mFab;
     private ActionMenuView amvMenu;
+    private static final String SELECTED_TAB_INDICATOR_COLOR = "#000000";
+    private static final int PSUKIM_TAB_INDEX = 0;
+    private static final int MEKOROT_TAB_INDEX = 1;
+    private static final int FAVORITES_TAB_INDEX = 2;
+    private static final int OFF_SCREEN_PAGE_LIMIT = 2;
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -86,6 +92,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Sets the filter to be either clickable or not clickable depending
      * on what we pass.
+     *
      * @param isClickable
      */
     public void setFilterIconClickable(boolean isClickable) {
@@ -133,12 +140,13 @@ public class MainActivity extends AppCompatActivity
         mViewPagerAdapter.addFragment(mMekorotTab, getResources().getString(R.string.mekorot));
         mViewPagerAdapter.addFragment(mFavoritesTab, getResources().getString(R.string.favorites));
         mViewPager.setAdapter(mViewPagerAdapter);
-        mViewPager.setOffscreenPageLimit(2);
+        mViewPager.setOffscreenPageLimit(OFF_SCREEN_PAGE_LIMIT);
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PrakimParashotListDialog prakimParashotListDialog = new PrakimParashotListDialog(MainActivity.this, mPrakim,
+                PrakimParashotListDialog prakimParashotListDialog = new PrakimParashotListDialog(
+                        MainActivity.this, mPrakim,
                         mParashot, parashotURILabelPairs, prakimURILabelPairs, mViewPagerAdapter,
                         MainActivity.this);
                 prakimParashotListDialog.show();
@@ -148,25 +156,24 @@ public class MainActivity extends AppCompatActivity
         });
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-        tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#000000"));
+        tabLayout.setSelectedTabIndicatorColor(Color.parseColor(SELECTED_TAB_INDICATOR_COLOR));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition() == 0) {
-                    //Psukim tab
+                if (tab.getPosition() == PSUKIM_TAB_INDEX) {
                     setFilterIconClickable(false);
                     mFab.show();
-                } else if (tab.getPosition() == 1) {
-                    //Mekorot tab
+                } else if (tab.getPosition() == MEKOROT_TAB_INDEX) {
                     PsukimTab psukimTabFrag = (PsukimTab) mViewPagerAdapter.getItem(
                             PSUKIM_FRAG_POSITION);
                     psukimTabFrag.moveToMekorot();
                     mFab.hide();
-                } else if (tab.getPosition() == 2) {
-                    // Favorites tab
+                } else if (tab.getPosition() == FAVORITES_TAB_INDEX) {
                     mFab.hide();
                     setFilterIconClickable(false);
-                    PreferencesUtils.getSharedPreferencesByFileName("favorites", getApplicationContext());
+                    PreferencesUtils.getSharedPreferencesByFileName(
+                            getResources().getString(R.string.favorites_file_name),
+                            getApplicationContext());
                     FavoritesTab favoritesTab = (FavoritesTab) mViewPagerAdapter.getItem(2);
                     favoritesTab.setRecyclerViewAdapter();
                 }
@@ -267,6 +274,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Psukim tab communicates with main activity when psukim are selected
      * via this method.
+     *
      * @param areNewSelected
      */
     @Override
@@ -276,6 +284,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * Sets the onClick listener for the filter icon.
+     *
      * @param dialog
      */
     @Override
@@ -291,6 +300,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * Sets the number of results to be seen at the mekorot tab.
+     *
      * @param numOfResults
      */
     @Override
@@ -301,8 +311,9 @@ public class MainActivity extends AppCompatActivity
             if (numOfResults == 0) {
                 mekorotTab.setText(getResources().getString(R.string.mekorot));
             } else {
-                mekorotTab.setText(getResources().getString(R.string.mekorot) + " (" + Integer.toString(
-                        numOfResults) + ")");
+                mekorotTab.setText(
+                        getResources().getString(R.string.mekorot) + " (" + Integer.toString(
+                                numOfResults) + ")");
             }
         }
     }
@@ -310,6 +321,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Favorites tab communicates with the main activity via this method in order
      * to update the num of results shown in the tab.
+     *
      * @param numOfFavorites
      */
     @Override
@@ -333,6 +345,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Favorites tab communicates with the main activity via this method in order
      * to set the num of results shown in the tab.
+     *
      * @param numOfResults
      */
     @Override
@@ -343,8 +356,9 @@ public class MainActivity extends AppCompatActivity
             if (numOfResults == 0) {
                 favoritesTab.setText(getResources().getString(R.string.favorites));
             } else {
-                favoritesTab.setText(getResources().getString(R.string.favorites) + " (" + Integer.toString(
-                        numOfResults) + ")");
+                favoritesTab.setText(
+                        getResources().getString(R.string.favorites) + " (" + Integer.toString(
+                                numOfResults) + ")");
             }
 
         }

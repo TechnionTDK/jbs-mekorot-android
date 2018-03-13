@@ -39,6 +39,7 @@ public class PrakimParashotListDialog extends Dialog implements View.OnClickList
     private ArrayList<Pair<String, String>> mPrakimURILabelPairs;
     private ViewPagerAdapter mViewPagerAdapter;
     private Activity mHostActivity;
+    private static final int PSUKIM_TAB_INDEX = 0;
 
     public PrakimParashotListDialog(Context context, ArrayList<String> prakim, ArrayList<String> parashot,
                                     ArrayList<Pair<String, String>> parashotURILabelPairs,
@@ -91,7 +92,7 @@ public class PrakimParashotListDialog extends Dialog implements View.OnClickList
                 perekOrParashaUri = perekOrParashaUri.substring(
                         perekOrParashaUri.lastIndexOf("/") + 1);
                 TabLayout tabs = (TabLayout) mHostActivity.findViewById(R.id.tabs);
-                TabLayout.Tab tab = tabs.getTabAt(0);
+                TabLayout.Tab tab = tabs.getTabAt(PSUKIM_TAB_INDEX);
                 if (tab != null) {
                     tab.select();
                 }
