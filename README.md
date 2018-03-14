@@ -1,7 +1,17 @@
-# Jewish Bookshelf Android - jbs-mekorot-android
-An Android Application providing accessibility to the texts of the jewish book shelf with various options that functions as a search engine for texts (mekorot) within the Jewish Bookshelf. 
+# "Sulamot" app for the Jewish Bookshelf
+An Android application providing accessibility to the texts of the jewish book shelf with various options that functions as a search engine for texts (mekorot) within the Jewish Bookshelf.
+
+// Try to improve, and mention the Linked Dataset that we are developing, may link to https://github.com/TechnionTDK/jbs-project
+
+## Basic app flow
+
+// use bullets. Make the items more short and precise.
 
 The user while interacting with the app (clicking on the floating action button) enters a name of a perek/parasha and receives the set of psukim of that makor.
+
+Example:
+- Getting the text of Parasha/Perek from the Tanach.
+- Select psukim (verses), or select all the psukim.
 
 At this moment, the psukim tab fills up with the psukim of the selected Makor, and the user has an option to mark a set of psukim of his choice. 
 
@@ -11,12 +21,11 @@ The user can filter the shown mekorot and in case he liked them, click the like 
 
 Moreover, the user can view each makor and see the highlighted psukim that are referenced in that makor and browse through them, using the forward and backward buttons supplied in the shown makor text.
 
-The project uses SPARQL queries to gather the data and show it in a convenient way.
 
-### pptx Presentation
+## pptx Presentation
 **[Presentation](/jbs-mekorot-android.pptx)**<br>
 
-### Table of Contents
+## Table of Contents
 **[Technologies used in this Project](#technologies-used-in-this-project)**<br>
 **[Repository structure](#repository-structure)**<br>
 **[General application flow](#general-application-flow)**<br>
@@ -24,12 +33,18 @@ The project uses SPARQL queries to gather the data and show it in a convenient w
 **[Creating new Queries](#creating-new-queries)**<br>
 **[Executing queries](#executing-queries)**<br>
 
+## Installation
+> git clone ...
+
 ## Technologies used in this Project
+The project uses SPARQL queries to gather the data and show it in a convenient way.
 - [Java](https://docs.oracle.com/javase/specs/)
 - [SPARQL](https://www.w3.org/TR/rdf-sparql-query/)
-- [Androjena](https://code.google.com/archive/p/androjena/)
+- [Androjena](https://github.com/lencinhaus/androjena)
 
-## Repository structure
+Then open the project in Android Studio. We recommend using Android Studio version 3.
+
+## Project structure
 ### libs
 - **androjena_0.5** - Androjena is an Android port of Hewlett-Packard's Jena Semantic Framework
 - **arqoid_0.5** - ARQoid is an Android port of Hewlett-Packard's ARQ SPARQL Query Engine
@@ -39,9 +54,11 @@ The project uses SPARQL queries to gather the data and show it in a convenient w
 - **lucenoid_3.0.2** - Lucenoid is a high-performance, full-featured text search engine library
 - **slf4j-android-1.6.1-RC1** - The Simple Logging Facade for Java
 
+**Note:** all these jars are not exported via the build.gradle file, but were manually added to the project. Also note that they all required for the operation of the Androjena library. These jars were built from sources as explained [here](https://github.com/lencinhaus/androjena).
+
 ### activities
-- **SplashActivity** - Splash screen while queries are being loaded.
-- **MainActivity** - Activity that holds all of the tabs. (Favorites, Mekorot, Psukim)
+- **SplashActivity** - Splash screen while queries that extract parasha/perek labels are being loaded.
+- **MainActivity** - Activity that holds all of the tabs (Favorites, Mekorot, Psukim).
 - **MakorDetailView** - Activity that shows the contents of a specific Makor.
 - **MakorFavoriteView** - Activity that shows the contents of a favorite Makor in which you can share your Makor in either a text or link format.
 - **SettingActivity** - Settings activity for choosing font families and sizes.
@@ -75,14 +92,15 @@ The project uses SPARQL queries to gather the data and show it in a convenient w
 ### utils
 - **FontUtils** - Used for font functionalities (setting size, setting text font)
 - **PreferencesUtils** - Used in order to store information in the shared preferences.
-- **WholeWordIndexFinder** - Used in order to match keyword in search strings.
-- **IndexWrapper** - Used to wrap indices in the WholeWorldIndexFinder.
+- **WholeWordIndexFinder** - Used in order to match keyword in search strings (used for makor highlighting).
+- **IndexWrapper** - Used to wrap indices in the WholeWorldIndexFinder (used for makor highlighting).
 
 ### other classes
-- **JBSQueries** - Contains all the queries used in the project.
+- **JBSQueries** - Contains all SPARQL queries used in the project.
 
 ### assets
 - **fonts** - Contains all the fonts used in the project.
+// explain how to add new fonts, provide link to http://freefonts.co.il/
 
 ## General application flow
 - When the splash screen is loading, we're executing the _FetchParashotAndPrakimTask_ in order to get the prakim and parashot.
@@ -95,7 +113,7 @@ The project uses SPARQL queries to gather the data and show it in a convenient w
 - App texts and strings can also be easily modified _from values/strings.xml_.
 - App dimensions on specific UI elements can be tweaked form _values/dimens.xml_.
 
-## Creating new Queries
+## How to add and execute new SPARQL queries
 In order to create and execute new Queries, you will first have to add your query to JBSQueries.java and afterwards have a look at any of the async classes aforementioned. (Thorough explanation below of the doInBackground method - mind the comments)
 
 
