@@ -35,6 +35,20 @@ public class FavoritesRecyclerViewAdapter
     FavoritesTab.FavoritesChangeListener mCallback;
     private List<Pair<String, Pair<String, String>>> mFavoritesPairs = new ArrayList<>();
 
+    private String getMakorNameTextOrUri(Set<String> pairSet, String prefixToSearch,
+                                         int prefixLength) {
+        String makorNameTextOrUri = "";
+        // Check for name
+        if (pairSet.toArray()[0].toString().contains(prefixToSearch)) {
+            makorNameTextOrUri = pairSet.toArray()[0].toString().substring(prefixLength);
+        } else if (pairSet.toArray()[1].toString().contains(prefixToSearch)) {
+            makorNameTextOrUri = pairSet.toArray()[1].toString().substring(prefixLength);
+        } else if (pairSet.toArray()[2].toString().contains(prefixToSearch)) {
+            makorNameTextOrUri = pairSet.toArray()[2].toString().substring(prefixLength);
+        }
+        return makorNameTextOrUri;
+    }
+
     public FavoritesRecyclerViewAdapter(Context context, HashMap<String, Set<String>> favorites,
                                         FavoritesTab.FavoritesChangeListener callback) {
         mContext = context;
@@ -44,42 +58,18 @@ public class FavoritesRecyclerViewAdapter
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             Set<String> pairSet = (Set<String>) pair.getValue();
-            String makorName = "";
-            String makorUri = "";
-            String makorText = "";
-            // Check for name
-            if (pairSet.toArray()[0].toString().contains(mContext.getResources().getString(
-                    R.string.favorites_name_prefix))) {
-                makorName = pairSet.toArray()[0].toString().substring(7);
-            } else if (pairSet.toArray()[1].toString().contains(mContext.getResources().getString(
-                    R.string.favorites_name_prefix))) {
-                makorName = pairSet.toArray()[1].toString().substring(7);
-            } else if (pairSet.toArray()[2].toString().contains(mContext.getResources().getString(
-                    R.string.favorites_name_prefix))) {
-                makorName = pairSet.toArray()[2].toString().substring(7);
-            }
-            // Check for text
-            if (pairSet.toArray()[0].toString().contains(mContext.getResources().getString(
-                    R.string.favorites_text_prefix))) {
-                makorText = pairSet.toArray()[0].toString().substring(7);
-            } else if (pairSet.toArray()[1].toString().contains(mContext.getResources().getString(
-                    R.string.favorites_text_prefix))) {
-                makorText = pairSet.toArray()[1].toString().substring(7);
-            } else if (pairSet.toArray()[2].toString().contains(mContext.getResources().getString(
-                    R.string.favorites_text_prefix))) {
-                makorText = pairSet.toArray()[2].toString().substring(7);
-            }
-            // Check for uri
-            if (pairSet.toArray()[0].toString().contains(mContext.getResources().getString(
-                    R.string.favorites_uri_prefix))) {
-                makorUri = pairSet.toArray()[0].toString().substring(6);
-            } else if (pairSet.toArray()[1].toString().contains(mContext.getResources().getString(
-                    R.string.favorites_uri_prefix))) {
-                makorUri = pairSet.toArray()[1].toString().substring(6);
-            } else if (pairSet.toArray()[2].toString().contains(mContext.getResources().getString(
-                    R.string.favorites_uri_prefix))) {
-                makorUri = pairSet.toArray()[2].toString().substring(6);
-            }
+            String favoritesNamePrefix = mContext.getResources().getString(R.string.favorites_name_prefix);
+            String favoritesUriPrefix = mContext.getResources().getString(R.string.favorites_uri_prefix);
+            String favoritesTextPrefix = mContext.getResources().getString(R.string.favorites_text_prefix);
+            String makorName = getMakorNameTextOrUri(pairSet,
+                    favoritesNamePrefix,
+                    favoritesNamePrefix.length());
+            String makorUri = getMakorNameTextOrUri(pairSet,
+                    favoritesUriPrefix,
+                    favoritesUriPrefix.length());
+            String makorText = getMakorNameTextOrUri(pairSet,
+                    favoritesTextPrefix,
+                    favoritesTextPrefix.length());
             mFavoritesPairs.add(Pair.create(makorUri, Pair.create(makorName, makorText)));
             it.remove(); // avoids a ConcurrentModificationException
         }
