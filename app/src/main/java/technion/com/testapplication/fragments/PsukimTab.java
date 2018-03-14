@@ -30,6 +30,8 @@ public class PsukimTab extends Fragment {
     OnMoveToMekorotTabListener mCallback;
     private static ArrayList<String> mCurrentPsukim = new ArrayList<>();
 
+    // Defines a way for the Psukim tab to communicate with the Mekorot tab
+    // via the MainActivity.
     public interface OnMoveToMekorotTabListener {
         public void onMoveToMekorotTab(ArrayList<String> psukimUris);
 

@@ -29,6 +29,7 @@ public class PsukimRecyclerViewAdapter
     private ArrayList<String> mSelectedUris = new ArrayList<>();
 
     private boolean allItemsClicked = false;
+    private static final float PASUK_HEADER_FONT_SIZE_COMPARED_TO_PASUK_SIZE = 0.60f;
 
     public PsukimRecyclerViewAdapter(ArrayList<PasukModel> psukim) {
         mPsukim = psukim;
@@ -67,10 +68,14 @@ public class PsukimRecyclerViewAdapter
         String pasukText = pasukModel.getText();
         String pasukLabel = pasukModel.getLabel();
         String pasukCombined = pasukLabel + " " + pasukText;
-        SpannableString spannableString=  new SpannableString(pasukCombined);
-        spannableString.setSpan(new RelativeSizeSpan(0.60f), 0, pasukLabel.length(), 0);
+
+        // Set the pasuk label font size to be smaller than the pasuk font size.
+        SpannableString spannableString = new SpannableString(pasukCombined);
+        spannableString.setSpan(new RelativeSizeSpan(PASUK_HEADER_FONT_SIZE_COMPARED_TO_PASUK_SIZE),
+                0, pasukLabel.length(), 0);
         StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
-        spannableString.setSpan(boldSpan, 0, pasukLabel.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(boldSpan, 0, pasukLabel.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         holder.mTextView.setText(spannableString);
         holder.mView.setBackgroundColor(pasukModel.isSelected() ? Color.CYAN : Color.WHITE);
