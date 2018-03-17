@@ -21,16 +21,17 @@ The jewish book shelf linked data sets consists of the following:
 **[Presentation](/jbs-mekorot-android.pptx)**<br>
 
 ## Table of Contents
+**[Installation Instructions](#installation-instructions)**<br>
 **[Technologies used in this Project](#technologies-used-in-this-project)**<br>
-**[Repository structure](#repository-structure)**<br>
+**[Project structure](#project-structure)**<br>
 **[General application flow](#general-application-flow)**<br>
 **[Further UI tweaking](#further-ui-tweaking)**<br>
 **[Creating new Queries](#creating-new-queries)**<br>
 **[Executing queries](#executing-queries)**<br>
 
 ## Installation instructions
-> cd YOUR_DESIRED_DIRECTORY
-> git clone https://github.com/TechnionTDK/jbs-mekorot-android.git
+- cd YOUR_DESIRED_DIRECTORY
+- git clone https://github.com/TechnionTDK/jbs-mekorot-android.git
 - Open Android Studio.
 - Load project from YOUR_DESIRED_DIRECTORY
 - Click on run.
@@ -53,7 +54,8 @@ Then open the project in Android Studio. We recommend using Android Studio versi
 - **lucenoid_3.0.2** - Lucenoid is a high-performance, full-featured text search engine library
 - **slf4j-android-1.6.1-RC1** - The Simple Logging Facade for Java
 
-**Note:** all these jars are not exported via the build.gradle file, but were manually added to the project. Also note that they all required for the operation of the Androjena library. These jars were built from sources as explained [here](https://github.com/lencinhaus/androjena).
+**Note:** all these jars are not exported via the build.gradle file, but were manually added to the project.
+Also note that they all required for the operation of the Androjena library. These jars were built from sources as explained [here](https://github.com/lencinhaus/androjena).
 
 ### activities
 - **SplashActivity** - Splash screen while queries that extract parasha/perek labels are being loaded.
