@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
     <ImageView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:scaleType="fitXY"
         android:src="@drawable/splash_screen"
     />
-    <TextView android:layout_width="match_parent"
-              android:layout_height="match_parent"
+    <TextView android:id="@+id/sulamot"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
               android:layout_marginTop="100dip"
               android:gravity="center|top"
               android:shadowColor="@color/SplashScreenSulamotTextShadow"
@@ -20,4 +21,31 @@
               android:textColor="@color/SplashScreenSulamotText"
               android:textSize="40sp"
               android:textStyle="bold"/>
-</FrameLayout>
+    <TextView android:id="@+id/lab"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center"
+              android:gravity="center|top"
+              android:shadowColor="@color/SplashScreenSulamotTextShadow"
+              android:shadowDx="1"
+              android:shadowDy="1"
+              android:shadowRadius="2"
+              android:text="המעבדה למידע וידע"
+              android:textColor="@color/SplashScreenSulamotText"
+              android:textSize="26sp" android:textStyle="bold" android:layout_below="@+id/sulamot"
+              android:layout_alignParentLeft="true" android:layout_alignParentStart="true"
+              android:singleLine="false"/>
+    <TextView android:id="@+id/technion"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center"
+              android:gravity="center|top"
+              android:shadowColor="@color/SplashScreenSulamotTextShadow"
+              android:shadowDx="1"
+              android:shadowDy="1"
+              android:shadowRadius="2"
+              android:text="הטכניון"
+              android:textColor="@color/SplashScreenSulamotText"
+              android:textSize="26sp" android:textStyle="bold" android:layout_below="@+id/lab"
+              android:layout_alignParentLeft="true" android:layout_alignParentStart="true"/>
+</RelativeLayout>
