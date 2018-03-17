@@ -10,11 +10,11 @@ The jewish book shelf linked data sets consists of the following:
 ## Basic app flow
 
 - Getting the text of Parasha/Perek from the Tanach.
-- Select psukim (verses), or select all the psukim.
-- View mekorot connecting to a set of psukim selected.
+- Selecting psukim (verses), or selecting all the psukim.
+- Viewing mekorot connecting to a set of psukim selected.
 - Liking a makor puts in in the favorites section (tab).
 - Clicking on a makor in the mekorot tab takes you to the makor view.
-- Accessing the settings screen is enabled via the main screen.
+- Accessing the settings screen is enabled via the main screen (And enables you to change font family and size).
 - Viewing Mekorot highlights according to the set of psukim chosen is possible via the makor view.
 
 ## pptx Presentation
