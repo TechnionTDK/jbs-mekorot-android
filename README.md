@@ -9,22 +9,13 @@ The jewish book shelf linked data sets consists of the following:
 
 ## Basic app flow
 
-// use bullets. Make the items more short and precise.
-
-The user while interacting with the app (clicking on the floating action button) enters a name of a perek/parasha and receives the set of psukim of that makor.
-
-Example:
 - Getting the text of Parasha/Perek from the Tanach.
 - Select psukim (verses), or select all the psukim.
-
-At this moment, the psukim tab fills up with the psukim of the selected Makor, and the user has an option to mark a set of psukim of his choice. 
-
-Once marked, when moving to the mekorot tab, he's provided with a set of mekorot that mention the marked psukim from the set. The mekorot shown in the mekorot tab are ordered by their relevance (number of psukim that they mention).
-
-The user can filter the shown mekorot and in case he liked them, click the like button and add them to the favorites tab. 
-
-Moreover, the user can view each makor and see the highlighted psukim that are referenced in that makor and browse through them, using the forward and backward buttons supplied in the shown makor text.
-
+- View mekorot connecting to a set of psukim selected.
+- Liking a makor puts in in the favorites section (tab).
+- Clicking on a makor in the mekorot tab takes you to the makor view.
+- Accessing the settings screen is enabled via the main screen.
+- Viewing Mekorot highlights according to the set of psukim chosen is possible via the makor view.
 
 ## pptx Presentation
 **[Presentation](/jbs-mekorot-android.pptx)**<br>
@@ -37,8 +28,12 @@ Moreover, the user can view each makor and see the highlighted psukim that are r
 **[Creating new Queries](#creating-new-queries)**<br>
 **[Executing queries](#executing-queries)**<br>
 
-## Installation
-> git clone ...
+## Installation instructions
+> cd YOUR_DESIRED_DIRECTORY
+> git clone https://github.com/TechnionTDK/jbs-mekorot-android.git
+- Open Android Studio.
+- Load project from YOUR_DESIRED_DIRECTORY
+- Click on run.
 
 ## Technologies used in this Project
 The project uses SPARQL queries to gather the data and show it in a convenient way.
