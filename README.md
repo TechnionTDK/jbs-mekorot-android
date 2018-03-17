@@ -1,7 +1,11 @@
 # "Sulamot" app for the Jewish Bookshelf
-An Android application providing accessibility to the texts of the jewish book shelf with various options that functions as a search engine for texts (mekorot) within the Jewish Bookshelf.
+An Android application providing accessibility to the texts of the jewish book shelf with various options that function as a search engine for texts (mekorot) within the Jewish Bookshelf.
 
-// Try to improve, and mention the Linked Dataset that we are developing, may link to https://github.com/TechnionTDK/jbs-project
+We're accessing the jewish book shelf via a linked data set built on top on RDF using SPARQL.
+The jewish book shelf linked data sets consists of the following:
+- **Defining a JBS ontology** (classes and properties).
+- **Representing the structure of various Jewish texts in RDF format, based on the defined ontology.**
+- **Conducting text analysis tasks, and representing the results in RDF.**
 
 ## Basic app flow
 
