@@ -29,7 +29,6 @@
             android:layout_marginLeft="10dip"
             android:layout_marginRight="10dip"
             android:gravity="right"
-            android:text="שדגשדג"
             android:textColor="@color/White"
             android:textSize="16sp"/>
     </android.support.v7.widget.Toolbar>
