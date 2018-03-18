@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -107,6 +108,8 @@ public class MekorotRecyclerViewAdapter
             public void onClick(View v) {
                 if (makorModel.getIsClicked()) {
                     makorModel.setIsClicked(false);
+                    Toast toast = Toast.makeText(mContext, "מקור הוסר מנבחרים", Toast.LENGTH_SHORT);
+                    toast.show();
                     holder.mLikeButton.setImageDrawable(
                             mContext.getDrawable(R.drawable.ic_favorite_border_black_18dp));
                     PreferencesUtils.deleteStoredDataByKey(
@@ -121,6 +124,8 @@ public class MekorotRecyclerViewAdapter
                     }
                 } else {
                     makorModel.setIsClicked(true);
+                    Toast toast = Toast.makeText(mContext, "מקור הוסף לנבחרים", Toast.LENGTH_SHORT);
+                    toast.show();
                     holder.mLikeButton.setImageDrawable(
                             mContext.getDrawable(R.drawable.ic_favorite_black_18dp));
                     Set<String> newParamSet = new HashSet<>();

@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,6 +48,10 @@ public class FavoritesRecyclerViewAdapter
             makorNameTextOrUri = pairSet.toArray()[2].toString().substring(prefixLength);
         }
         return makorNameTextOrUri;
+    }
+
+    public List<Pair<String, Pair<String, String>>> getFavoritesPairs() {
+        return mFavoritesPairs;
     }
 
     public FavoritesRecyclerViewAdapter(Context context, HashMap<String, Set<String>> favorites,
@@ -118,6 +123,8 @@ public class FavoritesRecyclerViewAdapter
         holder.mLikeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast toast = Toast.makeText(mContext, "מקור הוסר מנבחרים", Toast.LENGTH_SHORT);
+                toast.show();
                 PreferencesUtils.deleteStoredDataByKey(
                         mContext.getResources().getString(R.string.favorites_file_name),
                         favoritesPair.first, mContext);
