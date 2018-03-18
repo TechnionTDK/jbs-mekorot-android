@@ -1,10 +1,13 @@
 package technion.com.testapplication.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.style.BackgroundColorSpan;
@@ -12,7 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.view.Window;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -41,33 +44,59 @@ public class MakorDetailView extends AppCompatActivity {
     private ArrayList<String> mMakorPsukim;
     private ArrayList<Integer> mScrollToList;
     private int mClickedIndex = 0;
+    private Intent mShareIntent;
+    private ActionMenuView amvMenu;
     private static final String INDICES_DELIMITER = "-";
     private static final String SPLIT_BY_SPACES_REGEX = "\\s+";
+    private static final String MAKOR_URI_DELIMITER = "/";
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.detail_view_menu, menu);
-        menu.findItem(R.id.action_share).setVisible(false);
-        menu.findItem(R.id.action_info).setVisible(false);
-        menu.findItem(R.id.action_favorite).setVisible(false);
-        menu.findItem(R.id.action_settings).setVisible(false);
+        inflater.inflate(R.menu.detail_view_menu, amvMenu.getMenu());
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
+            case R.id.action_share:
+                AlertDialog.Builder builder = new AlertDialog.Builder(MakorDetailView.this);
+                String[] options = new String[]{getResources().getString(
+                        R.string.full_text_share_option), getResources().getString(
+                        R.string.link_to_text_share_option)};
+                int selectedFont = 0;
+                builder.setSingleChoiceItems(options, selectedFont, null);
+                builder.setCancelable(true);
+                builder.setTitle(getApplicationContext().getResources().getString(
+                        R.string.choose_sharing_option));
+                builder.setPositiveButton(
+                        getApplicationContext().getResources().getString(R.string.choose_button),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                int selectedPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
+                                if (selectedPosition == 0) {
+                                    startActivity(createShareIntent(true));
+                                } else {
+                                    startActivity(createShareIntent(false));
+                                }
+                            }
+                        });
+
+                builder.setNegativeButton(
+                        getApplicationContext().getResources().getString(R.string.cancel_button),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
                 return true;
             case android.R.id.home:
                 onBackPressed();
-                return true;
-            case R.id.action_favorite:
-                return true;
-            case R.id.action_share:
-                return true;
-            case R.id.action_info:
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -78,11 +107,13 @@ public class MakorDetailView extends AppCompatActivity {
     /**
      * Given an indices pair of the following format:
      * "X-Y" returns the words corresponding it from the splitMakorText.
-     * @param indicesPair - String of the format "X-Y" that represents the indices of the words in the text.
+     *
+     * @param indicesPair    - String of the format "X-Y" that represents the indices of the words in the text.
      * @param splitMakorText - Makor array of words.
      * @return String represting successive words in the given text between the indices X and Y.
      */
-    private String calculatePasukReferenceFromGivenIndices(String indicesPair, String[] splitMakorText) {
+    private String calculatePasukReferenceFromGivenIndices(String indicesPair,
+                                                           String[] splitMakorText) {
         String[] splitSubset = indicesPair.split(INDICES_DELIMITER);
         int startWord = Integer.parseInt(splitSubset[0]);
         int endWord = Integer.parseInt(splitSubset[1]);
@@ -109,74 +140,99 @@ public class MakorDetailView extends AppCompatActivity {
         Collections.sort(mScrollToList);
     }
 
+    private Intent createShareIntent(boolean fullText) {
+        mShareIntent = new Intent(Intent.ACTION_SEND);
+        mShareIntent.setType("text/plain");
+        if (fullText) {
+            mShareIntent.putExtra(Intent.EXTRA_TITLE, mMakorTitle);
+            mShareIntent.putExtra(Intent.EXTRA_TEXT, mMakorText);
+        } else {
+            String makorUri = mMakorUri;
+            makorUri = makorUri.substring(makorUri.lastIndexOf(MAKOR_URI_DELIMITER) + 1);
+            makorUri = getResources().getString(R.string.jbr_prefix) + makorUri;
+            mShareIntent.putExtra(Intent.EXTRA_TEXT,
+                    JBSQueries.READ_URL + makorUri);
+        }
+        return mShareIntent;
+    }
+
+    public View getActionBarView() {
+        Window window = getWindow();
+        View v = window.getDecorView();
+        int resId = getResources().getIdentifier("action_bar_container", "id", "android");
+        return v.findViewById(resId);
+    }
+
     /**
      * Sets the next and prev buttons for the highlights.
      */
     private void setPrevNextButtons() {
-        Button nextButton = (Button) findViewById(R.id.next);
-        Button previousButton = (Button) findViewById(R.id.previous);
-        previousButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mClickedIndex > 0) {
-                    final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
-                    scrollView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            TextView makorTextView = (TextView) findViewById(R.id.makor_text);
-                            int y = makorTextView.getLayout().getLineTop(
-                                    mScrollToList.get(mClickedIndex));
-                            scrollView.scrollTo(0, y);
-                            mClickedIndex--;
-                        }
-                    });
-                } else {
-                    mClickedIndex = mScrollToList.size() - 1;
-                    final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
-                    scrollView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            TextView makorTextView = (TextView) findViewById(R.id.makor_text);
-                            int y = makorTextView.getLayout().getLineTop(
-                                    mScrollToList.get(mClickedIndex));
-                            scrollView.scrollTo(0, y);
-                            mClickedIndex--;
-                        }
-                    });
+        if (getWindow().getDecorView() != null) {
+            View prevAction = getWindow().getDecorView().findViewById(R.id.action_prev);
+            View nextAction = getWindow().getDecorView().findViewById(R.id.action_next);
+            prevAction.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mClickedIndex > 0) {
+                        final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
+                        scrollView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                TextView makorTextView = (TextView) findViewById(R.id.makor_text);
+                                int y = makorTextView.getLayout().getLineTop(
+                                        mScrollToList.get(mClickedIndex));
+                                scrollView.scrollTo(0, y);
+                                mClickedIndex--;
+                            }
+                        });
+                    } else {
+                        mClickedIndex = mScrollToList.size() - 1;
+                        final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
+                        scrollView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                TextView makorTextView = (TextView) findViewById(R.id.makor_text);
+                                int y = makorTextView.getLayout().getLineTop(
+                                        mScrollToList.get(mClickedIndex));
+                                scrollView.scrollTo(0, y);
+                                mClickedIndex--;
+                            }
+                        });
+                    }
                 }
-            }
-        });
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mClickedIndex < mScrollToList.size()) {
-                    final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
-                    scrollView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            TextView makorTextView = (TextView) findViewById(R.id.makor_text);
-                            int y = makorTextView.getLayout().getLineTop(
-                                    mScrollToList.get(mClickedIndex));
-                            scrollView.scrollTo(0, y);
-                            mClickedIndex++;
-                        }
-                    });
-                } else {
-                    mClickedIndex = 0;
-                    final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
-                    scrollView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            TextView makorTextView = (TextView) findViewById(R.id.makor_text);
-                            int y = makorTextView.getLayout().getLineTop(
-                                    mScrollToList.get(mClickedIndex));
-                            scrollView.scrollTo(0, y);
-                            mClickedIndex++;
-                        }
-                    });
+            });
+            nextAction.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mClickedIndex < mScrollToList.size()) {
+                        final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
+                        scrollView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                TextView makorTextView = (TextView) findViewById(R.id.makor_text);
+                                int y = makorTextView.getLayout().getLineTop(
+                                        mScrollToList.get(mClickedIndex));
+                                scrollView.scrollTo(0, y);
+                                mClickedIndex++;
+                            }
+                        });
+                    } else {
+                        mClickedIndex = 0;
+                        final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
+                        scrollView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                TextView makorTextView = (TextView) findViewById(R.id.makor_text);
+                                int y = makorTextView.getLayout().getLineTop(
+                                        mScrollToList.get(mClickedIndex));
+                                scrollView.scrollTo(0, y);
+                                mClickedIndex++;
+                            }
+                        });
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     /**
@@ -191,6 +247,13 @@ public class MakorDetailView extends AppCompatActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        amvMenu = (ActionMenuView) myToolbar.findViewById(R.id.amvMenu);
+        amvMenu.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                return onOptionsItemSelected(menuItem);
+            }
+        });
         TextView toolbarTitleTV = (TextView) findViewById(R.id.toolbar_title);
         toolbarTitleTV.setText(mMakorTitle);
     }
@@ -224,8 +287,9 @@ public class MakorDetailView extends AppCompatActivity {
      * 1) Go over each index range in the psukimSubstrings.
      * 2) Highlight each index-range.
      * 3) Calculate scroll position for next-prev buttons.
+     *
      * @param psukimSubstrings - psukim substrings of the following format: ["X-Y", "A-B",..]
-     *                          For example: ["1-4", "50-65",...]
+     *                         For example: ["1-4", "50-65",...]
      */
     public void highlightPsukim(ArrayList<String> psukimSubstrings) {
         TextView makorTextView = (TextView) findViewById(R.id.makor_text);
@@ -234,7 +298,8 @@ public class MakorDetailView extends AppCompatActivity {
         SpannableString spannableMakorText = new SpannableString(makorText);
         mScrollToList = new ArrayList<>();
         for (String subsetToHighlight : psukimSubstrings) {
-            String successivePsukim = calculatePasukReferenceFromGivenIndices(subsetToHighlight, splitMakorText);
+            String successivePsukim = calculatePasukReferenceFromGivenIndices(subsetToHighlight,
+                    splitMakorText);
 
             // Find all indices inside makorText for the given psukim String.
             List<IndexWrapper> indicesList = (new WholeWordIndexFinder(
