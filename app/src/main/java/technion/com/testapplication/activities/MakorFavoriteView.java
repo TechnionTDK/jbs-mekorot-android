@@ -41,6 +41,7 @@ public class MakorFavoriteView extends AppCompatActivity {
         shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
         if (fullText) {
+            shareIntent.putExtra(Intent.EXTRA_TITLE, mMakorTitle);
             shareIntent.putExtra(Intent.EXTRA_TEXT, mMakorText);
         } else {
             String makorUri = mMakorUri;
@@ -59,8 +60,6 @@ public class MakorFavoriteView extends AppCompatActivity {
                 return true;
             case android.R.id.home:
                 onBackPressed();
-                return true;
-            case R.id.action_favorite:
                 return true;
             case R.id.action_share:
                 AlertDialog.Builder builder = new AlertDialog.Builder(MakorFavoriteView.this);
@@ -97,8 +96,8 @@ public class MakorFavoriteView extends AppCompatActivity {
                 AlertDialog dialog = builder.create();
                 dialog.show();
                 return true;
-            case R.id.action_info:
-                return true;
+//            case R.id.action_info:
+//                return true;
             default:
                 return super.onOptionsItemSelected(item);
 
