@@ -44,8 +44,10 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<Pair<String, String>> prakimURILabelPairs = new ArrayList<>();
     private ViewPager mViewPager;
     private ViewPagerAdapter mViewPagerAdapter;
+    private int mNumOfFavorites = 0;
     private static final int PSUKIM_FRAG_POSITION = 0;
     private static final int MEKOROT_FRAG_POSITION = 1;
+    private static final int FAVORITE_FRAG_POSITION = 2;
     private static boolean mIsNewQuerySubmitted = false;
     private PsukimTab mPsukimTab;
     private MekorotTab mMekorotTab;
@@ -74,8 +76,6 @@ public class MainActivity extends AppCompatActivity
                         SettingsActivity.class);
                 startActivity(settingsActivityIntent);
                 return true;
-            case R.id.action_favorite:
-                return false;
             default:
                 return super.onOptionsItemSelected(item);
 
@@ -106,6 +106,22 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
+    /**
+     * Sets the share icon to be either clickable or not.
+     * @param isClickable
+     */
+    public void setShareIconClickable(boolean isClickable) {
+        ImageView shareIcon = (ImageView) findViewById(R.id.share_icon);
+        if (!isClickable) {
+            shareIcon.setColorFilter(R.color.FilterIconUnavailable);
+            shareIcon.setEnabled(false);
+        } else {
+            shareIcon.setColorFilter(null);
+            shareIcon.setEnabled(true);
+        }
+    }
+
     /**
      * Set toolbar for this activity.
      * This will also set the spinner.
@@ -125,6 +141,7 @@ public class MainActivity extends AppCompatActivity
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
         setFilterIconClickable(false);
+        setShareIconClickable(false);
     }
 
     /**
@@ -162,19 +179,25 @@ public class MainActivity extends AppCompatActivity
             public void onTabSelected(TabLayout.Tab tab) {
                 if (tab.getPosition() == PSUKIM_TAB_INDEX) {
                     setFilterIconClickable(false);
+                    setShareIconClickable(false);
                     mFab.show();
                 } else if (tab.getPosition() == MEKOROT_TAB_INDEX) {
                     PsukimTab psukimTabFrag = (PsukimTab) mViewPagerAdapter.getItem(
                             PSUKIM_FRAG_POSITION);
                     psukimTabFrag.moveToMekorot();
+                    setShareIconClickable(false);
                     mFab.hide();
                 } else if (tab.getPosition() == FAVORITES_TAB_INDEX) {
                     mFab.hide();
                     setFilterIconClickable(false);
+                    if (mNumOfFavorites > 0) {
+                        setShareIconClickable(true);
+                    }
+                    FavoritesTab favoritesTab = (FavoritesTab) mViewPagerAdapter.getItem(
+                            FAVORITE_FRAG_POSITION);
                     PreferencesUtils.getSharedPreferencesByFileName(
                             getResources().getString(R.string.favorites_file_name),
                             getApplicationContext());
-                    FavoritesTab favoritesTab = (FavoritesTab) mViewPagerAdapter.getItem(2);
                     favoritesTab.setRecyclerViewAdapter();
                 }
             }
@@ -327,6 +350,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void updateFavoritesNum(int numOfFavorites) {
         setFavoriteTabResultsNum(numOfFavorites);
+        mNumOfFavorites = numOfFavorites;
     }
 
     /**
@@ -350,17 +374,33 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void setFavoriteTabResultsNum(int numOfResults) {
+        mNumOfFavorites = numOfResults;
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         TabLayout.Tab favoritesTab = tabLayout.getTabAt(2);
         if (favoritesTab != null) {
             if (numOfResults == 0) {
                 favoritesTab.setText(getResources().getString(R.string.favorites));
+                setShareIconClickable(false);
             } else {
                 favoritesTab.setText(
                         getResources().getString(R.string.favorites) + " (" + Integer.toString(
                                 numOfResults) + ")");
+                if (mViewPager.getCurrentItem() == 2) {
+                    setShareIconClickable(true);
+                }
             }
 
         }
+    }
+
+    @Override
+    public void setShareIcon(final Dialog dialog) {
+        View shareIcon = findViewById(R.id.share_icon);
+        shareIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.show();
+            }
+        });
     }
 }

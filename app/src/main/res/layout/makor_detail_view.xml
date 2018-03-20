@@ -1,51 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout android:id="@+id/relative_layout"
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relative_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"
         style="@style/Base_ToolbarStyle"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:elevation="4dp">
+
+        <ImageButton
+            android:id="@+id/go_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_margin="10dp"
+            android:background="@drawable/ic_arrow_forward_white_18dp" />
+
         <TextView
             android:id="@+id/toolbar_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_above="@+id/scroll_view"
+            android:layout_gravity="right"
+            android:layout_marginBottom="16dp"
+            android:text="Hello"
             android:textColor="@color/White"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
+
+        <ImageButton
+            android:id="@+id/share_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/ic_share_white_18dp" />
+
+        <ImageButton
+            android:id="@+id/next_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/ic_navigate_before_white_18dp" />
+
+        <ImageButton
+            android:id="@+id/prev_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_navigate_next_white_18dp" />
     </android.support.v7.widget.Toolbar>
-    <LinearLayout android:id="@+id/navigation_controls"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:layout_below="@id/my_toolbar"
-                  android:background="@color/DodgerBlue"
-                  android:orientation="horizontal"
-                  android:weightSum="1">
-        <Button android:id="@+id/previous"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:text="הקודם"/>
-        <Button android:id="@+id/next"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:text="הבא"/>
-    </LinearLayout>
+
     <ScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/navigation_controls"
+        android:layout_below="@id/my_toolbar"
         android:orientation="vertical">
+
         <TextView
             android:id="@+id/makor_text"
             android:layout_width="match_parent"
@@ -53,7 +68,7 @@
             android:padding="10dp"
             android:scrollbars="vertical"
             android:textColor="@color/Black"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
 
     </ScrollView>
 </RelativeLayout>

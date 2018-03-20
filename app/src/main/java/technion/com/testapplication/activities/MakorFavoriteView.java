@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import technion.com.testapplication.JBSQueries;
@@ -27,13 +28,12 @@ public class MakorFavoriteView extends AppCompatActivity {
     private String mMakorText;
     private String mMakorUri;
     Intent shareIntent;
-    private ActionMenuView amvMenu;
     private static final String MAKOR_URI_DELIMITER = "/";
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.favorite_menu, amvMenu.getMenu());
+        inflater.inflate(R.menu.favorite_menu, menu);
         return true;
     }
 
@@ -41,6 +41,7 @@ public class MakorFavoriteView extends AppCompatActivity {
         shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
         if (fullText) {
+            shareIntent.putExtra(Intent.EXTRA_TITLE, mMakorTitle);
             shareIntent.putExtra(Intent.EXTRA_TEXT, mMakorText);
         } else {
             String makorUri = mMakorUri;
@@ -55,14 +56,32 @@ public class MakorFavoriteView extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                return true;
-            case android.R.id.home:
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    /**
+     * Sets the toolbar for the activity.
+     */
+    private void setToolbar() {
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+        View goBack = findViewById(R.id.go_back);
+        goBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 onBackPressed();
-                return true;
-            case R.id.action_favorite:
-                return true;
-            case R.id.action_share:
+            }
+        });
+        View shareButton = findViewById(R.id.share_button);
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MakorFavoriteView.this);
                 String[] options = new String[]{getResources().getString(
                         R.string.full_text_share_option), getResources().getString(
@@ -96,30 +115,6 @@ public class MakorFavoriteView extends AppCompatActivity {
 
                 AlertDialog dialog = builder.create();
                 dialog.show();
-                return true;
-            case R.id.action_info:
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-
-        }
-    }
-
-    /**
-     * Sets the toolbar for the activity.
-     */
-    private void setToolbar() {
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
-        }
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        amvMenu = (ActionMenuView) toolbar.findViewById(R.id.amvMenu);
-        amvMenu.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                return onOptionsItemSelected(menuItem);
             }
         });
         TextView toolbarTitleTV = (TextView) findViewById(R.id.toolbar_title);

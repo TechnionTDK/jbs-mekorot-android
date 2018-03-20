@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -107,6 +108,8 @@ public class MekorotRecyclerViewAdapter
             public void onClick(View v) {
                 if (makorModel.getIsClicked()) {
                     makorModel.setIsClicked(false);
+                    Toast toast = Toast.makeText(mContext, mContext.getResources().getString(R.string.makor_removed_from_favorites), Toast.LENGTH_SHORT);
+                    toast.show();
                     holder.mLikeButton.setImageDrawable(
                             mContext.getDrawable(R.drawable.ic_favorite_border_black_18dp));
                     PreferencesUtils.deleteStoredDataByKey(
@@ -121,11 +124,15 @@ public class MekorotRecyclerViewAdapter
                     }
                 } else {
                     makorModel.setIsClicked(true);
+                    Toast toast = Toast.makeText(mContext, mContext.getResources().getString(R.string.makor_added_to_favorites), Toast.LENGTH_SHORT);
+                    toast.show();
                     holder.mLikeButton.setImageDrawable(
                             mContext.getDrawable(R.drawable.ic_favorite_black_18dp));
                     Set<String> newParamSet = new HashSet<>();
                     newParamSet.add(mContext.getResources().getString(
                             R.string.favorites_name_prefix) + makorModel.getMakorName());
+
+                    
                     newParamSet.add(mContext.getResources().getString(
                             R.string.favorites_text_prefix) + makorModel.getMakorText());
                     newParamSet.add(mContext.getResources().getString(
@@ -147,9 +154,11 @@ public class MekorotRecyclerViewAdapter
         if (authorTextUriSet != null && authorTextUriSet.size() > 0) {
             holder.mLikeButton.setImageDrawable(
                     mContext.getDrawable(R.drawable.ic_favorite_black_18dp));
+            makorModel.setIsClicked(true);
         } else {
             holder.mLikeButton.setImageDrawable(
                     mContext.getDrawable(R.drawable.ic_favorite_border_black_18dp));
+            makorModel.setIsClicked(false);
         }
     }
 
