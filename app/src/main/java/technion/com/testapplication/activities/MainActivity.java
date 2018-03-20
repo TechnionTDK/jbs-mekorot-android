@@ -76,8 +76,6 @@ public class MainActivity extends AppCompatActivity
                         SettingsActivity.class);
                 startActivity(settingsActivityIntent);
                 return true;
-//            case R.id.action_favorite:
-//                return false;
             default:
                 return super.onOptionsItemSelected(item);
 

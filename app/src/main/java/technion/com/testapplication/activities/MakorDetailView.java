@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.style.BackgroundColorSpan;
@@ -15,11 +14,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.widget.ImageButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,7 +43,6 @@ public class MakorDetailView extends AppCompatActivity {
     private ArrayList<Integer> mScrollToList;
     private int mClickedIndex = 0;
     private Intent mShareIntent;
-    private ActionMenuView amvMenu;
     private static final String INDICES_DELIMITER = "-";
     private static final String SPLIT_BY_SPACES_REGEX = "\\s+";
     private static final String MAKOR_URI_DELIMITER = "/";
@@ -118,13 +113,6 @@ public class MakorDetailView extends AppCompatActivity {
                     JBSQueries.READ_URL + makorUri);
         }
         return mShareIntent;
-    }
-
-    public View getActionBarView() {
-        Window window = getWindow();
-        View v = window.getDecorView();
-        int resId = getResources().getIdentifier("action_bar_container", "id", "android");
-        return v.findViewById(resId);
     }
 
     /**
@@ -211,14 +199,6 @@ public class MakorDetailView extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
-        //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        amvMenu = (ActionMenuView) myToolbar.findViewById(R.id.amvMenu);
-//        amvMenu.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem menuItem) {
-//                return onOptionsItemSelected(menuItem);
-//            }
-//        });
         View shareButton = findViewById(R.id.share_button);
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
