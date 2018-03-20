@@ -152,9 +152,11 @@ public class MekorotRecyclerViewAdapter
         if (authorTextUriSet != null && authorTextUriSet.size() > 0) {
             holder.mLikeButton.setImageDrawable(
                     mContext.getDrawable(R.drawable.ic_favorite_black_18dp));
+            makorModel.setIsClicked(true);
         } else {
             holder.mLikeButton.setImageDrawable(
                     mContext.getDrawable(R.drawable.ic_favorite_border_black_18dp));
+            makorModel.setIsClicked(false);
         }
     }
 
