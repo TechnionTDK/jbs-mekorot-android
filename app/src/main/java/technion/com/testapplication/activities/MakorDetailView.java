@@ -16,8 +16,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,51 +55,13 @@ public class MakorDetailView extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.detail_view_menu, amvMenu.getMenu());
+        inflater.inflate(R.menu.detail_view_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_share:
-                AlertDialog.Builder builder = new AlertDialog.Builder(MakorDetailView.this);
-                String[] options = new String[]{getResources().getString(
-                        R.string.full_text_share_option), getResources().getString(
-                        R.string.link_to_text_share_option)};
-                int selectedFont = 0;
-                builder.setSingleChoiceItems(options, selectedFont, null);
-                builder.setCancelable(true);
-                builder.setTitle(getApplicationContext().getResources().getString(
-                        R.string.choose_sharing_option));
-                builder.setPositiveButton(
-                        getApplicationContext().getResources().getString(R.string.choose_button),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                int selectedPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
-                                if (selectedPosition == 0) {
-                                    startActivity(createShareIntent(true));
-                                } else {
-                                    startActivity(createShareIntent(false));
-                                }
-                            }
-                        });
-
-                builder.setNegativeButton(
-                        getApplicationContext().getResources().getString(R.string.cancel_button),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        });
-
-                AlertDialog dialog = builder.create();
-                dialog.show();
-                return true;
-            case android.R.id.home:
-                onBackPressed();
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
 
@@ -167,72 +131,73 @@ public class MakorDetailView extends AppCompatActivity {
      * Sets the next and prev buttons for the highlights.
      */
     private void setPrevNextButtons() {
-        if (getWindow().getDecorView() != null) {
-            View prevAction = getWindow().getDecorView().findViewById(R.id.action_prev);
-            View nextAction = getWindow().getDecorView().findViewById(R.id.action_next);
-            prevAction.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mClickedIndex > 0) {
-                        final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
-                        scrollView.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                TextView makorTextView = (TextView) findViewById(R.id.makor_text);
-                                int y = makorTextView.getLayout().getLineTop(
-                                        mScrollToList.get(mClickedIndex));
-                                scrollView.scrollTo(0, y);
+        View prevAction = findViewById(R.id.prev_button);
+        View nextAction = findViewById(R.id.next_button);
+        prevAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mClickedIndex > 0 && (mClickedIndex < mScrollToList.size())) {
+                    final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
+                    scrollView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            TextView makorTextView = (TextView) findViewById(R.id.makor_text);
+                            int y = makorTextView.getLayout().getLineTop(
+                                    mScrollToList.get(mClickedIndex));
+                            scrollView.scrollTo(0, y);
+                            mClickedIndex--;
+                        }
+                    });
+                } else {
+                    mClickedIndex = mScrollToList.size() - 1;
+                    final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
+                    scrollView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            TextView makorTextView = (TextView) findViewById(R.id.makor_text);
+                            int y = makorTextView.getLayout().getLineTop(
+                                    mScrollToList.get(mClickedIndex));
+                            scrollView.scrollTo(0, y);
+                            if (mClickedIndex != 0) {
                                 mClickedIndex--;
                             }
-                        });
-                    } else {
-                        mClickedIndex = mScrollToList.size() - 1;
-                        final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
-                        scrollView.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                TextView makorTextView = (TextView) findViewById(R.id.makor_text);
-                                int y = makorTextView.getLayout().getLineTop(
-                                        mScrollToList.get(mClickedIndex));
-                                scrollView.scrollTo(0, y);
-                                mClickedIndex--;
-                            }
-                        });
-                    }
+                        }
+                    });
                 }
-            });
-            nextAction.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mClickedIndex < mScrollToList.size()) {
-                        final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
-                        scrollView.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                TextView makorTextView = (TextView) findViewById(R.id.makor_text);
-                                int y = makorTextView.getLayout().getLineTop(
-                                        mScrollToList.get(mClickedIndex));
-                                scrollView.scrollTo(0, y);
-                                mClickedIndex++;
-                            }
-                        });
-                    } else {
-                        mClickedIndex = 0;
-                        final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
-                        scrollView.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                TextView makorTextView = (TextView) findViewById(R.id.makor_text);
-                                int y = makorTextView.getLayout().getLineTop(
-                                        mScrollToList.get(mClickedIndex));
-                                scrollView.scrollTo(0, y);
-                                mClickedIndex++;
-                            }
-                        });
-                    }
+            }
+        });
+        nextAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mClickedIndex < mScrollToList.size()) {
+                    final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
+                    scrollView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            TextView makorTextView = (TextView) findViewById(R.id.makor_text);
+                            int y = makorTextView.getLayout().getLineTop(
+                                    mScrollToList.get(mClickedIndex));
+                            scrollView.scrollTo(0, y);
+                            mClickedIndex++;
+                        }
+                    });
+                } else {
+                    mClickedIndex = 0;
+                    final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
+                    scrollView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            TextView makorTextView = (TextView) findViewById(R.id.makor_text);
+                            int y = makorTextView.getLayout().getLineTop(
+                                    mScrollToList.get(mClickedIndex));
+                            scrollView.scrollTo(0, y);
+                            mClickedIndex++;
+                        }
+                    });
                 }
-            });
-        }
+            }
+        });
+
     }
 
     /**
@@ -246,12 +211,58 @@ public class MakorDetailView extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        amvMenu = (ActionMenuView) myToolbar.findViewById(R.id.amvMenu);
-        amvMenu.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
+        //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        amvMenu = (ActionMenuView) myToolbar.findViewById(R.id.amvMenu);
+//        amvMenu.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem menuItem) {
+//                return onOptionsItemSelected(menuItem);
+//            }
+//        });
+        View shareButton = findViewById(R.id.share_button);
+        shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                return onOptionsItemSelected(menuItem);
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MakorDetailView.this);
+                String[] options = new String[]{getResources().getString(
+                        R.string.full_text_share_option), getResources().getString(
+                        R.string.link_to_text_share_option)};
+                int selectedFont = 0;
+                builder.setSingleChoiceItems(options, selectedFont, null);
+                builder.setCancelable(true);
+                builder.setTitle(getApplicationContext().getResources().getString(
+                        R.string.choose_sharing_option));
+                builder.setPositiveButton(
+                        getApplicationContext().getResources().getString(R.string.choose_button),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                int selectedPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
+                                if (selectedPosition == 0) {
+                                    startActivity(createShareIntent(true));
+                                } else {
+                                    startActivity(createShareIntent(false));
+                                }
+                            }
+                        });
+
+                builder.setNegativeButton(
+                        getApplicationContext().getResources().getString(R.string.cancel_button),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+        View backButton = findViewById(R.id.go_back);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
             }
         });
         TextView toolbarTitleTV = (TextView) findViewById(R.id.toolbar_title);
