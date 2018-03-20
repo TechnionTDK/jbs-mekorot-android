@@ -50,21 +50,12 @@ public class SettingsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.settings_menu, menu);
-        menu.findItem(R.id.action_favorite).setVisible(false);
-        menu.findItem(R.id.action_settings).setVisible(false);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                return false;
-            case R.id.action_favorite:
-                return false;
-            case android.R.id.home:
-                onBackPressed();
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
 
@@ -78,7 +69,13 @@ public class SettingsActivity extends AppCompatActivity {
         final Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        View backButton = findViewById(R.id.go_back);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         setSetFontSizeDialog();
         setFontFamilyDialog();
     }
