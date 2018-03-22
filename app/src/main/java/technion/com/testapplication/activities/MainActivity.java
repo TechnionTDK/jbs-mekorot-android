@@ -282,6 +282,7 @@ public class MainActivity extends AppCompatActivity
             mekorotTabFrag.runMekorotAndCategoriesQueries(psukimUris);
             mIsNewQuerySubmitted = false;
             setFilterIconClickable(true);
+            mekorotTabFrag.clearFilterDialogSelections();
         } else {
             if (psukimUris.size() == 0) {
                 mekorotTabFrag.clear();

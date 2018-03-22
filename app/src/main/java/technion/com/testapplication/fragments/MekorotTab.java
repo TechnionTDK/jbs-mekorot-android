@@ -74,6 +74,10 @@ public class MekorotTab extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    public void clearFilterDialogSelections() {
+        mDialogSelectedItems.clear();
+        mDialogSelectedItemsNames.clear();
+    }
     public void clear() {
         if (mRecyclerView != null) {
             mRecyclerView.removeAllViewsInLayout();
