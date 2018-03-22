@@ -74,10 +74,14 @@ public class MekorotTab extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * Clear filtering dialogs - called from main activity upon new query submitted.
+     */
     public void clearFilterDialogSelections() {
         mDialogSelectedItems.clear();
         mDialogSelectedItemsNames.clear();
     }
+
     public void clear() {
         if (mRecyclerView != null) {
             mRecyclerView.removeAllViewsInLayout();
