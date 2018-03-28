@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.Resource;
 
 import java.util.ArrayList;
 
@@ -13,6 +14,7 @@ import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.R;
 import technion.com.testapplication.activities.MainActivity;
 import technion.com.testapplication.models.ParashotAndPrakim;
+import technion.com.testapplication.utils.OneButtonAlert;
 
 /**
  * Created by tomerlevinson on 15/12/2017.
@@ -20,10 +22,26 @@ import technion.com.testapplication.models.ParashotAndPrakim;
  */
 public class FetchParashotAndPrakimTask extends AsyncTask<String, Void, ParashotAndPrakim> {
     private Activity mActivity;
+    private OneButtonAlert oneButtonAlert;
+    private boolean isError = false;
     public static final String MAGIC_SEPERATOR = "$$$";
 
     public FetchParashotAndPrakimTask(Activity activity) {
         mActivity = activity;
+    }
+
+    protected void onPreExecute() {
+        super.onPreExecute();
+        Runnable finishCallingActivity = new Runnable() {
+            @Override
+            public void run() {
+                mActivity.finish();
+            }
+        };
+        oneButtonAlert = new OneButtonAlert(mActivity,
+                mActivity.getResources().getString(R.string.alert_connection_error_info),
+                mActivity.getResources().getString(R.string.alert_connection_error_btn),
+                finishCallingActivity);
     }
 
     @Override
@@ -73,16 +91,20 @@ public class FetchParashotAndPrakimTask extends AsyncTask<String, Void, Parashot
                 parashotQueryExec.close();
             }
         } catch (Exception err) {
+            isError = true;
             err.printStackTrace();
         }
-        ParashotAndPrakim parashotAndPrakim = new ParashotAndPrakim(queryResultsParashot,
-                queryResultsPrakim);
-        return parashotAndPrakim;
+        return new ParashotAndPrakim(queryResultsParashot, queryResultsPrakim);
     }
 
     @Override
     protected void onPostExecute(ParashotAndPrakim parashotAndPrakim) {
         super.onPostExecute(parashotAndPrakim);
+        if (isError)
+        {
+            oneButtonAlert.show();
+            return;
+        }
         Intent startMainActivityIntent = new Intent(mActivity, MainActivity.class);
         ArrayList<String> parashotArray = parashotAndPrakim.getParashot();
         ArrayList<String> prakimArray = parashotAndPrakim.getPrakim();
