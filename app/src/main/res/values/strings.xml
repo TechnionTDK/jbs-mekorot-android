@@ -23,6 +23,7 @@
     <string name="choose_font_style">בחר פונט</string>
     <string name="choose_button">בחר</string>
     <string name="cancel_button">בטל</string>
+    <string name="close_button">סגור</string>
     <string name="num_of_mekorot">"תוצאות: "</string>
     <string name="jbr_prefix">jbr:</string>
     <string name="psukim">פסוקים</string>
@@ -37,8 +38,8 @@
     <string name="link_to_text_share_option">קישור לאתר</string>
     <string name="makor_removed_from_favorites">מקור הוסר מנבחרים</string>
     <string name="makor_added_to_favorites">מקור הוסף לנבחרים</string>
+    <string name="alert_error">שגיאה</string>
     <string name="alert_connection_error_info">התרחשה שגיאה בחיבור לשרת - אנא נסה שנית מאוחר יותר.</string>
-    <string name="alert_connection_error_btn">אוקיי</string>
     <string-array name="spinner_items">
         <item> פרשה</item>
         <item> פרק</item>

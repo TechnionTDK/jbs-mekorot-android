@@ -1,6 +1,8 @@
 package technion.com.testapplication.async;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 
@@ -13,6 +15,7 @@ import java.util.ArrayList;
 import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.R;
 import technion.com.testapplication.activities.MainActivity;
+import technion.com.testapplication.activities.MakorDetailView;
 import technion.com.testapplication.models.ParashotAndPrakim;
 import technion.com.testapplication.utils.OneButtonAlert;
 
@@ -22,7 +25,7 @@ import technion.com.testapplication.utils.OneButtonAlert;
  */
 public class FetchParashotAndPrakimTask extends AsyncTask<String, Void, ParashotAndPrakim> {
     private Activity mActivity;
-    private OneButtonAlert oneButtonAlert;
+    private AlertDialog mDialog;
     private boolean isError = false;
     public static final String MAGIC_SEPERATOR = "$$$";
 
@@ -32,16 +35,26 @@ public class FetchParashotAndPrakimTask extends AsyncTask<String, Void, Parashot
 
     protected void onPreExecute() {
         super.onPreExecute();
-        Runnable finishCallingActivity = new Runnable() {
+        final Runnable finishCallingActivity = new Runnable() {
             @Override
             public void run() {
                 mActivity.finish();
             }
         };
-        oneButtonAlert = new OneButtonAlert(mActivity,
-                mActivity.getResources().getString(R.string.alert_connection_error_info),
-                mActivity.getResources().getString(R.string.alert_connection_error_btn),
-                finishCallingActivity);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        builder.setTitle(mActivity.getResources().getString(R.string.alert_error));
+        builder.setMessage(mActivity.getResources().getString(R.string.alert_connection_error_info));
+        builder.setNeutralButton(
+                mActivity.getResources().getString(R.string.close_button),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finishCallingActivity.run();
+                    }
+                });
+
+        mDialog = builder.create();
     }
 
     @Override
@@ -102,7 +115,7 @@ public class FetchParashotAndPrakimTask extends AsyncTask<String, Void, Parashot
         super.onPostExecute(parashotAndPrakim);
         if (isError)
         {
-            oneButtonAlert.show();
+            mDialog.show();
             return;
         }
         Intent startMainActivityIntent = new Intent(mActivity, MainActivity.class);
