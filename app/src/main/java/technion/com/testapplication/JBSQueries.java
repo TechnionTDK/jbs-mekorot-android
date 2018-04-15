@@ -57,14 +57,23 @@ public class JBSQueries {
                 " PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n" +
                 " PREFIX jbr: <http://jbs.technion.ac.il/resource/>\n" +
                 " PREFIX jbo: <http://jbs.technion.ac.il/ontology/>\n" +
-                " SELECT ?pasuk ?label ?pasuk_text ?position \n" +
-                " WHERE {?pasuk a jbo:Pasuk. ?pasuk jbo:within jbr:" + parashaUri + ". ?pasuk rdfs:label ?label. ?pasuk jbo:text ?pasuk_text. ?pasuk jbo:position ?position. } ORDER BY ASC(xsd:integer(?position))";
+                " PREFIX dco: <http://purl.org/dc/terms/> \n" +
+                " SELECT ?pasuk ?label ?pasuk_text ?position (COUNT(?makor) as ?numOfMekorot) \n" +
+                " WHERE {?pasuk a jbo:Pasuk. \n" +
+                " ?pasuk jbo:within jbr:" + parashaUri + ".\n" +
+                " ?pasuk rdfs:label ?label. \n" +
+                " ?pasuk jbo:text ?pasuk_text. \n" +
+                " ?pasuk jbo:position ?position. \n" +
+                " ?mention a jbo:Mention.\n" +
+                " ?mention jbo:source ?makor; jbo:target ?pasuk. \n" +
+                " } ORDER BY ASC(xsd:integer(?position))";
     }
 
     public static String getPsukimToHighlightFromMakor(String makorUri, ArrayList<String> psukim) {
-        String psukimList = "";
+        StringBuilder psukimList = new StringBuilder("");
         for (String pasuk : psukim) {
-            psukimList += pasuk + " ";
+            psukimList.append(pasuk);
+            psukimList.append(" ");
         }
         return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>                           \n"
                 + "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n"
@@ -78,9 +87,10 @@ public class JBSQueries {
     }
 
     public static String getCategoriesByPsukimWithReferenceNumber(ArrayList<String> psukim) {
-        String psukimList = "";
+        StringBuilder psukimList = new StringBuilder("");
         for (String pasuk : psukim) {
-            psukimList += pasuk + " ";
+            psukimList.append(pasuk);
+            psukimList.append(" ");
         }
         return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>                           \n"
                 + "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n"
@@ -100,9 +110,10 @@ public class JBSQueries {
             makorUri = "jbr:" + makorUri;
             prefixedMekorotUris.add(i, makorUri);
         }
-        String mekorotList = "";
+        StringBuilder mekorotList = new StringBuilder("");
         for (String makor : prefixedMekorotUris) {
-            mekorotList += makor + " ";
+            mekorotList.append(makor);
+            mekorotList.append(" ");
         }
         return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>                           \n" +
                 "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n" +
@@ -114,13 +125,15 @@ public class JBSQueries {
     }
 
     public static String getMekorotFiltered(ArrayList<String> subjects, ArrayList<String> psukim) {
-        String psukimList = "";
-        String subjectList = "";
+        StringBuilder subjectList = new StringBuilder("");
+        StringBuilder psukimList = new StringBuilder("");
         for (String pasuk : psukim) {
-            psukimList += pasuk + " ";
+            psukimList.append(pasuk);
+            psukimList.append(" ");
         }
         for (String subject : subjects) {
-            subjectList += subject + " ";
+            subjectList.append(subject);
+            subjectList.append(" ");
         }
         return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>\n" +
                 "      PREFIX jbo: <http://jbs.technion.ac.il/ontology/>\n" +
@@ -284,9 +297,10 @@ public class JBSQueries {
     }
 
     public static String getMekorotWithAllData(ArrayList<String> psukim) {
-        String psukimList = "";
+        StringBuilder psukimList = new StringBuilder("");
         for (String pasuk : psukim) {
-            psukimList += pasuk + " ";
+            psukimList.append(pasuk);
+            psukimList.append(" ");
         }
         return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>                           \n" +
                 "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n" +

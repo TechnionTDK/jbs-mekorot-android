@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.sparql.engine.http.QueryEngineHTTP;
 
 import java.util.ArrayList;
 
@@ -21,6 +22,7 @@ import technion.com.testapplication.models.PasukModel;
 public class FetchPsukimTask extends AsyncTask<String, Void, ArrayList<PasukModel>> {
     private Fragment mPsukimFrag;
     private ProgressDialog mProgressDialog;
+    private static final String NUM_OF_REFERENCES_REGEX = "^";
 
     public FetchPsukimTask(Fragment frag) {
         mPsukimFrag = frag;
@@ -39,28 +41,25 @@ public class FetchPsukimTask extends AsyncTask<String, Void, ArrayList<PasukMode
     protected ArrayList<PasukModel> doInBackground(String... params) {
         ArrayList<PasukModel> queryResults = new ArrayList<>();
         try {
-            com.hp.hpl.jena.query.Query query = com.hp.hpl.jena.query.QueryFactory.create(
-                    params[0]);
-            com.hp.hpl.jena.query.QueryExecution qexec = com.hp.hpl.jena.query.QueryExecutionFactory.sparqlService(
-                    JBSQueries.JBS_ENDPOINT, query);
+            QueryEngineHTTP psukimQuery = new QueryEngineHTTP(JBSQueries.JBS_ENDPOINT, params[0]);
 
             try {
-                ResultSet rs = qexec.execSelect();
-
-                while (rs.hasNext()) {
-                    QuerySolution rb = rs.nextSolution();
+                ResultSet resultSet = psukimQuery.execSelect();
+                while (resultSet.hasNext()) {
+                    QuerySolution rb = resultSet.nextSolution();
+                    String numOfMekorot = rb.get("numOfMekorot").toString();
+                    numOfMekorot = numOfMekorot.substring(0, numOfMekorot.indexOf(NUM_OF_REFERENCES_REGEX));
                     String pasukLabel = rb.get(JBSQueries.PASUK_LABEL).toString();
                     int indexOfSecondWord = pasukLabel.indexOf(" ") + 1;
                     String perekParashaOfPasuk = pasukLabel.substring(indexOfSecondWord);
                     PasukModel pasukModel = new PasukModel(
-                            rb.get(JBSQueries.PASUK_TEXT).toString(), perekParashaOfPasuk);
+                            rb.get(JBSQueries.PASUK_TEXT).toString() + " (" + numOfMekorot + ")", perekParashaOfPasuk);
                     pasukModel.setUri(rb.get(JBSQueries.PASUK).toString());
                     queryResults.add(pasukModel);
                 }
             } finally {
-                qexec.close();
+                psukimQuery.close();
             }
-
 
         } catch (Exception err) {
             err.printStackTrace();
