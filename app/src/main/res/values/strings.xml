@@ -40,6 +40,8 @@
     <string name="makor_added_to_favorites">מקור הוסף לנבחרים</string>
     <string name="alert_error">שגיאה</string>
     <string name="alert_connection_error_info">התרחשה שגיאה בחיבור לשרת - אנא נסה שנית מאוחר יותר.</string>
+    <string name="unchoose_all">נקה בחירה</string>
+    <string name="choose_all">בחר הכל</string>
     <string-array name="spinner_items">
         <item> פרשה</item>
         <item> פרק</item>

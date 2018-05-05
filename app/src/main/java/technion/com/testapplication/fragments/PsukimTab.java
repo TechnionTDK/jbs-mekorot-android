@@ -33,9 +33,9 @@ public class PsukimTab extends Fragment {
     // Defines a way for the Psukim tab to communicate with the Mekorot tab
     // via the MainActivity.
     public interface OnMoveToMekorotTabListener {
-        public void onMoveToMekorotTab(ArrayList<String> psukimUris);
+        void onMoveToMekorotTab(ArrayList<String> psukimUris);
 
-        public void onPsukimSelected(boolean areNewSelected);
+        void onPsukimSelected(boolean areNewSelected);
     }
 
     @Override
@@ -52,32 +52,46 @@ public class PsukimTab extends Fragment {
     public void setRecyclerViewAdapter(ArrayList<PasukModel> psukim) {
         if (getView() != null) {
             getView().findViewById(R.id.choose_all).setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.unchoose_all).setVisibility(View.VISIBLE);
         }
-        mRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view);
+        mRecyclerView = getView().findViewById(R.id.recycler_view);
         mAdapter = new PsukimRecyclerViewAdapter(psukim);
         LinearLayoutManager manager = new LinearLayoutManager(getView().getContext());
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+
+        // Choose all view configuration:
         View chooseAll = getView().findViewById(R.id.choose_all);
         final PsukimRecyclerViewAdapter psukimRecyclerViewAdapter = ((PsukimRecyclerViewAdapter) mAdapter);
-        final ImageView chooseAllImage = (ImageView) getView().findViewById(
+        final ImageView chooseAllImage = getView().findViewById(
                 R.id.choose_all_image);
         chooseAllImage.setImageResource(
-                R.drawable.ic_check_box_outline_blank_black_24dp);
+                R.drawable.ic_choose_all_unselected);
         psukimRecyclerViewAdapter.clickOnAllItems(false);
         chooseAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (psukimRecyclerViewAdapter.getAreAllItemsClicked()) {
                     chooseAllImage.setImageResource(
-                            R.drawable.ic_check_box_outline_blank_black_24dp);
+                            R.drawable.ic_choose_all_unselected);
                     psukimRecyclerViewAdapter.clickOnAllItems(false);
                 } else {
-                    chooseAllImage.setImageResource(R.drawable.ic_check_box_black_24dp);
+                    chooseAllImage.setImageResource(R.drawable.ic_choose_all_selected);
                     psukimRecyclerViewAdapter.clickOnAllItems(true);
                 }
+            }
+        });
+
+        // Unchoose all view configuration
+        View unchooseAll = getView().findViewById(R.id.unchoose_all);
+        unchooseAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                psukimRecyclerViewAdapter.clickOnAllItems(false);
+                chooseAllImage.setImageResource(
+                        R.drawable.ic_choose_all_unselected);
             }
         });
     }
@@ -96,8 +110,7 @@ public class PsukimTab extends Fragment {
         }
         if (psukimUris.size() == 0) {
             mCallback.onPsukimSelected(false);
-        }
-        else {
+        } else {
             if (Arrays.asList(psukimUris).containsAll(
                     Arrays.asList(mCurrentPsukim)) && psukimUris.size() == mCurrentPsukim.size()) {
                 mCallback.onPsukimSelected(false);
@@ -112,6 +125,7 @@ public class PsukimTab extends Fragment {
 
     /**
      * The FAB dialog notifies the tab that it should load relevant psukim.
+     *
      * @param perekOrParashaUri
      */
     public void loadPuskim(String perekOrParashaUri) {
@@ -131,6 +145,7 @@ public class PsukimTab extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.psukim_tab, container, false);
         rootView.findViewById(R.id.choose_all).setVisibility(View.INVISIBLE);
+        rootView.findViewById(R.id.unchoose_all).setVisibility(View.INVISIBLE);
 
         return rootView;
     }
