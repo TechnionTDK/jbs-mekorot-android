@@ -28,11 +28,11 @@ import technion.com.testapplication.fragments.PsukimTab;
 public class PrakimParashotListDialog extends Dialog implements View.OnClickListener {
 
     private ListView list;
-    private EditText filterText = null;
+    private EditText filterText;
     private ArrayList<String> mAdapterArrayList = new ArrayList<>();
     private ArrayAdapter<String> mAdapter;
-    ArrayList<String> mParashot;
-    ArrayList<String> mPrakim;
+    private ArrayList<String> mParashot;
+    private ArrayList<String> mPrakim;
     private Context mContext;
     private int mSpinnerCheck = 0;
     private ArrayList<Pair<String, String>> mParashotURILabelPairs;
@@ -48,7 +48,7 @@ public class PrakimParashotListDialog extends Dialog implements View.OnClickList
                                     Activity activity) {
         super(context);
 
-        /** Design the dialog in main.xml file */
+        /* Design the dialog in main.xml file */
         setContentView(R.layout.psukim_dialog);
         mHostActivity = activity;
         mParashot = parashot;
@@ -57,46 +57,39 @@ public class PrakimParashotListDialog extends Dialog implements View.OnClickList
         mPrakimURILabelPairs = prakimURILabelPairs;
         mParashotURILabelPairs = parashotURILabelPairs;
         mViewPagerAdapter = viewPagerAdapter;
-        filterText = (EditText) this.findViewById(R.id.EditBox);
+        filterText = this.findViewById(R.id.EditBox);
         filterText.addTextChangedListener(filterTextWatcher);
         setSpinner();
         setAdapterForListView();
     }
 
     private void setAdapterForListView() {
-        mAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1,
-                mAdapterArrayList);
-        list = (ListView) this.findViewById(R.id.List);
+        mAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, mAdapterArrayList);
+        list = this.findViewById(R.id.List);
         list.setAdapter(mAdapter);
         final Dialog thisDialog = this;
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-                String spinnerText = ((Spinner) thisDialog.findViewById(
-                        R.id.spinner_nav)).getSelectedItem().toString();
+                String spinnerText = ((Spinner) thisDialog.findViewById(R.id.spinner_nav)).getSelectedItem().toString();
                 String perekOrParashaName = list.getItemAtPosition(position).toString();
-                String perekOrParashaUri = "";
                 ArrayList<Pair<String, String>> perekOrParashaPairs;
-                if (spinnerText.equals(mContext.getResources().getString(R.string.parasha))) {
+                if (spinnerText.equals(mContext.getResources().getString(R.string.parasha)))
+                {
                     perekOrParashaPairs = mParashotURILabelPairs;
-                } else {
+                }
+                else
+                {
                     perekOrParashaPairs = mPrakimURILabelPairs;
                 }
-                for (Pair<String, String> uriLabel : perekOrParashaPairs) {
-                    if (uriLabel.first.equals(perekOrParashaName)) {
-                        perekOrParashaUri = uriLabel.second;
-                    }
-                }
-                PsukimTab psukimTabFrag = (PsukimTab) mViewPagerAdapter.getItem(
-                        0);
-                perekOrParashaUri = perekOrParashaUri.substring(
-                        perekOrParashaUri.lastIndexOf("/") + 1);
-                TabLayout tabs = (TabLayout) mHostActivity.findViewById(R.id.tabs);
+                PsukimTab psukimTabFrag = (PsukimTab) mViewPagerAdapter.getItem(0);
+                TabLayout tabs = mHostActivity.findViewById(R.id.tabs);
                 TabLayout.Tab tab = tabs.getTabAt(PSUKIM_TAB_INDEX);
-                if (tab != null) {
+                if (tab != null)
+                {
                     tab.select();
                 }
-                psukimTabFrag.loadPuskim(perekOrParashaUri);
+                psukimTabFrag.loadPuskim(perekOrParashaName, perekOrParashaPairs);
                 thisDialog.dismiss();
             }
         });
@@ -108,30 +101,35 @@ public class PrakimParashotListDialog extends Dialog implements View.OnClickList
     }
 
     private void setSpinner() {
-        Spinner spinner = (Spinner) this.findViewById(R.id.spinner_nav);
+        Spinner spinner = this.findViewById(R.id.spinner_nav);
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(mContext,
-                R.layout.spinner_item_main,
-                mContext.getResources().getStringArray(R.array.spinner_items));
+                                                                      R.layout.spinner_item_main,
+                                                                      mContext.getResources().getStringArray(R.array.spinner_items));
         spinnerArrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerArrayAdapter);
         final Dialog thisDialog = this;
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                EditText editText = (EditText) thisDialog.findViewById(
+                EditText editText = thisDialog.findViewById(
                         R.id.EditBox);
                 if (((TextView) view).getText().equals(
-                        mContext.getResources().getString(R.string.perek))) {
+                        mContext.getResources().getString(R.string.perek)))
+                {
                     editText.setHint(mContext.getResources().getString(R.string.enter_perek));
-                    if (++mSpinnerCheck > 1 && !mAdapter.isEmpty()) {
+                    if (++mSpinnerCheck > 1 && !mAdapter.isEmpty())
+                    {
                         mAdapter.clear();
                     }
                     mAdapter.addAll(mPrakim);
                     mAdapter.getFilter().filter("");
                     mAdapter.notifyDataSetChanged();
-                } else {
+                }
+                else
+                {
                     editText.setHint(mContext.getResources().getString(R.string.enter_parasha));
-                    if (++mSpinnerCheck > 1 && !mAdapter.isEmpty()) {
+                    if (++mSpinnerCheck > 1 && !mAdapter.isEmpty())
+                    {
                         mAdapter.clear();
                     }
                     mAdapter.addAll(mParashot);

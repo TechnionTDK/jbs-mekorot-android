@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,8 @@ public class PsukimTab extends Fragment {
     private RecyclerView.Adapter mAdapter;
     OnMoveToMekorotTabListener mCallback;
     private static ArrayList<String> mCurrentPsukim = new ArrayList<>();
+    private ArrayList<Pair<String, String>> mPrakimOrParashotPairs = new ArrayList<>();
+    private int mCurPerekParashId = 0;
 
     // Defines a way for the Psukim tab to communicate with the Mekorot tab
     // via the MainActivity.
@@ -53,6 +56,7 @@ public class PsukimTab extends Fragment {
         if (getView() != null) {
             getView().findViewById(R.id.choose_all).setVisibility(View.VISIBLE);
             getView().findViewById(R.id.unchoose_all).setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.perekBrowsing).setVisibility(View.VISIBLE);
         }
         mRecyclerView = getView().findViewById(R.id.recycler_view);
         mAdapter = new PsukimRecyclerViewAdapter(psukim);
@@ -94,6 +98,24 @@ public class PsukimTab extends Fragment {
                         R.drawable.ic_choose_all_unselected);
             }
         });
+
+        final PsukimTab selfie = this;
+
+        View nextPerek = getView().findViewById(R.id.next_perek);
+        nextPerek.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selfie.onNextPerek();
+            }
+        });
+
+        View prevPerek = getView().findViewById(R.id.prev_perek);
+        prevPerek.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selfie.onPrevPerek();
+            }
+        });
     }
 
     public PsukimTab() {
@@ -126,9 +148,26 @@ public class PsukimTab extends Fragment {
     /**
      * The FAB dialog notifies the tab that it should load relevant psukim.
      *
-     * @param perekOrParashaUri
+     * @param perekOrParashaName
+     * @param perekOrParashaPairs
      */
-    public void loadPuskim(String perekOrParashaUri) {
+    public void loadPuskim(String perekOrParashaName, ArrayList<Pair<String, String>> perekOrParashaPairs) {
+        mPrakimOrParashotPairs = perekOrParashaPairs;
+        for (int i = 0; i < mPrakimOrParashotPairs.size(); i++)
+        {
+            Pair<String, String> uriLabel = mPrakimOrParashotPairs.get(i);
+            if (uriLabel.first.equals(perekOrParashaName))
+            {
+                mCurPerekParashId = i;
+                break;
+            }
+        }
+        loadPsukimByIndex(mCurPerekParashId);
+    }
+
+    public void loadPsukimByIndex(int index) {
+        Pair<String, String> uriLabel = mPrakimOrParashotPairs.get(index);
+        String perekOrParashaUri = uriLabel.second.substring(uriLabel.second.lastIndexOf("/") + 1);
         String psukimByParashaQuery = JBSQueries.getAllPsukimFromParashaQuery(perekOrParashaUri);
         FetchPsukimTask fetchPsukimTask = new FetchPsukimTask(this);
         fetchPsukimTask.execute(psukimByParashaQuery);
@@ -146,8 +185,25 @@ public class PsukimTab extends Fragment {
         View rootView = inflater.inflate(R.layout.psukim_tab, container, false);
         rootView.findViewById(R.id.choose_all).setVisibility(View.INVISIBLE);
         rootView.findViewById(R.id.unchoose_all).setVisibility(View.INVISIBLE);
+        rootView.findViewById(R.id.perekBrowsing).setVisibility(View.INVISIBLE);
 
         return rootView;
+    }
+
+    public void onNextPerek() {
+        // Prevent overflow
+        if (mCurPerekParashId < mPrakimOrParashotPairs.size() - 1)
+        {
+            loadPsukimByIndex(++mCurPerekParashId);
+        }
+    }
+
+    public void onPrevPerek() {
+        // Prevent underflow
+        if (mCurPerekParashId > 0)
+        {
+            loadPsukimByIndex(--mCurPerekParashId);
+        }
     }
 
     @Override
