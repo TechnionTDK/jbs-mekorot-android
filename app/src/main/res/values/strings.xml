@@ -44,6 +44,7 @@
     <string name="choose_all">בחר הכל</string>
     <string name="next_chapter">פרק הבא</string>
     <string name="prev_chapter">פרק קודם</string>
+    <string name="search_substr_txt">חיפוש טקסט:</string>
     <string-array name="spinner_items">
         <item> פרשה</item>
         <item> פרק</item>

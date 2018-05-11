@@ -18,6 +18,7 @@ import java.util.Arrays;
 import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.adapters.PsukimRecyclerViewAdapter;
 import technion.com.testapplication.R;
+import technion.com.testapplication.async.FetchPsukimBySubstrTask;
 import technion.com.testapplication.async.FetchPsukimTask;
 import technion.com.testapplication.models.PasukModel;
 
@@ -171,6 +172,12 @@ public class PsukimTab extends Fragment {
         String psukimByParashaQuery = JBSQueries.getAllPsukimFromParashaQuery(perekOrParashaUri);
         FetchPsukimTask fetchPsukimTask = new FetchPsukimTask(this);
         fetchPsukimTask.execute(psukimByParashaQuery);
+    }
+
+    public void loadPuskimBySubstr(String pasukSubstr) {
+        String psukimBySubstrQuery = JBSQueries.getAllPsukimBySubstrQuery(pasukSubstr);
+        FetchPsukimBySubstrTask fetchPsukimBySubstrTask = new FetchPsukimBySubstrTask(this);
+        fetchPsukimBySubstrTask.execute(psukimBySubstrQuery);
     }
 
     @Override

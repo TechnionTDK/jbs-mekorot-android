@@ -69,6 +69,27 @@ public class JBSQueries {
                 " } ORDER BY ASC(xsd:integer(?position))";
     }
 
+    public static String getAllPsukimBySubstrQuery(String pasukSubstr) {
+        return " PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+                " PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                " PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                " PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n" +
+                " PREFIX dc: <http://purl.org/dc/elements/1.1/>\n" +
+                " PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n" +
+                " PREFIX jbr: <http://jbs.technion.ac.il/resource/>\n" +
+                " PREFIX jbo: <http://jbs.technion.ac.il/ontology/>\n" +
+                " PREFIX dco: <http://purl.org/dc/terms/> \n" +
+                " SELECT ?pasuk ?label ?pasuk_text ?position (COUNT(?makor) as ?numOfMekorot) \n" +
+                " WHERE {?pasuk a jbo:Pasuk. \n" +
+                " ?pasuk rdfs:label ?label. \n" +
+                " ?pasuk jbo:text ?pasuk_text. \n" +
+                " ?pasuk jbo:position ?position. \n" +
+                " ?mention a jbo:Mention.\n" +
+                " ?mention jbo:source ?makor; jbo:target ?pasuk. \n" +
+                " filter (regex(str(?pasuk_text), \"" + pasukSubstr + "\" )). \n" +
+                " } ORDER BY ASC(xsd:integer(?position))";
+    }
+
     public static String getPsukimToHighlightFromMakor(String makorUri, ArrayList<String> psukim) {
         StringBuilder psukimList = new StringBuilder("");
         for (String pasuk : psukim) {

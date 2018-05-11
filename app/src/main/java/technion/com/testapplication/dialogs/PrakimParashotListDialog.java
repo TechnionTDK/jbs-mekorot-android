@@ -61,6 +61,26 @@ public class PrakimParashotListDialog extends Dialog implements View.OnClickList
         filterText.addTextChangedListener(filterTextWatcher);
         setSpinner();
         setAdapterForListView();
+        setSubstrSearchForBtn();
+    }
+
+    private void setSubstrSearchForBtn() {
+        final Dialog thisDialog = this;
+        this.findViewById(R.id.btn_search_substr).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String pasukSubstr = ((TextView) thisDialog.findViewById(R.id.pasuk_substr)).getText().toString();
+                PsukimTab psukimTabFrag = (PsukimTab) mViewPagerAdapter.getItem(0);
+                TabLayout tabs = mHostActivity.findViewById(R.id.tabs);
+                TabLayout.Tab tab = tabs.getTabAt(PSUKIM_TAB_INDEX);
+                if (tab != null)
+                {
+                    tab.select();
+                }
+                psukimTabFrag.loadPuskimBySubstr(pasukSubstr);
+                thisDialog.dismiss();
+            }
+        });
     }
 
     private void setAdapterForListView() {
@@ -94,7 +114,6 @@ public class PrakimParashotListDialog extends Dialog implements View.OnClickList
             }
         });
     }
-
 
     @Override
     public void onClick(View v) {

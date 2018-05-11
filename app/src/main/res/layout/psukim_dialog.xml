@@ -1,23 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/LinearLayout01"
-              xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:gravity="center"
-              android:orientation="vertical">
-    <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:orientation="horizontal"
-                  android:weightSum="1">
-        <EditText android:id="@+id/EditBox"
-                  android:layout_width="0dip"
-                  android:layout_height="wrap_content"
-                  android:layout_marginLeft="20dip"
-                  android:layout_weight="0.7"
-                  android:gravity="right"
-                  android:maxLines="1"
-                  android:textSize="18sp">
-        </EditText>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearLayout01"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btn_search_substr"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.15"
+            android:layout_marginLeft="0dp"
+            android:layout_marginStart="0dp"
+            android:src="@drawable/ic_search_btn" />
+
+        <EditText
+            android:id="@+id/pasuk_substr"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.55"
+            android:gravity="right"
+            android:maxLines="1"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:text="@string/search_substr_txt"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <EditText
+            android:id="@+id/EditBox"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dip"
+            android:layout_weight="0.7"
+            android:gravity="right"
+            android:maxLines="1"
+            android:textSize="18sp" />
+
         <Spinner
             android:id="@+id/spinner_nav"
             android:layout_width="0dip"
@@ -28,12 +66,13 @@
             android:background="@null"
             android:gravity="right"
             android:paddingTop="10dip"
-            android:spinnerMode="dropdown"/>
+            android:spinnerMode="dropdown" />
     </LinearLayout>
-    <ListView android:id="@+id/List"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:choiceMode="singleChoice"
-              android:gravity="left">
-    </ListView>
+
+    <ListView
+        android:id="@+id/List"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:choiceMode="singleChoice"
+        android:gravity="left"></ListView>
 </LinearLayout>
