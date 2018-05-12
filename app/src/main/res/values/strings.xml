@@ -42,9 +42,10 @@
     <string name="alert_connection_error_info">התרחשה שגיאה בחיבור לשרת - אנא נסה שנית מאוחר יותר.</string>
     <string name="unchoose_all">נקה בחירה</string>
     <string name="choose_all">בחר הכל</string>
-    <string name="next_chapter">פרק הבא</string>
-    <string name="prev_chapter">פרק קודם</string>
+    <string name="next_chapter">הבא</string>
+    <string name="prev_chapter">הקודם</string>
     <string name="search_substr_txt">חיפוש טקסט:</string>
+    <string name="app_name_he">סולמות</string>
     <string-array name="spinner_items">
         <item> פרשה</item>
         <item> פרק</item>

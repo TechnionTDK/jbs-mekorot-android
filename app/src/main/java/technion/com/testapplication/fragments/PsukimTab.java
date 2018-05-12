@@ -57,7 +57,8 @@ public class PsukimTab extends Fragment {
         if (getView() != null) {
             getView().findViewById(R.id.choose_all).setVisibility(View.VISIBLE);
             getView().findViewById(R.id.unchoose_all).setVisibility(View.VISIBLE);
-            getView().findViewById(R.id.perekBrowsing).setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.next_perek).setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.prev_perek).setVisibility(View.VISIBLE);
         }
         mRecyclerView = getView().findViewById(R.id.recycler_view);
         mAdapter = new PsukimRecyclerViewAdapter(psukim);
@@ -192,7 +193,8 @@ public class PsukimTab extends Fragment {
         View rootView = inflater.inflate(R.layout.psukim_tab, container, false);
         rootView.findViewById(R.id.choose_all).setVisibility(View.INVISIBLE);
         rootView.findViewById(R.id.unchoose_all).setVisibility(View.INVISIBLE);
-        rootView.findViewById(R.id.perekBrowsing).setVisibility(View.INVISIBLE);
+        rootView.findViewById(R.id.next_perek).setVisibility(View.INVISIBLE);
+        rootView.findViewById(R.id.prev_perek).setVisibility(View.INVISIBLE);
 
         return rootView;
     }

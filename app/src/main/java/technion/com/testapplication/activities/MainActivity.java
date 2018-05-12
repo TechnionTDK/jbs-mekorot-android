@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity
      * @param isClickable
      */
     public void setFilterIconClickable(boolean isClickable) {
-        ImageView filterIcon = (ImageView) findViewById(R.id.filter_icon);
+        ImageView filterIcon = findViewById(R.id.filter_icon);
         if (!isClickable) {
             filterIcon.setColorFilter(R.color.FilterIconUnavailable);
             filterIcon.setEnabled(false);
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity
      * @param isClickable
      */
     public void setShareIconClickable(boolean isClickable) {
-        ImageView shareIcon = (ImageView) findViewById(R.id.share_icon);
+        ImageView shareIcon = findViewById(R.id.share_icon);
         if (!isClickable) {
             shareIcon.setColorFilter(R.color.FilterIconUnavailable);
             shareIcon.setEnabled(false);
@@ -122,13 +122,24 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+//    public void setUnchooseAllClickable(boolean isClickable) {
+//        ImageView shareIcon = (ImageView) findViewById(R.id.unchoose_all);
+//        if (!isClickable) {
+//            shareIcon.setColorFilter(R.color.FilterIconUnavailable);
+//            shareIcon.setEnabled(false);
+//        } else {
+//            shareIcon.setColorFilter(null);
+//            shareIcon.setEnabled(true);
+//        }
+//    }
+
     /**
      * Set toolbar for this activity.
      * This will also set the spinner.
      */
     private void setToolbar() {
-        final Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        amvMenu = (ActionMenuView) myToolbar.findViewById(R.id.amvMenu);
+        final Toolbar myToolbar = findViewById(R.id.my_toolbar);
+        amvMenu = myToolbar.findViewById(R.id.amvMenu);
         amvMenu.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
@@ -148,7 +159,7 @@ public class MainActivity extends AppCompatActivity
      * Set the tabs for the view pager.
      */
     private void setTabs() {
-        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager = findViewById(R.id.pager);
         mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         mPsukimTab = new PsukimTab();
         mMekorotTab = new MekorotTab();
@@ -158,7 +169,7 @@ public class MainActivity extends AppCompatActivity
         mViewPagerAdapter.addFragment(mFavoritesTab, getResources().getString(R.string.favorites));
         mViewPager.setAdapter(mViewPagerAdapter);
         mViewPager.setOffscreenPageLimit(OFF_SCREEN_PAGE_LIMIT);
-        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab = findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -171,7 +182,7 @@ public class MainActivity extends AppCompatActivity
                 mIsNewQuerySubmitted = true;
             }
         });
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         tabLayout.setSelectedTabIndicatorColor(Color.parseColor(SELECTED_TAB_INDICATOR_COLOR));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -180,18 +191,21 @@ public class MainActivity extends AppCompatActivity
                 if (tab.getPosition() == PSUKIM_TAB_INDEX) {
                     setFilterIconClickable(false);
                     setShareIconClickable(false);
+                    //setUnchooseAllClickable(true);
                     mFab.show();
                 } else if (tab.getPosition() == MEKOROT_TAB_INDEX) {
                     PsukimTab psukimTabFrag = (PsukimTab) mViewPagerAdapter.getItem(
                             PSUKIM_FRAG_POSITION);
                     psukimTabFrag.moveToMekorot();
                     setShareIconClickable(false);
+                    //setUnchooseAllClickable(false);
                     mFab.hide();
                 } else if (tab.getPosition() == FAVORITES_TAB_INDEX) {
                     mFab.hide();
                     setFilterIconClickable(false);
                     if (mNumOfFavorites > 0) {
                         setShareIconClickable(true);
+                        //setUnchooseAllClickable(false);
                     }
                     FavoritesTab favoritesTab = (FavoritesTab) mViewPagerAdapter.getItem(
                             FAVORITE_FRAG_POSITION);
@@ -329,7 +343,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void setTabResultsNum(int numOfResults) {
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = findViewById(R.id.tabs);
         TabLayout.Tab mekorotTab = tabLayout.getTabAt(1);
         if (mekorotTab != null) {
             if (numOfResults == 0) {
@@ -376,7 +390,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void setFavoriteTabResultsNum(int numOfResults) {
         mNumOfFavorites = numOfResults;
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = findViewById(R.id.tabs);
         TabLayout.Tab favoritesTab = tabLayout.getTabAt(2);
         if (favoritesTab != null) {
             if (numOfResults == 0) {
