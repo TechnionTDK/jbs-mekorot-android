@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -113,79 +114,6 @@ public class MakorDetailView extends AppCompatActivity {
                     JBSQueries.READ_URL + makorUri);
         }
         return mShareIntent;
-    }
-
-    /**
-     * Sets the next and prev buttons for the highlights.
-     */
-    private void setPrevNextButtons() {
-        View prevAction = findViewById(R.id.prev_button);
-        View nextAction = findViewById(R.id.next_button);
-        prevAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mClickedIndex > 0 && (mClickedIndex < mScrollToList.size())) {
-                    final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
-                    scrollView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            TextView makorTextView = (TextView) findViewById(R.id.makor_text);
-                            int y = makorTextView.getLayout().getLineTop(
-                                    mScrollToList.get(mClickedIndex));
-                            scrollView.scrollTo(0, y);
-                            mClickedIndex--;
-                        }
-                    });
-                } else {
-                    mClickedIndex = mScrollToList.size() - 1;
-                    final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
-                    scrollView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            TextView makorTextView = (TextView) findViewById(R.id.makor_text);
-                            int y = makorTextView.getLayout().getLineTop(
-                                    mScrollToList.get(mClickedIndex));
-                            scrollView.scrollTo(0, y);
-                            if (mClickedIndex != 0) {
-                                mClickedIndex--;
-                            }
-                        }
-                    });
-                }
-            }
-        });
-        nextAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mClickedIndex < mScrollToList.size()) {
-                    final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
-                    scrollView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            TextView makorTextView = (TextView) findViewById(R.id.makor_text);
-                            int y = makorTextView.getLayout().getLineTop(
-                                    mScrollToList.get(mClickedIndex));
-                            scrollView.scrollTo(0, y);
-                            mClickedIndex++;
-                        }
-                    });
-                } else {
-                    mClickedIndex = 0;
-                    final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
-                    scrollView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            TextView makorTextView = (TextView) findViewById(R.id.makor_text);
-                            int y = makorTextView.getLayout().getLineTop(
-                                    mScrollToList.get(mClickedIndex));
-                            scrollView.scrollTo(0, y);
-                            mClickedIndex++;
-                        }
-                    });
-                }
-            }
-        });
-
     }
 
     /**
@@ -314,7 +242,6 @@ public class MakorDetailView extends AppCompatActivity {
 
         // Set highlights in makor text
         makorTextView.setText(spannableMakorText);
-        setPrevNextButtons();
     }
 
     @Override
@@ -336,6 +263,43 @@ public class MakorDetailView extends AppCompatActivity {
         setToolbarAndColors();
         setMakorText();
         executeGetHighlightsForMakorQuery();
+
+
+        FloatingActionButton fab = findViewById(R.id.fab_next);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mClickedIndex < mScrollToList.size())
+                {
+                    final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
+                    scrollView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            TextView makorTextView = (TextView) findViewById(R.id.makor_text);
+                            int y = makorTextView.getLayout().getLineTop(
+                                    mScrollToList.get(mClickedIndex));
+                            scrollView.scrollTo(0, y);
+                            mClickedIndex++;
+                        }
+                    });
+                }
+                else
+                {
+                    mClickedIndex = 0;
+                    final ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
+                    scrollView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            TextView makorTextView = (TextView) findViewById(R.id.makor_text);
+                            int y = makorTextView.getLayout().getLineTop(
+                                    mScrollToList.get(mClickedIndex));
+                            scrollView.scrollTo(0, y);
+                            mClickedIndex++;
+                        }
+                    });
+                }
+            }
+        });
     }
 
     @Override

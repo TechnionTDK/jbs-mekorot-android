@@ -56,7 +56,6 @@ public class PsukimTab extends Fragment {
     public void setRecyclerViewAdapter(ArrayList<PasukModel> psukim) {
         if (getView() != null) {
             getView().findViewById(R.id.choose_all).setVisibility(View.VISIBLE);
-            getView().findViewById(R.id.unchoose_all).setVisibility(View.VISIBLE);
             getView().findViewById(R.id.next_perek).setVisibility(View.VISIBLE);
             getView().findViewById(R.id.prev_perek).setVisibility(View.VISIBLE);
         }
@@ -87,17 +86,6 @@ public class PsukimTab extends Fragment {
                     chooseAllImage.setImageResource(R.drawable.ic_choose_all_selected);
                     psukimRecyclerViewAdapter.clickOnAllItems(true);
                 }
-            }
-        });
-
-        // Unchoose all view configuration
-        View unchooseAll = getView().findViewById(R.id.unchoose_all);
-        unchooseAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                psukimRecyclerViewAdapter.clickOnAllItems(false);
-                chooseAllImage.setImageResource(
-                        R.drawable.ic_choose_all_unselected);
             }
         });
 
@@ -192,7 +180,6 @@ public class PsukimTab extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.psukim_tab, container, false);
         rootView.findViewById(R.id.choose_all).setVisibility(View.INVISIBLE);
-        rootView.findViewById(R.id.unchoose_all).setVisibility(View.INVISIBLE);
         rootView.findViewById(R.id.next_perek).setVisibility(View.INVISIBLE);
         rootView.findViewById(R.id.prev_perek).setVisibility(View.INVISIBLE);
 

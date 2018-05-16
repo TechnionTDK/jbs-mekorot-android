@@ -22,7 +22,6 @@
     </android.support.v7.widget.Toolbar>
     <LinearLayout android:layout_width="fill_parent"
                   android:layout_height="fill_parent"
-                  android:layout_above="@+id/footer"
                   android:layout_below="@+id/my_toolbar"
                   android:layout_marginTop="5dip"
                   android:orientation="vertical">
@@ -48,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:src="@drawable/ic_check_box_outline_blank_black_24dp"/>
+                android:src="@drawable/ic_choose_all_unselected" />
         </LinearLayout>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view"

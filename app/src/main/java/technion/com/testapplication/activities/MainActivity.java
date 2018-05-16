@@ -122,17 +122,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-//    public void setUnchooseAllClickable(boolean isClickable) {
-//        ImageView shareIcon = (ImageView) findViewById(R.id.unchoose_all);
-//        if (!isClickable) {
-//            shareIcon.setColorFilter(R.color.FilterIconUnavailable);
-//            shareIcon.setEnabled(false);
-//        } else {
-//            shareIcon.setColorFilter(null);
-//            shareIcon.setEnabled(true);
-//        }
-//    }
-
     /**
      * Set toolbar for this activity.
      * This will also set the spinner.
