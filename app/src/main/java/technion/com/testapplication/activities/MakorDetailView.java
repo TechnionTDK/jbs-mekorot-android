@@ -2,6 +2,7 @@ package technion.com.testapplication.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -10,7 +11,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
 import android.text.style.BackgroundColorSpan;
+import android.text.style.ClickableSpan;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -57,7 +63,8 @@ public class MakorDetailView extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+        switch (item.getItemId())
+        {
             default:
                 return super.onOptionsItemSelected(item);
 
@@ -78,10 +85,14 @@ public class MakorDetailView extends AppCompatActivity {
         int startWord = Integer.parseInt(splitSubset[0]);
         int endWord = Integer.parseInt(splitSubset[1]);
         String partialPasukText = "";
-        for (int i = startWord; i <= endWord; i++) {
-            if (i == endWord) {
+        for (int i = startWord; i <= endWord; i++)
+        {
+            if (i == endWord)
+            {
                 partialPasukText += splitMakorText[i];
-            } else {
+            }
+            else
+            {
                 partialPasukText += splitMakorText[i] + " ";
             }
         }
@@ -103,15 +114,18 @@ public class MakorDetailView extends AppCompatActivity {
     private Intent createShareIntent(boolean fullText) {
         mShareIntent = new Intent(Intent.ACTION_SEND);
         mShareIntent.setType("text/plain");
-        if (fullText) {
+        if (fullText)
+        {
             mShareIntent.putExtra(Intent.EXTRA_TITLE, mMakorTitle);
             mShareIntent.putExtra(Intent.EXTRA_TEXT, mMakorText);
-        } else {
+        }
+        else
+        {
             String makorUri = mMakorUri;
             makorUri = makorUri.substring(makorUri.lastIndexOf(MAKOR_URI_DELIMITER) + 1);
             makorUri = getResources().getString(R.string.jbr_prefix) + makorUri;
             mShareIntent.putExtra(Intent.EXTRA_TEXT,
-                    JBSQueries.READ_URL + makorUri);
+                                  JBSQueries.READ_URL + makorUri);
         }
         return mShareIntent;
     }
@@ -124,7 +138,8 @@ public class MakorDetailView extends AppCompatActivity {
                 ContextCompat.getColor(this, R.color.MakorDetailViewBG));
         final Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        if (getSupportActionBar() != null) {
+        if (getSupportActionBar() != null)
+        {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
         View shareButton = findViewById(R.id.share_button);
@@ -146,9 +161,12 @@ public class MakorDetailView extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 int selectedPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
-                                if (selectedPosition == 0) {
+                                if (selectedPosition == 0)
+                                {
                                     startActivity(createShareIntent(true));
-                                } else {
+                                }
+                                else
+                                {
                                     startActivity(createShareIntent(false));
                                 }
                             }
@@ -196,7 +214,7 @@ public class MakorDetailView extends AppCompatActivity {
      */
     private void executeGetHighlightsForMakorQuery() {
         String fetchHighlightsForMakor = JBSQueries.getPsukimToHighlightFromMakor(mMakorUri,
-                mMakorPsukim);
+                                                                                  mMakorPsukim);
         FetchHighlightsForMakorTask fetchHighlightsForMakorTask = new FetchHighlightsForMakorTask(
                 this, MakorDetailView.this);
         fetchHighlightsForMakorTask.execute(fetchHighlightsForMakor);
@@ -207,41 +225,59 @@ public class MakorDetailView extends AppCompatActivity {
      * 2) Highlight each index-range.
      * 3) Calculate scroll position for next-prev buttons.
      *
-     * @param psukimSubstrings - psukim substrings of the following format: ["X-Y", "A-B",..]
+     * @param psukimSubstrings - A pair <span, pasuk_text>
+     *                         span: psukim substrings of the following format: ["X-Y", "A-B",..]
      *                         For example: ["1-4", "50-65",...]
      */
-    public void highlightPsukim(ArrayList<String> psukimSubstrings) {
-        TextView makorTextView = (TextView) findViewById(R.id.makor_text);
+    public void highlightPsukim(ArrayList<Pair<String, String>> psukimSubstrings) {
+        TextView makorTextView = findViewById(R.id.makor_text);
         String makorText = makorTextView.getText().toString();
         String[] splitMakorText = makorText.split(SPLIT_BY_SPACES_REGEX);
         SpannableString spannableMakorText = new SpannableString(makorText);
+        final MakorDetailView selfie = this;
         mScrollToList = new ArrayList<>();
-        for (String subsetToHighlight : psukimSubstrings) {
-            String successivePsukim = calculatePasukReferenceFromGivenIndices(subsetToHighlight,
-                    splitMakorText);
+        for (final Pair<String, String> subsetToHighlight : psukimSubstrings)
+        {
+            String successivePsukim = calculatePasukReferenceFromGivenIndices(subsetToHighlight.first,
+                                                                              splitMakorText);
 
             // Find all indices inside makorText for the given psukim String.
             List<IndexWrapper> indicesList = (new WholeWordIndexFinder(
                     makorText)).findIndexesForKeyword(successivePsukim);
 
             // Calculate for each indicesList the scroll position.
-            for (IndexWrapper indexWrapper : indicesList) {
+            for (IndexWrapper indexWrapper : indicesList)
+            {
                 int lineNum = makorTextView.getLayout().getLineForOffset(indexWrapper.getStart());
                 mScrollToList.add(lineNum);
             }
 
             // Highlight each indicesList members.
-            for (IndexWrapper indexWrapper : indicesList) {
-                spannableMakorText.setSpan(new BackgroundColorSpan(
-                                ContextCompat.getColor(getApplicationContext(), R.color.Highlight)),
-                        indexWrapper.getStart(), indexWrapper.getEnd(),
-                        0);
+            for (IndexWrapper indexWrapper : indicesList)
+            {
+                ClickableSpan clickableSpan = new ClickableSpan() {
+                    @Override
+                    public void onClick(View widget) {
+                        AlertDialog alert = new AlertDialog.Builder(selfie).create();
+                        alert.setTitle(subsetToHighlight.second);
+                        alert.show();
+                    }
+
+                    @Override
+                    public void updateDrawState(TextPaint ds) {
+                        super.updateDrawState(ds);
+                        ds.setColor(Color.MAGENTA);
+                    }
+                };
+                spannableMakorText.setSpan(clickableSpan, indexWrapper.getStart(), indexWrapper.getEnd(),
+                                           Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
         removeDuplicatesAndSortScrollList();
 
         // Set highlights in makor text
         makorTextView.setText(spannableMakorText);
+        makorTextView.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     @Override
@@ -263,7 +299,6 @@ public class MakorDetailView extends AppCompatActivity {
         setToolbarAndColors();
         setMakorText();
         executeGetHighlightsForMakorQuery();
-
 
         FloatingActionButton fab = findViewById(R.id.fab_next);
         fab.setOnClickListener(new View.OnClickListener() {

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/relative_layout"
     android:layout_width="fill_parent"
@@ -30,12 +29,12 @@
             <technion.com.testapplication.utils.AutoResizeTextView
                 android:id="@+id/toolbar_title"
                 android:layout_width="0dp"
-                android:maxLines="1"
                 android:layout_height="wrap_content"
-                android:text="Hello"
-                android:textColor="@color/White"
                 android:layout_marginTop="7dp"
                 android:layout_weight="1"
+                android:maxLines="1"
+                android:text="Hello"
+                android:textColor="@color/White"
                 android:textSize="16sp" />
 
             <ImageButton
@@ -58,6 +57,8 @@
             android:id="@+id/makor_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
             android:padding="10dp"
             android:scrollbars="vertical"
             android:textColor="@color/Black"
@@ -69,10 +70,10 @@
         android:id="@+id/fab_next"
         android:layout_width="56dp"
         android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:layout_alignParentBottom="true"
         android:src="@drawable/ic_next_arrow"
         app:backgroundTint="@color/DodgerBlue"
         app:fabSize="normal"

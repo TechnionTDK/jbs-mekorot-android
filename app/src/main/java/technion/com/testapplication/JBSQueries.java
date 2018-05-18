@@ -92,16 +92,18 @@ public class JBSQueries {
 
     public static String getPsukimToHighlightFromMakor(String makorUri, ArrayList<String> psukim) {
         StringBuilder psukimList = new StringBuilder("");
-        for (String pasuk : psukim) {
+        for (String pasuk : psukim)
+        {
             psukimList.append(pasuk);
             psukimList.append(" ");
         }
         return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>                           \n"
                 + "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n"
                 + "            PREFIX dco: <http://purl.org/dc/terms/>                                     \n"
-                + "SELECT ?makor ?pasuk ?span WHERE {\n"
+                + "SELECT ?makor ?pasuk ?pasuk_text ?span WHERE {\n"
                 + "values ?makor { " + makorUri + " }\n"
                 + "values ?pasuk { " + psukimList + " }\n"
+                + "?pasuk jbo:text ?pasuk_text. \n"
                 + "?mention a jbo:Mention.\n"
                 + "?mention jbo:source ?makor; jbo:target ?pasuk; jbo:span ?span.\n"
                 + "}\n";
@@ -109,7 +111,8 @@ public class JBSQueries {
 
     public static String getCategoriesByPsukimWithReferenceNumber(ArrayList<String> psukim) {
         StringBuilder psukimList = new StringBuilder("");
-        for (String pasuk : psukim) {
+        for (String pasuk : psukim)
+        {
             psukimList.append(pasuk);
             psukimList.append(" ");
         }
@@ -125,14 +128,16 @@ public class JBSQueries {
 
     public static String getMekorotAuthors(ArrayList<String> mekorotUris) {
         ArrayList<String> prefixedMekorotUris = new ArrayList<>();
-        for (int i = 0; i < mekorotUris.size(); i++) {
+        for (int i = 0; i < mekorotUris.size(); i++)
+        {
             String makorUri = mekorotUris.get(i);
             makorUri = makorUri.substring(makorUri.lastIndexOf("/") + 1);
             makorUri = "jbr:" + makorUri;
             prefixedMekorotUris.add(i, makorUri);
         }
         StringBuilder mekorotList = new StringBuilder("");
-        for (String makor : prefixedMekorotUris) {
+        for (String makor : prefixedMekorotUris)
+        {
             mekorotList.append(makor);
             mekorotList.append(" ");
         }
@@ -148,11 +153,13 @@ public class JBSQueries {
     public static String getMekorotFiltered(ArrayList<String> subjects, ArrayList<String> psukim) {
         StringBuilder subjectList = new StringBuilder("");
         StringBuilder psukimList = new StringBuilder("");
-        for (String pasuk : psukim) {
+        for (String pasuk : psukim)
+        {
             psukimList.append(pasuk);
             psukimList.append(" ");
         }
-        for (String subject : subjects) {
+        for (String subject : subjects)
+        {
             subjectList.append(subject);
             subjectList.append(" ");
         }
@@ -319,7 +326,8 @@ public class JBSQueries {
 
     public static String getMekorotWithAllData(ArrayList<String> psukim) {
         StringBuilder psukimList = new StringBuilder("");
-        for (String pasuk : psukim) {
+        for (String pasuk : psukim)
+        {
             psukimList.append(pasuk);
             psukimList.append(" ");
         }
