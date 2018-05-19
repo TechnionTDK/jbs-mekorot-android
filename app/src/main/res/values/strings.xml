@@ -46,6 +46,9 @@
     <string name="prev_chapter">הקודם</string>
     <string name="search_substr_txt">חיפוש טקסט:</string>
     <string name="app_name_he">סולמות</string>
+    <string name="share">שתף</string>
+    <string name="return_to_main">חזרה לעמוד ראשי</string>
+    <string name="report_error">דווח על שגיאה</string>
     <string-array name="spinner_items">
         <item> פרשה</item>
         <item> פרק</item>

@@ -20,11 +20,12 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/share_button"
+                android:id="@+id/nav_menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:background="@drawable/ic_share_white_18dp" />
+                android:onClick="showMenu"
+                android:background="@drawable/ic_nav_menu" />
 
             <technion.com.testapplication.utils.AutoResizeTextView
                 android:id="@+id/toolbar_title"

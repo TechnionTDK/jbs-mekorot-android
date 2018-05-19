@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -41,7 +42,7 @@ import technion.com.testapplication.utils.WholeWordIndexFinder;
  * Created by tomerlevinson on 23/12/2017.
  * Shows the chosen Makor from the makor tab.
  */
-public class MakorDetailView extends AppCompatActivity {
+public class MakorDetailView extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
     private String mMakorTitle;
     private String mMakorAuthor;
     private String mMakorText;
@@ -130,6 +131,71 @@ public class MakorDetailView extends AppCompatActivity {
         return mShareIntent;
     }
 
+    public void showMenu(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+
+        // This activity implements OnMenuItemClickListener
+        popup.setOnMenuItemClickListener(this);
+        popup.inflate(R.menu.menu_single_result);
+        popup.show();
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.action_share:
+                onShareClick();
+                return true;
+            case R.id.action_return:
+                finish();
+                return true;
+            case R.id.action_report_error:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private void onShareClick() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MakorDetailView.this);
+        String[] options = new String[]{getResources().getString(
+                R.string.full_text_share_option), getResources().getString(
+                R.string.link_to_text_share_option)};
+        int selectedFont = 0;
+        builder.setSingleChoiceItems(options, selectedFont, null);
+        builder.setCancelable(true);
+        builder.setTitle(getApplicationContext().getResources().getString(
+                R.string.choose_sharing_option));
+        builder.setPositiveButton(
+                getApplicationContext().getResources().getString(R.string.choose_button),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        int selectedPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
+                        if (selectedPosition == 0)
+                        {
+                            startActivity(createShareIntent(true));
+                        }
+                        else
+                        {
+                            startActivity(createShareIntent(false));
+                        }
+                    }
+                });
+
+        builder.setNegativeButton(
+                getApplicationContext().getResources().getString(R.string.cancel_button),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     /**
      * Sets the background color and toolbar options.
      */
@@ -142,48 +208,6 @@ public class MakorDetailView extends AppCompatActivity {
         {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
-        View shareButton = findViewById(R.id.share_button);
-        shareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MakorDetailView.this);
-                String[] options = new String[]{getResources().getString(
-                        R.string.full_text_share_option), getResources().getString(
-                        R.string.link_to_text_share_option)};
-                int selectedFont = 0;
-                builder.setSingleChoiceItems(options, selectedFont, null);
-                builder.setCancelable(true);
-                builder.setTitle(getApplicationContext().getResources().getString(
-                        R.string.choose_sharing_option));
-                builder.setPositiveButton(
-                        getApplicationContext().getResources().getString(R.string.choose_button),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                int selectedPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
-                                if (selectedPosition == 0)
-                                {
-                                    startActivity(createShareIntent(true));
-                                }
-                                else
-                                {
-                                    startActivity(createShareIntent(false));
-                                }
-                            }
-                        });
-
-                builder.setNegativeButton(
-                        getApplicationContext().getResources().getString(R.string.cancel_button),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        });
-
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-        });
         View backButton = findViewById(R.id.go_back);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override

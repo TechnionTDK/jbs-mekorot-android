@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_return"
+        android:title="@string/return_to_main"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_share"
+        android:title="@string/share"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_report_error"
+        android:title="@string/report_error"
+        app:showAsAction="never" />
+</menu>
