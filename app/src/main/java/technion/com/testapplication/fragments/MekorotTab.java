@@ -34,6 +34,7 @@ public class MekorotTab extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private ArrayList<CategoryModel> mMekorotCategories;
+    public static ArrayList<MakorModel> MekorotModels = new ArrayList<>();
     private static final int CATEGORY_STRING_LENGTH = 9;
     private static ArrayList<Integer> mDialogSelectedItems = new ArrayList<>();
     private static ArrayList<String> mDialogSelectedItemsNames = new ArrayList<>();
@@ -61,11 +62,13 @@ public class MekorotTab extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
+        try
+        {
             mCallback = (MekorotChangesListener) activity;
-        } catch (ClassCastException e) {
+        } catch (ClassCastException e)
+        {
             throw new ClassCastException(activity.toString()
-                    + " must implement MekorotChangesListener");
+                                                 + " must implement MekorotChangesListener");
         }
     }
 
@@ -83,7 +86,8 @@ public class MekorotTab extends Fragment {
     }
 
     public void clear() {
-        if (mRecyclerView != null) {
+        if (mRecyclerView != null)
+        {
             mRecyclerView.removeAllViewsInLayout();
             mRecyclerView.setAdapter(null);
         }
@@ -96,10 +100,11 @@ public class MekorotTab extends Fragment {
     private void setFilterDialog() {
         final Fragment mekorotTabFrag = this;
         ArrayList<String> prettifiedCategories = new ArrayList<>();
-        for (CategoryModel category : mMekorotCategories) {
+        for (CategoryModel category : mMekorotCategories)
+        {
             String prettifiedCategory = category.getCategoryName().substring(
                     CATEGORY_STRING_LENGTH).replace("_",
-                    " ")
+                                                    " ")
                     + CATEGORY_NUM_OPEN_BRACE
                     + category.getCategoryRefernceNum()
                     + CATEGORY_NUM_CLOSE_BRACE;
@@ -108,59 +113,66 @@ public class MekorotTab extends Fragment {
         final CharSequence[] items = prettifiedCategories.toArray(
                 new CharSequence[prettifiedCategories.size()]);
         boolean[] checkedItemsPositions = new boolean[mMekorotCategories.size()];
-        for (Integer selectedItem : mDialogSelectedItems) {
+        for (Integer selectedItem : mDialogSelectedItems)
+        {
             checkedItemsPositions[selectedItem] = true;
         }
         final AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setTitle(getResources().getString(R.string.choose_category_to_filter))
                 .setMultiChoiceItems(items, checkedItemsPositions,
-                        new DialogInterface.OnMultiChoiceClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int indexSelected,
-                                                boolean isChecked) {
-                                if (isChecked) {
-                                    // If the user checked the item, add it to the selected items
-                                    mDialogSelectedItems.add(indexSelected);
-                                    String prefixedSelection = getResources().getString(
-                                            R.string.jbr_prefix) + mMekorotCategories.get(
-                                            indexSelected).getCategoryName();
-                                    mDialogSelectedItemsNames.add(prefixedSelection);
-                                } else if (mDialogSelectedItems.contains(indexSelected)) {
-                                    // Else, if the item is already in the array, remove it
-                                    mDialogSelectedItems.remove(Integer.valueOf(indexSelected));
-                                    String prefixedSelection = getResources().getString(
-                                            R.string.jbr_prefix) + mMekorotCategories.get(
-                                            indexSelected).getCategoryName();
-                                    mDialogSelectedItemsNames.remove(prefixedSelection);
-                                }
-                            }
-                        }).setPositiveButton(getResources().getString(R.string.choose_button),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                String mekorotQuery;
-                                boolean shouldFilter = false;
-                                if (mDialogSelectedItemsNames.size() > 0) {
-                                    mekorotQuery = JBSQueries.getMekorotFiltered(
-                                            mDialogSelectedItemsNames, mPrefixedPsukimUris);
-                                    shouldFilter = true;
-                                } else {
-                                    mekorotQuery = JBSQueries.getMekorotWithAllData(
-                                            mPrefixedPsukimUris);
-                                }
-                                String categoriesQuery = JBSQueries.getCategoriesByPsukimWithReferenceNumber(
-                                        mPrefixedPsukimUris);
-                                FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(
-                                        mekorotTabFrag, shouldFilter);
-                                fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQuery);
-                            }
-                        }).setNegativeButton(getResources().getString(R.string.cancel_button),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        }).create();
+                                     new DialogInterface.OnMultiChoiceClickListener() {
+                                         @Override
+                                         public void onClick(DialogInterface dialog, int indexSelected,
+                                                             boolean isChecked) {
+                                             if (isChecked)
+                                             {
+                                                 // If the user checked the item, add it to the selected items
+                                                 mDialogSelectedItems.add(indexSelected);
+                                                 String prefixedSelection = getResources().getString(
+                                                         R.string.jbr_prefix) + mMekorotCategories.get(
+                                                         indexSelected).getCategoryName();
+                                                 mDialogSelectedItemsNames.add(prefixedSelection);
+                                             }
+                                             else if (mDialogSelectedItems.contains(indexSelected))
+                                             {
+                                                 // Else, if the item is already in the array, remove it
+                                                 mDialogSelectedItems.remove(Integer.valueOf(indexSelected));
+                                                 String prefixedSelection = getResources().getString(
+                                                         R.string.jbr_prefix) + mMekorotCategories.get(
+                                                         indexSelected).getCategoryName();
+                                                 mDialogSelectedItemsNames.remove(prefixedSelection);
+                                             }
+                                         }
+                                     }).setPositiveButton(getResources().getString(R.string.choose_button),
+                                                          new DialogInterface.OnClickListener() {
+                                                              @Override
+                                                              public void onClick(DialogInterface dialog, int id) {
+                                                                  String mekorotQuery;
+                                                                  boolean shouldFilter = false;
+                                                                  if (mDialogSelectedItemsNames.size() > 0)
+                                                                  {
+                                                                      mekorotQuery = JBSQueries.getMekorotFiltered(
+                                                                              mDialogSelectedItemsNames, mPrefixedPsukimUris);
+                                                                      shouldFilter = true;
+                                                                  }
+                                                                  else
+                                                                  {
+                                                                      mekorotQuery = JBSQueries.getMekorotWithAllData(
+                                                                              mPrefixedPsukimUris);
+                                                                  }
+                                                                  String categoriesQuery = JBSQueries.getCategoriesByPsukimWithReferenceNumber(
+                                                                          mPrefixedPsukimUris);
+                                                                  FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(
+                                                                          mekorotTabFrag, shouldFilter);
+                                                                  fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQuery);
+                                                              }
+                                                          }).setNegativeButton(getResources().getString(R.string.cancel_button),
+                                                                               new DialogInterface.OnClickListener() {
+                                                                                   @Override
+                                                                                   public void onClick(DialogInterface dialog, int id) {
+                                                                                       dialog.dismiss();
+                                                                                   }
+                                                                               }).create();
         mCallback.setFilterIcon(dialog);
     }
 
@@ -169,18 +181,21 @@ public class MekorotTab extends Fragment {
      * upon a message from the favorites, that it has changed.
      */
     public void notifyFromFavorites() {
-        if (mAdapter != null) {
+        if (mAdapter != null)
+        {
             mAdapter.notifyDataSetChanged();
         }
     }
 
     /**
      * Run the mekorot and categories query.
+     *
      * @param psukimUris
      */
     public void runMekorotAndCategoriesQueries(ArrayList<String> psukimUris) {
         mPrefixedPsukimUris = new ArrayList<>();
-        for (int i = 0; i < psukimUris.size(); i++) {
+        for (int i = 0; i < psukimUris.size(); i++)
+        {
             String pasukUri = psukimUris.get(i);
             pasukUri = pasukUri.substring(pasukUri.lastIndexOf("/") + 1);
             pasukUri = getResources().getString(R.string.jbr_prefix) + pasukUri;
@@ -195,27 +210,29 @@ public class MekorotTab extends Fragment {
 
     public void setRecyclerViewAdapter(HashMap<String, MakorModel> mekorot,
                                        ArrayList<CategoryModel> mekorotCategories) {
-        if (getView() != null) {
-            ArrayList<MakorModel> makorModels = new ArrayList<>();
+        if (getView() != null)
+        {
+            MekorotModels.clear();
             Iterator it = mekorot.entrySet().iterator();
-            while (it.hasNext()) {
+            while (it.hasNext())
+            {
                 Map.Entry pair = (Map.Entry) it.next();
                 MakorModel makorModel = (MakorModel) pair.getValue();
-                makorModels.add(makorModel);
+                MekorotModels.add(makorModel);
                 it.remove(); // avoids a ConcurrentModificationException
             }
-            Collections.sort(makorModels, new MakorComparator());
-            Collections.reverse(makorModels);
+            Collections.sort(MekorotModels, new MakorComparator());
+            Collections.reverse(MekorotModels);
             mMekorotCategories = mekorotCategories;
-            mRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view);
-            mAdapter = new MekorotRecyclerViewAdapter(mPrefixedPsukimUris, makorModels,
-                    getContext(), mCallback);
+            mRecyclerView = getView().findViewById(R.id.recycler_view);
+            mAdapter = new MekorotRecyclerViewAdapter(mPrefixedPsukimUris, MekorotModels,
+                                                      getContext(), mCallback);
             LinearLayoutManager manager = new LinearLayoutManager(getContext());
             mRecyclerView.setHasFixedSize(true);
             mRecyclerView.setLayoutManager(manager);
             mRecyclerView.setAdapter(mAdapter);
             setFilterDialog();
-            mCallback.setTabResultsNum(makorModels.size());
+            mCallback.setTabResultsNum(MekorotModels.size());
         }
     }
 
@@ -237,9 +254,9 @@ public class MekorotTab extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (mAdapter != null) {
+        if (mAdapter != null)
+        {
             mAdapter.notifyDataSetChanged();
         }
-
     }
 }

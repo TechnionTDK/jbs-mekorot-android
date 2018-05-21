@@ -53,4 +53,5 @@
         <item> פרשה</item>
         <item> פרק</item>
     </string-array>
+    <string name="title_activity_results">ResultsActivity</string>
 </resources>

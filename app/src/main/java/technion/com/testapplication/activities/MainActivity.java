@@ -257,6 +257,7 @@ public class MainActivity extends AppCompatActivity
             return;
         }
         setContentView(R.layout.activity_main);
+
         Intent intent = getIntent();
         mParashotAndUris = (ArrayList<String>) intent.getExtras().get(
                 getResources().getString(R.string.parashot_and_uri_extra));

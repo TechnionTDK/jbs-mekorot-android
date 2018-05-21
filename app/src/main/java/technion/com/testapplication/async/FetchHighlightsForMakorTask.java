@@ -13,8 +13,7 @@ import com.hp.hpl.jena.sparql.engine.http.QueryEngineHTTP;
 import java.util.ArrayList;
 
 import technion.com.testapplication.JBSQueries;
-import technion.com.testapplication.R;
-import technion.com.testapplication.activities.MakorDetailView;
+import technion.com.testapplication.activities.ResultsActivity;
 
 /**
  * Created by tomerlevinson on 16/01/2018.
@@ -29,15 +28,6 @@ public class FetchHighlightsForMakorTask extends AsyncTask<String, Void, ArrayLi
         mContext = context;
         mProgressDialog = new ProgressDialog(mContext);
     }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        this.mProgressDialog.setMessage(
-                mContext.getResources().getString(R.string.please_wait_he));
-        this.mProgressDialog.show();
-    }
-
 
     @Override
     protected ArrayList<Pair<String, String>> doInBackground(String... params) {
@@ -77,9 +67,9 @@ public class FetchHighlightsForMakorTask extends AsyncTask<String, Void, ArrayLi
         {
             mProgressDialog.dismiss();
         }
-        if (mActivity instanceof MakorDetailView)
+        if (mActivity instanceof ResultsActivity)
         {
-            ((MakorDetailView) mActivity).highlightPsukim(highlightedPsukimIndices);
+            ((ResultsActivity) mActivity).highlightPsukim(highlightedPsukimIndices);
         }
     }
 }

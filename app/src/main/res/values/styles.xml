@@ -7,6 +7,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
     <style name="spinner_style">
         <item name="android:background">@drawable/background_spinner</item>
     </style>
@@ -38,11 +39,13 @@
         <item name="android:maxHeight">20dp</item>
         <item name="android:width">40dp</item>
     </style>
+
     <style name="CustomSubTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/White</item>
         <item name="android:textStyle">italic</item>
     </style>
+
     <style name="Autocomplete">
         <item name="colorControlNormal">@color/White</item>
         <item name="colorControlActivated">@color/White</item>
@@ -66,6 +69,10 @@
         <item name="android:windowTitleStyle">@style/MyOwnDialogTitle</item>
 
     </style>
+
+    <style name="AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 
 </resources>

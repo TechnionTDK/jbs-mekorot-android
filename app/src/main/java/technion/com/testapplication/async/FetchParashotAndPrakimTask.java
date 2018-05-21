@@ -8,16 +8,13 @@ import android.os.AsyncTask;
 
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Resource;
 
 import java.util.ArrayList;
 
 import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.R;
 import technion.com.testapplication.activities.MainActivity;
-import technion.com.testapplication.activities.MakorDetailView;
 import technion.com.testapplication.models.ParashotAndPrakim;
-import technion.com.testapplication.utils.OneButtonAlert;
 
 /**
  * Created by tomerlevinson on 15/12/2017.

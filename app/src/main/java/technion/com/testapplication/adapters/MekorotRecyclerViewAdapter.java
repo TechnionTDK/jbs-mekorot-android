@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import technion.com.testapplication.R;
-import technion.com.testapplication.activities.MakorDetailView;
+import technion.com.testapplication.activities.ResultsActivity;
 import technion.com.testapplication.fragments.MekorotTab;
 import technion.com.testapplication.models.MakorModel;
 import technion.com.testapplication.utils.FontUtils;
@@ -55,7 +55,7 @@ public class MekorotRecyclerViewAdapter
     }
 
     @Override
-    public void onBindViewHolder(final MekorotViewHolder holder, int position) {
+    public void onBindViewHolder(final MekorotViewHolder holder, final int position) {
         final MakorModel makorModel = mMekorotList.get(position);
         final String makorUri = makorModel.getMakorUri();
         holder.mTitle.setText(
@@ -78,23 +78,10 @@ public class MekorotRecyclerViewAdapter
         View.OnClickListener clickListenerForEverythingButFav = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent makorDetailViewIntent = new Intent(mContext, MakorDetailView.class);
-                makorDetailViewIntent.putExtra(
-                        mContext.getResources().getString(R.string.makor_text),
-                        holder.mText.getText());
-                makorDetailViewIntent.putExtra(
-                        mContext.getResources().getString(R.string.makor_author),
-                        holder.mAuthor.getText());
-                makorDetailViewIntent.putExtra(
-                        mContext.getResources().getString(R.string.makor_title),
-                        holder.mTitle.getText());
-                makorDetailViewIntent.putExtra(
-                        mContext.getResources().getString(R.string.makor_uri),
-                        makorUri);
-                makorDetailViewIntent.putStringArrayListExtra(
-                        mContext.getResources().getString(R.string.psukim_uris_extra),
-                        mPsukimUris);
-                mContext.startActivity(makorDetailViewIntent);
+                Intent resultsIntent = new Intent(mContext, ResultsActivity.class);
+                resultsIntent.putExtra(ResultsActivity.EXTRA_MAKOR_INDEX, position);
+                resultsIntent.putStringArrayListExtra(ResultsActivity.EXTRA_PSUKIM_URIS, mPsukimUris);
+                mContext.startActivity(resultsIntent);
             }
         };
         holder.mText.setOnClickListener(clickListenerForEverythingButFav);
