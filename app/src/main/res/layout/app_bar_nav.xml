@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".activities.NavActivity">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical">
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/my_toolbar"
+            android:id="@+id/toolbar"
             style="@style/Base_ToolbarStyle"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -24,15 +24,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
+                android:layout_marginEnd="15dip"
+                android:layout_marginLeft="10dip"
+                android:layout_marginRight="15dip"
+                android:layout_marginStart="10dip"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:text="@string/app_name_he"
                 android:textColor="@color/White"
-                android:textSize="@dimen/heading_text_size"
-                android:layout_marginLeft="10dip"
-                android:layout_marginRight="15dip"
-                android:layout_marginStart="10dip"
-                android:layout_marginEnd="15dip" />
+                android:textSize="@dimen/heading_text_size" />
 
             <android.support.v7.widget.ActionMenuView
                 android:id="@+id/amvMenu"
@@ -46,58 +46,35 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
-                android:src="@drawable/ic_filter_list_white_24dp"
                 android:layout_marginLeft="10dip"
-                android:layout_marginStart="10dip" />
+                android:layout_marginStart="10dip"
+                android:src="@drawable/ic_filter_list_white_24dp" />
 
             <ImageView
                 android:id="@+id/share_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
-                android:src="@drawable/ic_share_white_18dp"
                 android:layout_marginLeft="10dip"
-                android:layout_marginStart="10dip" />
+                android:layout_marginStart="10dip"
+                android:src="@drawable/ic_share_white_18dp" />
 
         </android.support.v7.widget.Toolbar>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:weightSum="1">
+    </android.support.design.widget.AppBarLayout>
 
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tabs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/DodgerBlue"
-                android:minHeight="?attr/actionBarSize"
-                app:tabGravity="fill"
-                app:tabMode="fixed"
-                app:tabSelectedTextColor="@color/Black"
-                app:tabTextColor="@color/White" />
-
-            <android.support.v4.view.ViewPager
-                android:id="@+id/pager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-
-        </LinearLayout>
-    </LinearLayout>
+    <include layout="@layout/content_nav" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="56dp"
         android:layout_height="56dp"
+        android:layout_gravity="bottom|start"
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:src="@drawable/ic_add_white_18dp"
         app:backgroundTint="@color/DodgerBlue"
-        app:fabSize="normal"
-        app:layout_anchor="@id/pager"
-        app:layout_anchorGravity="bottom|left" />
+        app:fabSize="normal" />
 
 </android.support.design.widget.CoordinatorLayout>

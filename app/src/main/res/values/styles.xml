@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -22,7 +22,7 @@
 
     <style name="Base_ToolbarTheme">
         <!-- Color used for the title of the Toolbar - as long as not overridden -->
-        <item name="android:textColorPrimary">@color/Black</item>
+        <item name="android:textColorPrimary">@color/White</item>
         <!-- Used to color back button and three dots -->
         <item name="android:textColorSecondary">@color/White</item>
     </style>

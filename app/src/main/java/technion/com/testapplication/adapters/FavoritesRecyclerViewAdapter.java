@@ -20,7 +20,6 @@ import java.util.Set;
 
 import technion.com.testapplication.R;
 import technion.com.testapplication.activities.MakorFavoriteView;
-import technion.com.testapplication.fragments.FavoritesTab;
 import technion.com.testapplication.utils.FontUtils;
 import technion.com.testapplication.utils.PreferencesUtils;
 
@@ -32,8 +31,6 @@ public class FavoritesRecyclerViewAdapter
         extends RecyclerView.Adapter<FavoritesRecyclerViewAdapter.FavoritesViewHolder> {
 
     private Context mContext;
-    private HashMap<String, Set<String>> mFavorites;
-    FavoritesTab.FavoritesChangeListener mCallback;
     private List<Pair<String, Pair<String, String>>> mFavoritesPairs = new ArrayList<>();
 
     private String getMakorNameTextOrUri(Set<String> pairSet, String prefixToSearch,
@@ -54,15 +51,13 @@ public class FavoritesRecyclerViewAdapter
         return mFavoritesPairs;
     }
 
-    public FavoritesRecyclerViewAdapter(Context context, HashMap<String, Set<String>> favorites,
-                                        FavoritesTab.FavoritesChangeListener callback) {
+    public FavoritesRecyclerViewAdapter(Context context, HashMap<String, Set<String>> favorites) {
         mContext = context;
-        mFavorites = favorites;
-        mCallback = callback;
-        Iterator it = mFavorites.entrySet().iterator();
+        HashMap<String, Set<String>> mFavorites = favorites;
+        Iterator<Map.Entry<String, Set<String>>> it = mFavorites.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            Set<String> pairSet = (Set<String>) pair.getValue();
+            Map.Entry<String, Set<String>> pair = it.next();
+            Set<String> pairSet = pair.getValue();
             String favoritesNamePrefix = mContext.getResources().getString(R.string.favorites_name_prefix);
             String favoritesUriPrefix = mContext.getResources().getString(R.string.favorites_uri_prefix);
             String favoritesTextPrefix = mContext.getResources().getString(R.string.favorites_text_prefix);
@@ -132,7 +127,6 @@ public class FavoritesRecyclerViewAdapter
                 notifyItemRemoved(position);
                 notifyItemRangeChanged(position, mFavoritesPairs.size());
                 notifyDataSetChanged();
-                mCallback.setFavoriteTabResultsNum(mFavoritesPairs.size());
             }
         });
     }
@@ -144,17 +138,15 @@ public class FavoritesRecyclerViewAdapter
 
     public class FavoritesViewHolder extends RecyclerView.ViewHolder {
 
-        private View mView;
         private TextView mTitle;
         private TextView mText;
         private ImageView mLikeButton;
 
         private FavoritesViewHolder(View itemView) {
             super(itemView);
-            mView = itemView;
-            mTitle = (TextView) itemView.findViewById(R.id.makor_name);
-            mText = (TextView) itemView.findViewById(R.id.makor_text);
-            mLikeButton = (ImageView) itemView.findViewById(R.id.favorite_icon);
+            mTitle = itemView.findViewById(R.id.makor_name);
+            mText = itemView.findViewById(R.id.makor_text);
+            mLikeButton = itemView.findViewById(R.id.favorite_icon);
         }
     }
 }

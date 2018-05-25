@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">Sulamot</string>
     <string name="action_favorite">favorite action</string>
-    <string name="action_settings">הגדרות</string>
     <string name="action_home">סולמות</string>
     <string name="enter_perek">אנא הכנס פרק</string>
     <string name="enter_parasha">אנא הכנס פרשה</string>
@@ -54,4 +53,14 @@
         <item> פרק</item>
     </string-array>
     <string name="title_activity_results">ResultsActivity</string>
+    <string name="title_activity_nav">NavActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">סולמות - מנוע חיפוש</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">סולמות</string>
+    <string name="title_activity_favorites">מקורות נבחרים</string>
+    <string name="nav_item_favorites">מקורות נבחרים</string>
+    <string name="nav_item_settings">הגדרות</string>
+    <string name="nav_item_help">עזרה ומשוב</string>
 </resources>

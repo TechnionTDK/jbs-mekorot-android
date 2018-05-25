@@ -9,10 +9,6 @@
         android:icon="@mipmap/ic_launcher_ladder"
         android:label="@string/app_name"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity
-            android:name=".activities.MainActivity"
-            android:alwaysRetainTaskState="true"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity android:name=".activities.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,22 +18,30 @@
         </activity>
         <activity
             android:name=".activities.SettingsActivity"
-            android:parentActivityName=".activities.MainActivity">
+            android:parentActivityName=".activities.NavActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.MainActivity" />
+                android:value=".activities.NavActivity" />
         </activity>
         <activity
             android:name=".activities.MakorFavoriteView"
-            android:parentActivityName=".activities.MainActivity">
+            android:parentActivityName=".activities.NavActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.MainActivity" />
+                android:value=".activities.NavActivity" />
         </activity>
         <activity
             android:name=".activities.ResultsActivity"
             android:label="@string/title_activity_results"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".activities.NavActivity"
+            android:label="@string/title_activity_nav"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".activities.FavoritesActivity"
+            android:label="@string/title_activity_favorites"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>
 
 </manifest>

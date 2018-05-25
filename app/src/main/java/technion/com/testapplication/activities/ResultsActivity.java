@@ -343,7 +343,8 @@ public class ResultsActivity extends AppCompatActivity
                     @Override
                     public void onClick(View widget) {
                         AlertDialog alert = new AlertDialog.Builder(selfie).create();
-                        alert.setTitle(subsetToHighlight.second);
+                        alert.setTitle("");
+                        alert.setMessage(subsetToHighlight.second);
                         alert.show();
                     }
 

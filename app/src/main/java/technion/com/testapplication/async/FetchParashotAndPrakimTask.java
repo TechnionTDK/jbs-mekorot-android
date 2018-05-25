@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.R;
-import technion.com.testapplication.activities.MainActivity;
+import technion.com.testapplication.activities.NavActivity;
 import technion.com.testapplication.models.ParashotAndPrakim;
 
 /**
@@ -115,7 +115,7 @@ public class FetchParashotAndPrakimTask extends AsyncTask<String, Void, Parashot
             mDialog.show();
             return;
         }
-        Intent startMainActivityIntent = new Intent(mActivity, MainActivity.class);
+        Intent startMainActivityIntent = new Intent(mActivity, NavActivity.class);
         ArrayList<String> parashotArray = parashotAndPrakim.getParashot();
         ArrayList<String> prakimArray = parashotAndPrakim.getPrakim();
         startMainActivityIntent.putStringArrayListExtra(

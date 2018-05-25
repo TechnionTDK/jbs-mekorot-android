@@ -52,11 +52,11 @@ public class MekorotTab extends Fragment {
      * 3) Update number of favorites.
      */
     public interface MekorotChangesListener {
-        public void setFilterIcon(Dialog dialog);
+        void setFilterIcon(Dialog dialog);
 
-        public void setTabResultsNum(int numOfResults);
+        void setTabResultsNum(int numOfResults);
 
-        public void updateFavoritesNum(int numOfFavorites);
+        void updateFavoritesNum(int numOfFavorites);
     }
 
     @Override
