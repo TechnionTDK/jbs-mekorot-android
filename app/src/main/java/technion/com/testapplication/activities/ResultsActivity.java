@@ -87,6 +87,11 @@ public class ResultsActivity extends AppCompatActivity
         titleView.setText(mResults.get(position).Title);
     }
 
+    private void editTitleWithHighlights(int num) {
+        final TextView titleView = findViewById(R.id.toolbar_title);
+        titleView.setText(titleView.getText() + " (" + String.valueOf(num) + ")");
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -183,9 +188,6 @@ public class ResultsActivity extends AppCompatActivity
         {
             case R.id.action_share:
                 onShareClick();
-                return true;
-            case R.id.action_return:
-                finish();
                 return true;
             case R.id.action_report_error:
                 return true;
@@ -312,6 +314,7 @@ public class ResultsActivity extends AppCompatActivity
      *                         For example: ["1-4", "50-65",...]
      */
     public void highlightPsukim(ArrayList<Pair<String, String>> psukimSubstrings) {
+        editTitleWithHighlights(psukimSubstrings.size());
         ResultsCollectionPagerAdapter.ResultObjectFragment fragment =
                 (ResultsCollectionPagerAdapter.ResultObjectFragment) mResultsCollectionPagerAdapter.getRegisteredFragment(mCurrentResult);
         TextView makorTextView = fragment.MakorTextView;

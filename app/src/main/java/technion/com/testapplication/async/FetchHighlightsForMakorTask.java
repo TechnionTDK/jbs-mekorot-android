@@ -44,8 +44,8 @@ public class FetchHighlightsForMakorTask extends AsyncTask<String, Void, ArrayLi
                 {
                     QuerySolution rb = rs.nextSolution();
                     String span = rb.get("span").toString();
-                    String pasukText = rb.get("pasuk_text").toString();
-                    queryResults.add(new Pair<>(span, pasukText));
+                    String pasukTextAndLabel = "(" + rb.get("label") + ") " + rb.get("pasuk_text").toString();
+                    queryResults.add(new Pair<>(span, pasukTextAndLabel));
                 }
             } finally
             {

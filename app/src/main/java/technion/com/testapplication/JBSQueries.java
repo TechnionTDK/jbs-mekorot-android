@@ -100,10 +100,11 @@ public class JBSQueries {
         return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>                           \n"
                 + "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n"
                 + "            PREFIX dco: <http://purl.org/dc/terms/>                                     \n"
-                + "SELECT ?makor ?pasuk ?pasuk_text ?span WHERE {\n"
+                + "SELECT ?makor ?pasuk ?pasuk_text ?label ?span WHERE {\n"
                 + "values ?makor { " + makorUri + " }\n"
                 + "values ?pasuk { " + psukimList + " }\n"
                 + "?pasuk jbo:text ?pasuk_text. \n"
+                + "?pasuk rdfs:label ?label. \n"
                 + "?mention a jbo:Mention.\n"
                 + "?mention jbo:source ?makor; jbo:target ?pasuk; jbo:span ?span.\n"
                 + "}\n";
