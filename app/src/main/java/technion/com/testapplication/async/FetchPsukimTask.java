@@ -40,12 +40,15 @@ public class FetchPsukimTask extends AsyncTask<String, Void, ArrayList<PasukMode
     @Override
     protected ArrayList<PasukModel> doInBackground(String... params) {
         ArrayList<PasukModel> queryResults = new ArrayList<>();
-        try {
+        try
+        {
             QueryEngineHTTP psukimQuery = new QueryEngineHTTP(JBSQueries.JBS_ENDPOINT, params[0]);
 
-            try {
+            try
+            {
                 ResultSet resultSet = psukimQuery.execSelect();
-                while (resultSet.hasNext()) {
+                while (resultSet.hasNext())
+                {
                     QuerySolution rb = resultSet.nextSolution();
                     String numOfMekorot = rb.get("numOfMekorot").toString();
                     numOfMekorot = numOfMekorot.substring(0, numOfMekorot.indexOf(NUM_OF_REFERENCES_REGEX));
@@ -57,11 +60,13 @@ public class FetchPsukimTask extends AsyncTask<String, Void, ArrayList<PasukMode
                     pasukModel.setUri(rb.get(JBSQueries.PASUK).toString());
                     queryResults.add(pasukModel);
                 }
-            } finally {
+            } finally
+            {
                 psukimQuery.close();
             }
 
-        } catch (Exception err) {
+        } catch (Exception err)
+        {
             err.printStackTrace();
         }
         return queryResults;
@@ -70,10 +75,12 @@ public class FetchPsukimTask extends AsyncTask<String, Void, ArrayList<PasukMode
     @Override
     protected void onPostExecute(ArrayList<PasukModel> pasukModelList) {
         super.onPostExecute(pasukModelList);
-        if (mProgressDialog.isShowing()) {
+        if (mProgressDialog.isShowing())
+        {
             mProgressDialog.dismiss();
         }
-        if (mPsukimFrag instanceof PsukimTab) {
+        if (mPsukimFrag instanceof PsukimTab)
+        {
             ((PsukimTab) mPsukimFrag).setRecyclerViewAdapter(pasukModelList);
         }
     }

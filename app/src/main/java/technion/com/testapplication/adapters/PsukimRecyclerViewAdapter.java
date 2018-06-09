@@ -37,9 +37,11 @@ public class PsukimRecyclerViewAdapter
 
     public void clickOnAllItems(boolean setSelected) {
         mSelectedUris.clear();
-        for (PasukModel pasukModel : mPsukim) {
+        for (PasukModel pasukModel : mPsukim)
+        {
             pasukModel.setSelected(setSelected);
-            if (setSelected) {
+            if (setSelected)
+            {
                 mSelectedUris.add(pasukModel.getUri());
             }
         }
@@ -72,16 +74,20 @@ public class PsukimRecyclerViewAdapter
         // Set the pasuk label font size to be smaller than the pasuk font size.
         SpannableString spannableString = new SpannableString(pasukCombined);
         spannableString.setSpan(new RelativeSizeSpan(PASUK_HEADER_FONT_SIZE_COMPARED_TO_PASUK_SIZE),
-                0, pasukLabel.length(), 0);
+                                0, pasukLabel.length(), 0);
         StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
         spannableString.setSpan(boldSpan, 0, pasukLabel.length(),
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         holder.mTextView.setText(spannableString);
         holder.mView.setBackgroundColor(pasukModel.isSelected() ? Color.CYAN : Color.WHITE);
-        if (pasukModel.isSelected()) {
+        holder.mView.setBackgroundResource(R.drawable.pasuk_background);
+        if (pasukModel.isSelected())
+        {
             holder.mImageView.setImageResource(R.drawable.ic_check_box_black_24dp);
-        } else {
+        }
+        else
+        {
             holder.mImageView.setImageResource(R.drawable.ic_check_box_outline_blank_black_24dp);
         }
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -90,10 +96,13 @@ public class PsukimRecyclerViewAdapter
                 pasukModel.setSelected(!pasukModel.isSelected());
                 holder.mView.setBackgroundColor(pasukModel.isSelected() ? Color.CYAN : Color.WHITE);
                 String pasukUri = pasukModel.getUri();
-                if (pasukModel.isSelected()) {
+                if (pasukModel.isSelected())
+                {
                     holder.mImageView.setImageResource(R.drawable.ic_check_box_black_24dp);
                     mSelectedUris.add(pasukUri);
-                } else {
+                }
+                else
+                {
                     holder.mImageView.setImageResource(
                             R.drawable.ic_check_box_outline_blank_black_24dp);
                     mSelectedUris.remove(pasukUri);
@@ -117,8 +126,8 @@ public class PsukimRecyclerViewAdapter
         private PsukimViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
-            mTextView = (TextView) itemView.findViewById(R.id.pasuk_text);
-            mImageView = (ImageView) itemView.findViewById(R.id.pasuk_selection);
+            mTextView = itemView.findViewById(R.id.pasuk_text);
+            mImageView = itemView.findViewById(R.id.pasuk_selection);
         }
     }
 
