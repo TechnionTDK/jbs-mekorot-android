@@ -1,6 +1,5 @@
 package technion.com.testapplication.adapters;
 
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
@@ -80,8 +79,7 @@ public class PsukimRecyclerViewAdapter
                                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         holder.mTextView.setText(spannableString);
-        holder.mView.setBackgroundColor(pasukModel.isSelected() ? Color.CYAN : Color.WHITE);
-        holder.mView.setBackgroundResource(R.drawable.pasuk_background);
+        holder.mView.setBackgroundResource(pasukModel.isSelected() ? R.drawable.pasuk_selected_background : R.drawable.pasuk_background);
         if (pasukModel.isSelected())
         {
             holder.mImageView.setImageResource(R.drawable.ic_check_box_black_24dp);
@@ -94,7 +92,7 @@ public class PsukimRecyclerViewAdapter
             @Override
             public void onClick(View view) {
                 pasukModel.setSelected(!pasukModel.isSelected());
-                holder.mView.setBackgroundColor(pasukModel.isSelected() ? Color.CYAN : Color.WHITE);
+                holder.mView.setBackgroundResource(pasukModel.isSelected() ? R.drawable.pasuk_selected_background : R.drawable.pasuk_background);
                 String pasukUri = pasukModel.getUri();
                 if (pasukModel.isSelected())
                 {

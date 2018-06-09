@@ -26,7 +26,6 @@ import technion.com.testapplication.models.PasukModel;
  */
 public class PsukimTab extends Fragment {
 
-    private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     OnMoveToMekorotTabListener mCallback;
     private static ArrayList<String> mCurrentPsukim = new ArrayList<>();
@@ -60,8 +59,9 @@ public class PsukimTab extends Fragment {
             getView().findViewById(R.id.choose_all).setVisibility(View.VISIBLE);
             getView().findViewById(R.id.next_perek).setVisibility(View.VISIBLE);
             getView().findViewById(R.id.prev_perek).setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.psukim_actions_bar_layout).setVisibility(View.VISIBLE);
         }
-        mRecyclerView = getView().findViewById(R.id.recycler_view);
+        RecyclerView mRecyclerView = getView().findViewById(R.id.recycler_view);
         mAdapter = new PsukimRecyclerViewAdapter(psukim);
         LinearLayoutManager manager = new LinearLayoutManager(getView().getContext());
         mRecyclerView.setHasFixedSize(true);
@@ -193,7 +193,7 @@ public class PsukimTab extends Fragment {
         rootView.findViewById(R.id.choose_all).setVisibility(View.INVISIBLE);
         rootView.findViewById(R.id.next_perek).setVisibility(View.INVISIBLE);
         rootView.findViewById(R.id.prev_perek).setVisibility(View.INVISIBLE);
-
+        rootView.findViewById(R.id.psukim_actions_bar_layout).setVisibility(View.INVISIBLE);
         return rootView;
     }
 
