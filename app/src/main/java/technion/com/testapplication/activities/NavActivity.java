@@ -391,12 +391,12 @@ public class NavActivity extends AppCompatActivity
         if (!isClickable)
         {
             filterIcon.setColorFilter(R.color.FilterIconUnavailable);
-            filterIcon.setEnabled(false);
+            filterIcon.setVisibility(View.INVISIBLE);
         }
         else
         {
             filterIcon.setColorFilter(null);
-            filterIcon.setEnabled(true);
+            filterIcon.setVisibility(View.VISIBLE);
         }
     }
 
@@ -410,12 +410,12 @@ public class NavActivity extends AppCompatActivity
         if (!isClickable)
         {
             shareIcon.setColorFilter(R.color.FilterIconUnavailable);
-            shareIcon.setEnabled(false);
+            shareIcon.setVisibility(View.INVISIBLE);
         }
         else
         {
             shareIcon.setColorFilter(null);
-            shareIcon.setEnabled(true);
+            shareIcon.setVisibility(View.VISIBLE);
         }
     }
 }
