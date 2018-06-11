@@ -110,7 +110,6 @@ public class ResultsActivity extends AppCompatActivity
         mCurrentResult = intent.getIntExtra(EXTRA_MAKOR_INDEX, 0);
         mViewPager.setCurrentItem(mCurrentResult);
         setTitleByPosition(mCurrentResult);
-        executeGetHighlightsForMakorQuery();
     }
 
     private void setFab() {
