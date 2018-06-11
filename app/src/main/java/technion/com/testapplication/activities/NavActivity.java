@@ -254,7 +254,7 @@ public class NavActivity extends AppCompatActivity
             if (psukimUris.size() == 0)
             {
                 mekorotTabFrag.clear();
-                setTabResultsNum(0);
+                setMekorotTabResultsNum(0);
                 setFilterIconClickable(false);
             }
             else
@@ -265,13 +265,32 @@ public class NavActivity extends AppCompatActivity
         mekorotTabFrag.notifyFromFavorites();
     }
 
+    @Override
+    public void setPsukimTabNumResults(int numResults) {
+        TabLayout tabLayout = findViewById(R.id.tabs);
+        TabLayout.Tab mekorotTab = tabLayout.getTabAt(0);
+        if (mekorotTab != null)
+        {
+            if (numResults == 0)
+            {
+                mekorotTab.setText(getResources().getString(R.string.psukim));
+            }
+            else
+            {
+                mekorotTab.setText(
+                        getResources().getString(R.string.psukim) + " (" + Integer.toString(
+                                numResults) + ")");
+            }
+        }
+    }
+
     /**
      * Sets the number of results to be seen at the mekorot tab.
      *
      * @param numOfResults
      */
     @Override
-    public void setTabResultsNum(int numOfResults) {
+    public void setMekorotTabResultsNum(int numOfResults) {
         TabLayout tabLayout = findViewById(R.id.tabs);
         TabLayout.Tab mekorotTab = tabLayout.getTabAt(1);
         if (mekorotTab != null)
@@ -319,7 +338,7 @@ public class NavActivity extends AppCompatActivity
                         mParashot, parashotURILabelPairs, prakimURILabelPairs, mViewPagerAdapter,
                         NavActivity.this);
                 prakimParashotListDialog.show();
-                setTabResultsNum(0);
+                setMekorotTabResultsNum(0);
                 mIsNewQuerySubmitted = true;
             }
         });

@@ -32,27 +32,6 @@ public class PsukimTab extends Fragment {
     private ArrayList<Pair<String, String>> mPrakimOrParashotPairs = new ArrayList<>();
     private int mCurPerekParashId = 0;
 
-    // Defines a way for the Psukim tab to communicate with the Mekorot tab
-    // via the MainActivity.
-    public interface OnMoveToMekorotTabListener {
-        void onMoveToMekorotTab(ArrayList<String> psukimUris);
-
-        void onPsukimSelected(boolean areNewSelected);
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try
-        {
-            mCallback = (OnMoveToMekorotTabListener) activity;
-        } catch (ClassCastException e)
-        {
-            throw new ClassCastException(activity.toString()
-                                                 + " must implement OnMoveToMekorotTabListener");
-        }
-    }
-
     public void setRecyclerViewAdapter(ArrayList<PasukModel> psukim) {
         if (getView() != null)
         {
@@ -110,6 +89,31 @@ public class PsukimTab extends Fragment {
                 selfie.onPrevPerek();
             }
         });
+
+        mCallback.setPsukimTabNumResults(psukim.size());
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try
+        {
+            mCallback = (OnMoveToMekorotTabListener) activity;
+        } catch (ClassCastException e)
+        {
+            throw new ClassCastException(activity.toString()
+                                                 + " must implement OnMoveToMekorotTabListener");
+        }
+    }
+
+    // Defines a way for the Psukim tab to communicate with the Mekorot tab
+    // via the MainActivity.
+    public interface OnMoveToMekorotTabListener {
+        void onMoveToMekorotTab(ArrayList<String> psukimUris);
+
+        void setPsukimTabNumResults(int numResults);
+
+        void onPsukimSelected(boolean areNewSelected);
     }
 
     public PsukimTab() {

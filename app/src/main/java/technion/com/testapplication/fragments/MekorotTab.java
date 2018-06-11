@@ -45,18 +45,32 @@ public class MekorotTab extends Fragment {
     public MekorotTab() {
     }
 
-    /**
-     * Used in order to communicate with the main activity in the following scenarios:
-     * 1) Filter icon should be enabled.
-     * 2) Set tab number of results.
-     * 3) Update number of favorites.
-     */
-    public interface MekorotChangesListener {
-        void setFilterIcon(Dialog dialog);
-
-        void setTabResultsNum(int numOfResults);
-
-        void updateFavoritesNum(int numOfFavorites);
+    public void setRecyclerViewAdapter(HashMap<String, MakorModel> mekorot,
+                                       ArrayList<CategoryModel> mekorotCategories) {
+        if (getView() != null)
+        {
+            MekorotModels.clear();
+            Iterator it = mekorot.entrySet().iterator();
+            while (it.hasNext())
+            {
+                Map.Entry pair = (Map.Entry) it.next();
+                MakorModel makorModel = (MakorModel) pair.getValue();
+                MekorotModels.add(makorModel);
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+            Collections.sort(MekorotModels, new MakorComparator());
+            Collections.reverse(MekorotModels);
+            mMekorotCategories = mekorotCategories;
+            mRecyclerView = getView().findViewById(R.id.recycler_view);
+            mAdapter = new MekorotRecyclerViewAdapter(mPrefixedPsukimUris, MekorotModels,
+                                                      getContext(), mCallback);
+            LinearLayoutManager manager = new LinearLayoutManager(getContext());
+            mRecyclerView.setHasFixedSize(true);
+            mRecyclerView.setLayoutManager(manager);
+            mRecyclerView.setAdapter(mAdapter);
+            setFilterDialog();
+            mCallback.setMekorotTabResultsNum(MekorotModels.size());
+        }
     }
 
     @Override
@@ -208,32 +222,18 @@ public class MekorotTab extends Fragment {
         fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQuery);
     }
 
-    public void setRecyclerViewAdapter(HashMap<String, MakorModel> mekorot,
-                                       ArrayList<CategoryModel> mekorotCategories) {
-        if (getView() != null)
-        {
-            MekorotModels.clear();
-            Iterator it = mekorot.entrySet().iterator();
-            while (it.hasNext())
-            {
-                Map.Entry pair = (Map.Entry) it.next();
-                MakorModel makorModel = (MakorModel) pair.getValue();
-                MekorotModels.add(makorModel);
-                it.remove(); // avoids a ConcurrentModificationException
-            }
-            Collections.sort(MekorotModels, new MakorComparator());
-            Collections.reverse(MekorotModels);
-            mMekorotCategories = mekorotCategories;
-            mRecyclerView = getView().findViewById(R.id.recycler_view);
-            mAdapter = new MekorotRecyclerViewAdapter(mPrefixedPsukimUris, MekorotModels,
-                                                      getContext(), mCallback);
-            LinearLayoutManager manager = new LinearLayoutManager(getContext());
-            mRecyclerView.setHasFixedSize(true);
-            mRecyclerView.setLayoutManager(manager);
-            mRecyclerView.setAdapter(mAdapter);
-            setFilterDialog();
-            mCallback.setTabResultsNum(MekorotModels.size());
-        }
+    /**
+     * Used in order to communicate with the main activity in the following scenarios:
+     * 1) Filter icon should be enabled.
+     * 2) Set tab number of results.
+     * 3) Update number of favorites.
+     */
+    public interface MekorotChangesListener {
+        void setFilterIcon(Dialog dialog);
+
+        void setMekorotTabResultsNum(int numOfResults);
+
+        void updateFavoritesNum(int numOfFavorites);
     }
 
     public class MakorComparator implements Comparator<MakorModel> {
