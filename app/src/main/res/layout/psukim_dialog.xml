@@ -9,40 +9,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="1"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/btn_search_substr"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.15"
-            android:layout_marginLeft="0dp"
-            android:layout_marginStart="0dp"
-            android:src="@drawable/ic_search_btn" />
-
-        <EditText
-            android:id="@+id/pasuk_substr"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.55"
-            android:gravity="right"
-            android:maxLines="1"
-            android:textSize="18sp" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.3"
-            android:text="@string/search_substr_txt"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="1">
 
@@ -67,12 +33,30 @@
             android:gravity="right"
             android:paddingTop="10dip"
             android:spinnerMode="dropdown" />
+
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/List"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:choiceMode="singleChoice"
-        android:gravity="left"></ListView>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ListView
+            android:id="@+id/List"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:choiceMode="singleChoice"
+            android:gravity="left" />
+
+        <ImageButton
+            android:id="@+id/btn_search_substr"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10dp"
+            android:src="@drawable/ic_search_btn"
+            android:visibility="visible" />
+
+    </RelativeLayout>
+
 </LinearLayout>

@@ -181,10 +181,11 @@ public class PsukimTab extends Fragment {
         fetchPsukimTask.execute(psukimByParashaQuery);
     }
 
-    public void loadPuskimBySubstr(String pasukSubstr) {
+    public void loadPuskimBySubstr(String pasukSubstr, String headingText) {
         String psukimBySubstrQuery = JBSQueries.getAllPsukimBySubstrQuery(pasukSubstr);
         FetchPsukimBySubstrTask fetchPsukimBySubstrTask = new FetchPsukimBySubstrTask(this);
         fetchPsukimBySubstrTask.execute(psukimBySubstrQuery);
+        mCallback.setTitleBySpinnerText(headingText);
     }
 
     @Override

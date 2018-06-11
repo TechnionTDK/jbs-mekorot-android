@@ -51,6 +51,7 @@
     <string-array name="spinner_items">
         <item> פרשה</item>
         <item> פרק</item>
+        <item> טקסט חופשי</item>
     </string-array>
     <string name="title_activity_results">ResultsActivity</string>
     <string name="title_activity_nav">NavActivity</string>

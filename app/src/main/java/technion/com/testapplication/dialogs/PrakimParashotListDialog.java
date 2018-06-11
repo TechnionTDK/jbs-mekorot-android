@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -69,7 +70,7 @@ public class PrakimParashotListDialog extends Dialog implements View.OnClickList
         this.findViewById(R.id.btn_search_substr).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String pasukSubstr = ((TextView) thisDialog.findViewById(R.id.pasuk_substr)).getText().toString();
+                String pasukSubstr = ((TextView) thisDialog.findViewById(R.id.EditBox)).getText().toString();
                 PsukimTab psukimTabFrag = (PsukimTab) mViewPagerAdapter.getItem(0);
                 TabLayout tabs = mHostActivity.findViewById(R.id.tabs);
                 TabLayout.Tab tab = tabs.getTabAt(PSUKIM_TAB_INDEX);
@@ -77,7 +78,9 @@ public class PrakimParashotListDialog extends Dialog implements View.OnClickList
                 {
                     tab.select();
                 }
-                psukimTabFrag.loadPuskimBySubstr(pasukSubstr);
+                String spinnerText = ((Spinner) thisDialog.findViewById(R.id.spinner_nav)).getSelectedItem().toString();
+                String headingText = spinnerText + ": " + pasukSubstr;
+                psukimTabFrag.loadPuskimBySubstr(pasukSubstr, headingText);
                 thisDialog.dismiss();
             }
         });
@@ -131,9 +134,11 @@ public class PrakimParashotListDialog extends Dialog implements View.OnClickList
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                TextView txtView = (TextView) view;
                 EditText editText = thisDialog.findViewById(
                         R.id.EditBox);
-                if (((TextView) view).getText().equals(
+                ImageButton searchBtn = findViewById(R.id.btn_search_substr);
+                if (txtView.getText().equals(
                         mContext.getResources().getString(R.string.perek)))
                 {
                     editText.setHint(mContext.getResources().getString(R.string.enter_perek));
@@ -144,8 +149,10 @@ public class PrakimParashotListDialog extends Dialog implements View.OnClickList
                     mAdapter.addAll(mPrakim);
                     mAdapter.getFilter().filter("");
                     mAdapter.notifyDataSetChanged();
+                    list.setAdapter(mAdapter);
+                    searchBtn.setVisibility(View.INVISIBLE);
                 }
-                else
+                else if (txtView.getText().equals("פרשה"))
                 {
                     editText.setHint(mContext.getResources().getString(R.string.enter_parasha));
                     if (++mSpinnerCheck > 1 && !mAdapter.isEmpty())
@@ -155,6 +162,14 @@ public class PrakimParashotListDialog extends Dialog implements View.OnClickList
                     mAdapter.addAll(mParashot);
                     mAdapter.getFilter().filter("");
                     mAdapter.notifyDataSetChanged();
+                    list.setAdapter(mAdapter);
+                    searchBtn.setVisibility(View.INVISIBLE);
+                }
+                else if (txtView.getText().equals("טקסט חופשי"))
+                {
+                    editText.setHint("אנא הכנס טקסט לחיפוש");
+                    list.setAdapter(null);
+                    searchBtn.setVisibility(View.VISIBLE);
                 }
             }
 
