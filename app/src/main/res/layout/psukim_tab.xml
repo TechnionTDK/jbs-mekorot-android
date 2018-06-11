@@ -4,92 +4,6 @@
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/psukim_actions_bar_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#FFF"
-        android:gravity="end"
-        android:weightSum="1"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:id="@+id/next_perek"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_weight="0.25"
-            android:gravity="start"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="5dp"
-                android:src="@drawable/ic_next_arrow" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:paddingTop="10dp"
-                android:text="@string/next_chapter"
-                android:textSize="13sp"
-                android:textColor="@color/Black" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/choose_all"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_horizontal"
-            android:layout_weight="0.5"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/choose_all_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="@string/choose_all"
-                android:textColor="@color/Black" />
-
-            <ImageView
-                android:id="@+id/choose_all_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_choose_all_unselected" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/prev_perek"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="end"
-            android:layout_weight="0.25"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:paddingTop="10dp"
-                android:textSize="13sp"
-                android:text="@string/prev_chapter"
-                android:textColor="@color/Black" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="5dp"
-                android:src="@drawable/ic_prev_arrow" />
-        </LinearLayout>
-    </LinearLayout>
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
@@ -97,4 +11,92 @@
         android:layout_weight="1"
         android:scrollbars="vertical" />
 
+    <LinearLayout
+        android:id="@+id/psukim_actions_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/AliceBlue"
+        android:gravity="end"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <LinearLayout
+            android:id="@+id/next_perek"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.35"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="start"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_next_arrow" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/next_chapter"
+                android:textColor="@color/Black"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/prev_perek"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.35"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/prev_chapter"
+                android:textColor="@color/Black"
+                android:textSize="13sp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_prev_arrow" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/choose_all"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/choose_all_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:padding="5dp"
+                android:text="@string/choose_all"
+                android:textColor="@color/Black"
+                android:textSize="13sp" />
+
+            <ImageView
+                android:id="@+id/choose_all_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_check_box_outline_blank_black_24dp" />
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

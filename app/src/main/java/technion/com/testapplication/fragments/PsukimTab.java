@@ -74,7 +74,7 @@ public class PsukimTab extends Fragment {
         final ImageView chooseAllImage = getView().findViewById(
                 R.id.choose_all_image);
         chooseAllImage.setImageResource(
-                R.drawable.ic_choose_all_unselected);
+                R.drawable.ic_check_box_outline_blank_black_24dp);
         psukimRecyclerViewAdapter.clickOnAllItems(false);
         chooseAll.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,12 +82,12 @@ public class PsukimTab extends Fragment {
                 if (psukimRecyclerViewAdapter.getAreAllItemsClicked())
                 {
                     chooseAllImage.setImageResource(
-                            R.drawable.ic_choose_all_unselected);
+                            R.drawable.ic_check_box_outline_blank_black_24dp);
                     psukimRecyclerViewAdapter.clickOnAllItems(false);
                 }
                 else
                 {
-                    chooseAllImage.setImageResource(R.drawable.ic_choose_all_selected);
+                    chooseAllImage.setImageResource(R.drawable.ic_check_box_black_24dp);
                     psukimRecyclerViewAdapter.clickOnAllItems(true);
                 }
             }
