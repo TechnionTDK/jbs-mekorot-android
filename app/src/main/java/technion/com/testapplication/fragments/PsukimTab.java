@@ -106,14 +106,25 @@ public class PsukimTab extends Fragment {
         }
     }
 
-    // Defines a way for the Psukim tab to communicate with the Mekorot tab
-    // via the MainActivity.
-    public interface OnMoveToMekorotTabListener {
-        void onMoveToMekorotTab(ArrayList<String> psukimUris);
-
-        void setPsukimTabNumResults(int numResults);
-
-        void onPsukimSelected(boolean areNewSelected);
+    /**
+     * The FAB dialog notifies the tab that it should load relevant psukim.
+     *
+     * @param perekOrParashaName
+     * @param perekOrParashaPairs
+     */
+    public void loadPuskim(String perekOrParashaName, ArrayList<Pair<String, String>> perekOrParashaPairs, String headingText) {
+        mPrakimOrParashotPairs = perekOrParashaPairs;
+        for (int i = 0; i < mPrakimOrParashotPairs.size(); i++)
+        {
+            Pair<String, String> uriLabel = mPrakimOrParashotPairs.get(i);
+            if (uriLabel.first.equals(perekOrParashaName))
+            {
+                mCurPerekParashId = i;
+                break;
+            }
+        }
+        loadPsukimByIndex(mCurPerekParashId);
+        mCallback.setTitleBySpinnerText(headingText);
     }
 
     public PsukimTab() {
@@ -150,24 +161,16 @@ public class PsukimTab extends Fragment {
         mCallback.onMoveToMekorotTab(psukimUris);
     }
 
-    /**
-     * The FAB dialog notifies the tab that it should load relevant psukim.
-     *
-     * @param perekOrParashaName
-     * @param perekOrParashaPairs
-     */
-    public void loadPuskim(String perekOrParashaName, ArrayList<Pair<String, String>> perekOrParashaPairs) {
-        mPrakimOrParashotPairs = perekOrParashaPairs;
-        for (int i = 0; i < mPrakimOrParashotPairs.size(); i++)
-        {
-            Pair<String, String> uriLabel = mPrakimOrParashotPairs.get(i);
-            if (uriLabel.first.equals(perekOrParashaName))
-            {
-                mCurPerekParashId = i;
-                break;
-            }
-        }
-        loadPsukimByIndex(mCurPerekParashId);
+    // Defines a way for the Psukim tab to communicate with the Mekorot tab
+    // via the MainActivity.
+    public interface OnMoveToMekorotTabListener {
+        void onMoveToMekorotTab(ArrayList<String> psukimUris);
+
+        void setPsukimTabNumResults(int numResults);
+
+        void onPsukimSelected(boolean areNewSelected);
+
+        void setTitleBySpinnerText(String spinnerText);
     }
 
     public void loadPsukimByIndex(int index) {

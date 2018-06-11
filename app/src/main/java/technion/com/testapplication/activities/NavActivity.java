@@ -21,6 +21,7 @@ import android.util.Pair;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -213,6 +214,12 @@ public class NavActivity extends AppCompatActivity
     @Override
     public void onPsukimSelected(boolean areNewSelected) {
         mIsNewQuerySubmitted = areNewSelected;
+    }
+
+    @Override
+    public void setTitleBySpinnerText(String headingText) {
+        TextView heading = findViewById(R.id.heading);
+        heading.setText(headingText);
     }
 
     /**

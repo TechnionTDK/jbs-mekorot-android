@@ -109,7 +109,8 @@ public class PrakimParashotListDialog extends Dialog implements View.OnClickList
                 {
                     tab.select();
                 }
-                psukimTabFrag.loadPuskim(perekOrParashaName, perekOrParashaPairs);
+                String headingText = spinnerText + ": " + perekOrParashaName;
+                psukimTabFrag.loadPuskim(perekOrParashaName, perekOrParashaPairs, headingText);
                 thisDialog.dismiss();
             }
         });
