@@ -5,6 +5,7 @@
     <string name="enter_perek">אנא הכנס פרק</string>
     <string name="enter_parasha">אנא הכנס פרשה</string>
     <string name="perek">פרק</string>
+    <string name="mekorot">תוצאות</string>
     <string name="perek_or_parasha_name_extra">perekOrParashaName</string>
     <string name="perek_or_parasha_uri_extra">perekOrParashaUri</string>
     <string name="parashot_and_uri_extra">parashotAndUri</string>
@@ -26,7 +27,6 @@
     <string name="num_of_mekorot">"תוצאות: "</string>
     <string name="jbr_prefix">jbr:</string>
     <string name="psukim">פסוקים</string>
-    <string name="mekorot">מקורות</string>
     <string name="favorites">נבחרים</string>
     <string name="favorites_uri_prefix">uri***</string>
     <string name="favorites_name_prefix">name***</string>
@@ -59,8 +59,8 @@
     <string name="nav_header_title">סולמות - מנוע חיפוש</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">סולמות</string>
-    <string name="title_activity_favorites">מקורות נבחרים</string>
-    <string name="nav_item_favorites">מקורות נבחרים</string>
+    <string name="title_activity_favorites">תוצאות נבחרות</string>
+    <string name="nav_item_favorites">תוצאות נבחרות</string>
     <string name="nav_item_settings">הגדרות</string>
     <string name="nav_item_help">עזרה ומשוב</string>
 </resources>
