@@ -186,7 +186,6 @@ public class NavActivity extends AppCompatActivity
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
         setFilterIconClickable(false);
-        setShareIconClickable(false);
     }
 
     // ############################################
@@ -333,7 +332,6 @@ public class NavActivity extends AppCompatActivity
                 if (tab.getPosition() == PSUKIM_TAB_INDEX)
                 {
                     setFilterIconClickable(false);
-                    setShareIconClickable(false);
                     mFab.show();
                 }
                 else if (tab.getPosition() == MEKOROT_TAB_INDEX)
@@ -341,7 +339,6 @@ public class NavActivity extends AppCompatActivity
                     PsukimTab psukimTabFrag = (PsukimTab) mViewPagerAdapter.getItem(
                             PSUKIM_FRAG_POSITION);
                     psukimTabFrag.moveToMekorot();
-                    setShareIconClickable(false);
                     mFab.hide();
                 }
             }
@@ -397,25 +394,6 @@ public class NavActivity extends AppCompatActivity
         {
             filterIcon.setColorFilter(null);
             filterIcon.setVisibility(View.VISIBLE);
-        }
-    }
-
-    /**
-     * Sets the share icon to be either clickable or not.
-     *
-     * @param isClickable
-     */
-    public void setShareIconClickable(boolean isClickable) {
-        ImageView shareIcon = findViewById(R.id.share_icon);
-        if (!isClickable)
-        {
-            shareIcon.setColorFilter(R.color.FilterIconUnavailable);
-            shareIcon.setVisibility(View.INVISIBLE);
-        }
-        else
-        {
-            shareIcon.setColorFilter(null);
-            shareIcon.setVisibility(View.VISIBLE);
         }
     }
 }

@@ -50,15 +50,6 @@
                 android:layout_marginStart="10dip"
                 android:src="@drawable/ic_filter_list_white_24dp" />
 
-            <ImageView
-                android:id="@+id/share_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:layout_marginLeft="10dip"
-                android:layout_marginStart="10dip"
-                android:src="@drawable/ic_share_white_18dp" />
-
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>

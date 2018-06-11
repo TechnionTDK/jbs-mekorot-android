@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -69,6 +70,7 @@ public class FavoritesActivity extends AppCompatActivity {
         });
         TextView toolbarTitleTV = findViewById(R.id.toolbar_title);
         toolbarTitleTV.setText(getString(R.string.title_activity_favorites));
+        setShareIconClickable();
     }
 
     public void onBackPressed() {
@@ -76,7 +78,7 @@ public class FavoritesActivity extends AppCompatActivity {
     }
 
     private void setShareDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         String[] options = new String[]{getResources().getString(
                 R.string.full_text_share_option), getResources().getString(
                 R.string.link_to_text_share_option)};
@@ -109,6 +111,13 @@ public class FavoritesActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 });
+        View shareButton = findViewById(R.id.share_button);
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                builder.show();
+            }
+        });
     }
 
     private Intent createShareIntent(boolean fullText) {
@@ -138,6 +147,14 @@ public class FavoritesActivity extends AppCompatActivity {
                                    allMekorotUris);
         }
         return mSharedIntent;
+    }
+
+    /**
+     * Sets the share icon to be either clickable or not.
+     */
+    public void setShareIconClickable() {
+        ImageView shareIcon = findViewById(R.id.share_button);
+        shareIcon.setVisibility(View.VISIBLE);
     }
 
     public interface FavoritesChangeListener {
