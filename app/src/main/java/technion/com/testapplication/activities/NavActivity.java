@@ -149,6 +149,11 @@ public class NavActivity extends AppCompatActivity
         {
             Intent intent = new Intent(this, FavoritesActivity.class);
             startActivity(intent);
+            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+            if (drawer.isDrawerOpen(GravityCompat.START))
+            {
+                drawer.closeDrawer(GravityCompat.START);
+            }
             return true;
         }
         else if (id == R.id.nav_settings)
@@ -156,6 +161,11 @@ public class NavActivity extends AppCompatActivity
             Intent settingsActivityIntent = new Intent(getApplicationContext(),
                                                        SettingsActivity.class);
             startActivity(settingsActivityIntent);
+            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+            if (drawer.isDrawerOpen(GravityCompat.START))
+            {
+                drawer.closeDrawer(GravityCompat.START);
+            }
             return true;
         }
         else if (id == R.id.nav_help)

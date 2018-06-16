@@ -57,8 +57,8 @@
     <string name="title_activity_nav">NavActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">סולמות - מנוע חיפוש</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_title">סולמות - חיפוש מבוסס פסוקים</string>
+    <string name="nav_header_subtitle">המעבדה למידע וידע - הטכניון</string>
     <string name="nav_header_desc">סולמות</string>
     <string name="title_activity_favorites">תוצאות נבחרות</string>
     <string name="nav_item_favorites">תוצאות נבחרות</string>
