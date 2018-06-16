@@ -3,7 +3,6 @@ package technion.com.testapplication.activities;
 import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -95,7 +94,6 @@ public class NavActivity extends AppCompatActivity
         populateUriLabelPairs();
         getWindow().getDecorView().setBackgroundColor(
                 ContextCompat.getColor(this, R.color.MainActivityBG));
-        forceRTLIfSupported();
         setToolbar();
         setTabs();
     }
@@ -361,7 +359,7 @@ public class NavActivity extends AppCompatActivity
         });
         TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-        tabLayout.setSelectedTabIndicatorColor(Color.parseColor(SELECTED_TAB_INDICATOR_COLOR));
+        //tabLayout.setSelectedTabIndicatorColor(Color.parseColor(SELECTED_TAB_INDICATOR_COLOR));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {

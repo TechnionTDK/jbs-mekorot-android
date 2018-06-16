@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layoutDirection="ltr"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".activities.NavActivity"
     tools:showIn="@layout/app_bar_nav">
@@ -18,12 +19,13 @@
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/DodgerBlue"
+            android:background="@color/colorPrimary"
             android:minHeight="?attr/actionBarSize"
+            app:tabIndicatorColor="@color/White"
             app:tabGravity="fill"
             app:tabMode="fixed"
-            app:tabSelectedTextColor="@color/Black"
-            app:tabTextColor="@color/White" />
+            app:tabSelectedTextColor="@color/White"
+            app:tabTextColor="@color/secondary_text" />
 
         <android.support.v4.view.ViewPager
             android:id="@+id/pager"

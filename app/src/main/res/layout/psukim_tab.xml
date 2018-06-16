@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@color/colorPrimaryLight"
     android:layoutDirection="ltr"
     android:orientation="vertical">
 
@@ -16,7 +17,7 @@
         android:id="@+id/psukim_actions_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/AliceBlue"
+        android:background="@color/colorPrimary"
         android:gravity="end"
         android:orientation="horizontal"
         android:weightSum="1">
@@ -42,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="@string/next_chapter"
-                android:textColor="@color/Black"
+                android:textColor="@color/White"
                 android:textSize="13sp" />
         </LinearLayout>
 
@@ -62,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="@string/prev_chapter"
-                android:textColor="@color/Black"
+                android:textColor="@color/White"
                 android:textSize="13sp" />
 
             <ImageView
@@ -79,7 +80,7 @@
             android:layout_weight="0.3"
             android:clickable="true"
             android:focusable="true"
-            android:gravity="center_horizontal"
+            android:gravity="end"
             android:orientation="horizontal">
 
             <TextView
@@ -89,14 +90,16 @@
                 android:layout_gravity="center_vertical"
                 android:padding="5dp"
                 android:text="@string/choose_all"
-                android:textColor="@color/Black"
+                android:textColor="@color/White"
                 android:textSize="13sp" />
 
             <ImageView
                 android:id="@+id/choose_all_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:layout_gravity="center"
+                android:layout_marginEnd="9dp"
+                android:layout_marginRight="9dp"
                 android:src="@drawable/ic_check_box_outline_blank_black_24dp" />
         </LinearLayout>
     </LinearLayout>

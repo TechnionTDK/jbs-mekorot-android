@@ -5,7 +5,7 @@
         android:left="3dp"
         android:right="3dp">
         <shape android:shape="rectangle">
-            <solid android:color="@color/Cyan" />
+            <solid android:color="@color/colorLightAccent" />
             <stroke
                 android:width="1px"
                 android:color="@color/WhiteSmoke" />
