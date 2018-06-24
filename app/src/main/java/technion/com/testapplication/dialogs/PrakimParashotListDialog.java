@@ -71,6 +71,10 @@ public class PrakimParashotListDialog extends Dialog implements View.OnClickList
             @Override
             public void onClick(View v) {
                 String pasukSubstr = ((TextView) thisDialog.findViewById(R.id.EditBox)).getText().toString();
+                if (pasukSubstr.isEmpty())
+                {
+                    return;
+                }
                 PsukimTab psukimTabFrag = (PsukimTab) mViewPagerAdapter.getItem(0);
                 TabLayout tabs = mHostActivity.findViewById(R.id.tabs);
                 TabLayout.Tab tab = tabs.getTabAt(PSUKIM_TAB_INDEX);
