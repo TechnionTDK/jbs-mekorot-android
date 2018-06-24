@@ -3,6 +3,7 @@
     android:id="@+id/relative_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:layoutDirection="rtl"
     android:orientation="vertical">
 
     <ScrollView

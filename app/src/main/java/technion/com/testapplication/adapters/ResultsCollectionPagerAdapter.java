@@ -9,6 +9,7 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -20,6 +21,20 @@ public class ResultsCollectionPagerAdapter extends FragmentStatePagerAdapter {
 
     private ArrayList<ResultModel> mResults;
     private SparseArray<Fragment> mRegisteredFragments = new SparseArray<>();
+    private Fragment mCurrentFragment;
+
+    public Fragment getCurrentFragment() {
+        return mCurrentFragment;
+    }
+
+    @Override
+    public void setPrimaryItem(ViewGroup container, int position, Object object) {
+        if (getCurrentFragment() != object)
+        {
+            mCurrentFragment = ((Fragment) object);
+        }
+        super.setPrimaryItem(container, position, object);
+    }
 
     @NonNull
     @Override
@@ -73,6 +88,7 @@ public class ResultsCollectionPagerAdapter extends FragmentStatePagerAdapter {
         public static final String ARG_TEXT = "result_text";
         public static final String ARG_POSITION = "result_position";
         public TextView MakorTextView;
+        public ScrollView MakorScrollView;
 
         @Override
         public View onCreateView(LayoutInflater inflater,
@@ -83,6 +99,7 @@ public class ResultsCollectionPagerAdapter extends FragmentStatePagerAdapter {
             assert args != null;
             MakorTextView = rootView.findViewById(R.id.makor_text);
             MakorTextView.setText(args.getString(ARG_TEXT));
+            MakorScrollView = rootView.findViewById(R.id.scroll_view);
             return rootView;
         }
     }

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layoutDirection="rtl"
     tools:context=".activities.FavoritesActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -16,33 +17,39 @@
             style="@style/Base_ToolbarStyle"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:gravity="end"
             app:popupTheme="@style/PopupOverlay">
 
-            <ImageButton
-                android:id="@+id/go_back"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_margin="10dp"
-                android:background="@drawable/ic_arrow_forward_white" />
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/toolbar_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/scroll_view"
-                android:layout_gravity="end"
-                android:layout_marginBottom="16dp"
-                android:textColor="@color/White"
-                android:textSize="16sp" />
+                <ImageButton
+                    android:id="@+id/go_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_arrow_forward_white" />
 
-            <ImageButton
-                android:id="@+id/share_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:background="@drawable/ic_share_white_18dp" />
+                <TextView
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/White"
+                    android:textSize="16sp" />
+
+                <ImageButton
+                    android:id="@+id/share_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/ic_share_white_18dp" />
+
+            </LinearLayout>
 
         </android.support.v7.widget.Toolbar>
 

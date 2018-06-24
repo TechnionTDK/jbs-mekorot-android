@@ -64,7 +64,6 @@ public class ResultsActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         setToolbarAndColors();
-        setFab();
 
         final ResultsActivity selfie = this;
         mViewPager = findViewById(R.id.pager_results);
@@ -74,7 +73,7 @@ public class ResultsActivity extends AppCompatActivity
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
 
             public void onPageSelected(int position) {
-                mClickedIndex = 0;
+                selfie.unsetFab();
                 selfie.setTitleByPosition(position);
                 selfie.mCurrentResult = position;
                 selfie.executeGetHighlightsForMakorQuery();
@@ -110,21 +109,39 @@ public class ResultsActivity extends AppCompatActivity
         mCurrentResult = intent.getIntExtra(EXTRA_MAKOR_INDEX, 0);
         mViewPager.setCurrentItem(mCurrentResult);
         setTitleByPosition(mCurrentResult);
+        executeGetHighlightsForMakorQuery();
     }
 
-    private void setFab() {
+    private void unsetFab() {
         FloatingActionButton fab = findViewById(R.id.fab_next);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+            }
+        });
+    }
+
+    private void setFab() {
+        FloatingActionButton fab = findViewById(R.id.fab_next);
+        final ResultsActivity selfie = this;
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mScrollToList.size() == 0)
+                {
+                    return;
+                }
                 if (mClickedIndex < mScrollToList.size())
                 {
-                    final ScrollView scrollView = findViewById(R.id.scroll_view);
+                    final ResultsCollectionPagerAdapter.ResultObjectFragment fragment =
+                            (ResultsCollectionPagerAdapter.ResultObjectFragment) selfie.mResultsCollectionPagerAdapter.getCurrentFragment();
+                    final ScrollView scrollView = fragment.MakorScrollView;
+
                     scrollView.post(new Runnable() {
                         @Override
                         public void run() {
-                            TextView makorTextView = findViewById(R.id.makor_text);
-                            int num = makorTextView.getLayout().getLineCount();
+                            TextView makorTextView = fragment.MakorTextView;
                             int y = makorTextView.getLayout().getLineTop(
                                     mScrollToList.get(mClickedIndex));
                             scrollView.scrollTo(0, y);
@@ -322,6 +339,7 @@ public class ResultsActivity extends AppCompatActivity
         SpannableString spannableMakorText = new SpannableString(makorText);
         final ResultsActivity selfie = this;
         mScrollToList = new ArrayList<>();
+        mClickedIndex = 0;
         for (final Pair<String, String> subsetToHighlight : psukimSubstrings)
         {
             String successivePsukim = calculatePasukReferenceFromGivenIndices(subsetToHighlight.first,
@@ -365,6 +383,7 @@ public class ResultsActivity extends AppCompatActivity
         // Set highlights in makor text
         makorTextView.setText(spannableMakorText);
         makorTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        setFab();
     }
 
 

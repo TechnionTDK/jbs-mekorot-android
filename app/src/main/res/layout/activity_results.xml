@@ -9,6 +9,7 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layoutDirection="rtl"
         android:theme="@style/AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
@@ -24,30 +25,29 @@
                 android:orientation="horizontal">
 
                 <ImageButton
-                    android:id="@+id/nav_menu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:onClick="showMenu"
-                    android:background="@drawable/ic_nav_menu" />
-
-                <technion.com.testapplication.utils.AutoResizeTextView
-                    android:id="@+id/toolbar_title"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="7dp"
-                    android:layout_weight="1"
-                    android:maxLines="1"
-                    android:text="Hello"
-                    android:textColor="@color/White"
-                    android:textSize="16sp" />
-
-                <ImageButton
                     android:id="@+id/go_back"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:background="@drawable/ic_arrow_forward_white" />
+
+                <technion.com.testapplication.utils.AutoResizeTextView
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@color/White"
+                    android:textSize="16sp" />
+
+                <ImageButton
+                    android:id="@+id/nav_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/ic_nav_menu"
+                    android:onClick="showMenu" />
+
             </LinearLayout>
         </android.support.v7.widget.Toolbar>
 
