@@ -179,6 +179,7 @@ public class PsukimTab extends Fragment {
         String psukimByParashaQuery = JBSQueries.getAllPsukimFromParashaQuery(perekOrParashaUri);
         FetchPsukimTask fetchPsukimTask = new FetchPsukimTask(this);
         fetchPsukimTask.execute(psukimByParashaQuery);
+        mCallback.setTitleBySpinnerText(uriLabel.first);
     }
 
     public void loadPuskimBySubstr(String pasukSubstr, String headingText) {
