@@ -5,8 +5,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import technion.com.testapplication.JBSQueries;
-import technion.com.testapplication.async.FetchParashotAndPrakimTask;
 import technion.com.testapplication.R;
+import technion.com.testapplication.async.FetchParashotAndPrakimTask;
 
 /**
  * Created by tomerlevinson on 15/12/2017.

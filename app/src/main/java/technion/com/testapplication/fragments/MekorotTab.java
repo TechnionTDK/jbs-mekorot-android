@@ -22,7 +22,8 @@ import java.util.Map;
 import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.R;
 import technion.com.testapplication.adapters.MekorotRecyclerViewAdapter;
-import technion.com.testapplication.async.FetchMekorotByScoreTask;
+import technion.com.testapplication.data_manage.DataManager;
+import technion.com.testapplication.data_manage.MekorotForPsukim;
 import technion.com.testapplication.models.CategoryModel;
 import technion.com.testapplication.models.MakorModel;
 
@@ -131,6 +132,7 @@ public class MekorotTab extends Fragment {
         {
             checkedItemsPositions[selectedItem] = true;
         }
+        final MekorotTab selfie = this;
         final AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setTitle(getResources().getString(R.string.choose_category_to_filter))
                 .setMultiChoiceItems(items, checkedItemsPositions,
@@ -174,11 +176,18 @@ public class MekorotTab extends Fragment {
                                                                       mekorotQuery = JBSQueries.getMekorotWithAllData(
                                                                               mPrefixedPsukimUris);
                                                                   }
-                                                                  String categoriesQuery = JBSQueries.getCategoriesByPsukimWithReferenceNumber(
-                                                                          mPrefixedPsukimUris);
-                                                                  FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(
-                                                                          mekorotTabFrag, shouldFilter);
-                                                                  fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQuery);
+
+                                                                  final MekorotForPsukim mekorotForPsukim = new MekorotForPsukim(mPrefixedPsukimUris, selfie, shouldFilter, mekorotQuery);
+                                                                  Runnable onComplete = new Runnable() {
+                                                                      @Override
+                                                                      public void run() {
+                                                                          HashMap<String, MakorModel> mekorotModels = (HashMap<String, MakorModel>) mekorotForPsukim.getData().get(0);
+                                                                          ArrayList<CategoryModel> mekorotCategories = (ArrayList<CategoryModel>) mekorotForPsukim.getData().get(1);
+                                                                          selfie.setRecyclerViewAdapter(mekorotModels, mekorotCategories);
+                                                                      }
+                                                                  };
+                                                                  DataManager dataManager = new DataManager(selfie.getContext());
+                                                                  dataManager.getData(mekorotForPsukim, onComplete);
                                                               }
                                                           }).setNegativeButton(getResources().getString(R.string.cancel_button),
                                                                                new DialogInterface.OnClickListener() {
@@ -216,10 +225,18 @@ public class MekorotTab extends Fragment {
             mPrefixedPsukimUris.add(i, pasukUri);
         }
         String mekorotQuery = JBSQueries.getMekorotWithAllData(mPrefixedPsukimUris);
-        String categoriesQuery = JBSQueries.getCategoriesByPsukimWithReferenceNumber(
-                mPrefixedPsukimUris);
-        FetchMekorotByScoreTask fetchMekorotByScoreTask = new FetchMekorotByScoreTask(this, false);
-        fetchMekorotByScoreTask.execute(mekorotQuery, categoriesQuery);
+        final MekorotTab selfie = this;
+        final MekorotForPsukim mekorotForPsukim = new MekorotForPsukim(mPrefixedPsukimUris, this, false, mekorotQuery);
+        Runnable onComplete = new Runnable() {
+            @Override
+            public void run() {
+                HashMap<String, MakorModel> mekorotModels = (HashMap<String, MakorModel>) mekorotForPsukim.getData().get(0);
+                ArrayList<CategoryModel> mekorotCategories = (ArrayList<CategoryModel>) mekorotForPsukim.getData().get(1);
+                selfie.setRecyclerViewAdapter(mekorotModels, mekorotCategories);
+            }
+        };
+        DataManager dataManager = new DataManager(this.getContext());
+        dataManager.getData(mekorotForPsukim, onComplete);
     }
 
     /**

@@ -1,10 +1,12 @@
 package technion.com.testapplication.models;
 
+import java.io.Serializable;
+
 /**
  * Created by tomerlevinson on 16/12/2017.
  * Used to store psukim.
  */
-public class PasukModel {
+public class PasukModel implements Serializable {
     private String mText;
     private String mLabel;
     private boolean mIsSelected = false;

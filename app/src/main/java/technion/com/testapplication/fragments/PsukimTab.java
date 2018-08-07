@@ -18,7 +18,8 @@ import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.R;
 import technion.com.testapplication.adapters.PsukimRecyclerViewAdapter;
 import technion.com.testapplication.async.FetchPsukimBySubstrTask;
-import technion.com.testapplication.async.FetchPsukimTask;
+import technion.com.testapplication.data_manage.DataManager;
+import technion.com.testapplication.data_manage.PsukimForParashaPerek;
 import technion.com.testapplication.models.PasukModel;
 
 /**
@@ -176,9 +177,17 @@ public class PsukimTab extends Fragment {
     public void loadPsukimByIndex(int index) {
         Pair<String, String> uriLabel = mPrakimOrParashotPairs.get(index);
         String perekOrParashaUri = uriLabel.second.substring(uriLabel.second.lastIndexOf("/") + 1);
-        String psukimByParashaQuery = JBSQueries.getAllPsukimFromParashaQuery(perekOrParashaUri);
-        FetchPsukimTask fetchPsukimTask = new FetchPsukimTask(this);
-        fetchPsukimTask.execute(psukimByParashaQuery);
+        final PsukimForParashaPerek psukimForParashaPerek = new PsukimForParashaPerek(perekOrParashaUri, this);
+        DataManager dataManager = new DataManager(this.getContext());
+        final PsukimTab selfie = this;
+        Runnable onComplete = new Runnable() {
+            @Override
+            public void run() {
+                selfie.setRecyclerViewAdapter(psukimForParashaPerek.getData());
+
+            }
+        };
+        dataManager.getData(psukimForParashaPerek, onComplete);
         mCallback.setTitleBySpinnerText(uriLabel.first);
     }
 

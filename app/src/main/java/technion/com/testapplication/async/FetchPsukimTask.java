@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.R;
-import technion.com.testapplication.fragments.PsukimTab;
+import technion.com.testapplication.data_manage.Cacheable;
 import technion.com.testapplication.models.PasukModel;
 
 /**
@@ -22,11 +22,15 @@ import technion.com.testapplication.models.PasukModel;
 public class FetchPsukimTask extends AsyncTask<String, Void, ArrayList<PasukModel>> {
     private Fragment mPsukimFrag;
     private ProgressDialog mProgressDialog;
+    private Runnable mOnComplete;
+    private Cacheable mCaller;
     private static final String NUM_OF_REFERENCES_REGEX = "^";
 
-    public FetchPsukimTask(Fragment frag) {
+    public FetchPsukimTask(Fragment frag, Runnable onComplete, Cacheable caller) {
         mPsukimFrag = frag;
         mProgressDialog = new ProgressDialog(frag.getContext());
+        mOnComplete = onComplete;
+        mCaller = caller;
     }
 
     @Override
@@ -79,9 +83,10 @@ public class FetchPsukimTask extends AsyncTask<String, Void, ArrayList<PasukMode
         {
             mProgressDialog.dismiss();
         }
-        if (mPsukimFrag instanceof PsukimTab)
+        mCaller.setData(pasukModelList);
+        if (mOnComplete != null)
         {
-            ((PsukimTab) mPsukimFrag).setRecyclerViewAdapter(pasukModelList);
+            mOnComplete.run();
         }
     }
 }
