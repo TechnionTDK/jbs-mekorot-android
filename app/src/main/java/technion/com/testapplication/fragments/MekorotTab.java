@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 
 import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.R;
@@ -34,7 +34,7 @@ public class MekorotTab extends Fragment {
     private ArrayList<String> mPrefixedPsukimUris;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
-    private ArrayList<CategoryModel> mMekorotCategories;
+    private Map<String, CategoryModel> mMekorotCategories;
     public static ArrayList<MakorModel> MekorotModels = new ArrayList<>();
     private static final int CATEGORY_STRING_LENGTH = 9;
     private static ArrayList<Integer> mDialogSelectedItems = new ArrayList<>();
@@ -42,26 +42,24 @@ public class MekorotTab extends Fragment {
     MekorotChangesListener mCallback;
     private static final String CATEGORY_NUM_OPEN_BRACE = " (";
     private static final String CATEGORY_NUM_CLOSE_BRACE = ")";
+    private HashMap<String, MakorModel> mMekorotModels;
+    private HashMap<String, MakorModel> mFilteredMekorotModels;
 
     public MekorotTab() {
     }
 
-    public void setRecyclerViewAdapter(HashMap<String, MakorModel> mekorot,
-                                       ArrayList<CategoryModel> mekorotCategories) {
+    public void setRecyclerViewAdapter(HashMap<String, MakorModel> mekorot) {
         if (getView() != null)
         {
             MekorotModels.clear();
-            Iterator it = mekorot.entrySet().iterator();
-            while (it.hasNext())
+            for (Object o : mekorot.entrySet())
             {
-                Map.Entry pair = (Map.Entry) it.next();
+                Map.Entry pair = (Map.Entry) o;
                 MakorModel makorModel = (MakorModel) pair.getValue();
                 MekorotModels.add(makorModel);
-                it.remove(); // avoids a ConcurrentModificationException
             }
             Collections.sort(MekorotModels, new MakorComparator());
             Collections.reverse(MekorotModels);
-            mMekorotCategories = mekorotCategories;
             mRecyclerView = getView().findViewById(R.id.recycler_view);
             mAdapter = new MekorotRecyclerViewAdapter(mPrefixedPsukimUris, MekorotModels,
                                                       getContext(), mCallback);
@@ -113,13 +111,19 @@ public class MekorotTab extends Fragment {
      * Sets the filter dialog in the mekorot tab.
      */
     private void setFilterDialog() {
-        final Fragment mekorotTabFrag = this;
         ArrayList<String> prettifiedCategories = new ArrayList<>();
-        for (CategoryModel category : mMekorotCategories)
+        ArrayList<CategoryModel> mekorotCategories = new ArrayList<>(mMekorotCategories.values());
+        Collections.sort(mekorotCategories, new Comparator<CategoryModel>() {
+            @Override
+            public int compare(CategoryModel cm1, CategoryModel cm2) {
+                return Integer.valueOf(cm2.getCategoryRefernceNum()) -
+                        Integer.valueOf(cm1.getCategoryRefernceNum());
+            }
+        });
+        for (CategoryModel category : mekorotCategories)
         {
             String prettifiedCategory = category.getCategoryName().substring(
-                    CATEGORY_STRING_LENGTH).replace("_",
-                                                    " ")
+                    CATEGORY_STRING_LENGTH).replace("_", " ")
                     + CATEGORY_NUM_OPEN_BRACE
                     + category.getCategoryRefernceNum()
                     + CATEGORY_NUM_CLOSE_BRACE;
@@ -140,12 +144,19 @@ public class MekorotTab extends Fragment {
                                          @Override
                                          public void onClick(DialogInterface dialog, int indexSelected,
                                                              boolean isChecked) {
+                                             ArrayList<CategoryModel> mekorotCategories = new ArrayList<>(mMekorotCategories.values());
+                                             Collections.sort(mekorotCategories, new Comparator<CategoryModel>() {
+                                                 @Override
+                                                 public int compare(CategoryModel cm1, CategoryModel cm2) {
+                                                     return Integer.valueOf(cm2.getCategoryRefernceNum()) -
+                                                             Integer.valueOf(cm1.getCategoryRefernceNum());
+                                                 }
+                                             });
                                              if (isChecked)
                                              {
                                                  // If the user checked the item, add it to the selected items
                                                  mDialogSelectedItems.add(indexSelected);
-                                                 String prefixedSelection = getResources().getString(
-                                                         R.string.jbr_prefix) + mMekorotCategories.get(
+                                                 String prefixedSelection = mekorotCategories.get(
                                                          indexSelected).getCategoryName();
                                                  mDialogSelectedItemsNames.add(prefixedSelection);
                                              }
@@ -153,8 +164,7 @@ public class MekorotTab extends Fragment {
                                              {
                                                  // Else, if the item is already in the array, remove it
                                                  mDialogSelectedItems.remove(Integer.valueOf(indexSelected));
-                                                 String prefixedSelection = getResources().getString(
-                                                         R.string.jbr_prefix) + mMekorotCategories.get(
+                                                 String prefixedSelection = mekorotCategories.get(
                                                          indexSelected).getCategoryName();
                                                  mDialogSelectedItemsNames.remove(prefixedSelection);
                                              }
@@ -163,31 +173,27 @@ public class MekorotTab extends Fragment {
                                                           new DialogInterface.OnClickListener() {
                                                               @Override
                                                               public void onClick(DialogInterface dialog, int id) {
-                                                                  String mekorotQuery;
-                                                                  boolean shouldFilter = false;
                                                                   if (mDialogSelectedItemsNames.size() > 0)
                                                                   {
-                                                                      mekorotQuery = JBSQueries.getMekorotFiltered(
-                                                                              mDialogSelectedItemsNames, mPrefixedPsukimUris);
-                                                                      shouldFilter = true;
+                                                                      ArrayList<CategoryModel> selectedCategories = new ArrayList<>();
+                                                                      for (String selectedItemName : mDialogSelectedItemsNames)
+                                                                      {
+                                                                          selectedCategories.add(mMekorotCategories.get(selectedItemName));
+                                                                      }
+                                                                      mFilteredMekorotModels = new HashMap<>();
+                                                                      for (CategoryModel cm : selectedCategories)
+                                                                      {
+                                                                          for (String makorUri : cm.getmMekorotUris())
+                                                                          {
+                                                                              mFilteredMekorotModels.put(makorUri, mMekorotModels.get(makorUri));
+                                                                          }
+                                                                      }
+                                                                      selfie.setRecyclerViewAdapter(mFilteredMekorotModels);
                                                                   }
                                                                   else
                                                                   {
-                                                                      mekorotQuery = JBSQueries.getMekorotWithAllData(
-                                                                              mPrefixedPsukimUris);
+                                                                      selfie.setRecyclerViewAdapter(mMekorotModels);
                                                                   }
-
-                                                                  final MekorotForPsukim mekorotForPsukim = new MekorotForPsukim(mPrefixedPsukimUris, selfie, shouldFilter, mekorotQuery);
-                                                                  Runnable onComplete = new Runnable() {
-                                                                      @Override
-                                                                      public void run() {
-                                                                          HashMap<String, MakorModel> mekorotModels = (HashMap<String, MakorModel>) mekorotForPsukim.getData().get(0);
-                                                                          ArrayList<CategoryModel> mekorotCategories = (ArrayList<CategoryModel>) mekorotForPsukim.getData().get(1);
-                                                                          selfie.setRecyclerViewAdapter(mekorotModels, mekorotCategories);
-                                                                      }
-                                                                  };
-                                                                  DataManager dataManager = new DataManager(selfie.getContext());
-                                                                  dataManager.getData(mekorotForPsukim, onComplete);
                                                               }
                                                           }).setNegativeButton(getResources().getString(R.string.cancel_button),
                                                                                new DialogInterface.OnClickListener() {
@@ -230,9 +236,14 @@ public class MekorotTab extends Fragment {
         Runnable onComplete = new Runnable() {
             @Override
             public void run() {
-                HashMap<String, MakorModel> mekorotModels = (HashMap<String, MakorModel>) mekorotForPsukim.getData().get(0);
-                ArrayList<CategoryModel> mekorotCategories = (ArrayList<CategoryModel>) mekorotForPsukim.getData().get(1);
-                selfie.setRecyclerViewAdapter(mekorotModels, mekorotCategories);
+                mMekorotCategories = new TreeMap<>();
+                mMekorotModels = (HashMap<String, MakorModel>) mekorotForPsukim.getData().get(0);
+                ArrayList<CategoryModel> categoryModels = (ArrayList<CategoryModel>) mekorotForPsukim.getData().get(1);
+                for (CategoryModel cm : categoryModels)
+                {
+                    mMekorotCategories.put(cm.getCategoryName(), cm);
+                }
+                selfie.setRecyclerViewAdapter(mMekorotModels);
             }
         };
         DataManager dataManager = new DataManager(this.getContext());

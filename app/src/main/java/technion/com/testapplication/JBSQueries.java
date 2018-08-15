@@ -120,11 +120,11 @@ public class JBSQueries {
         return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>                           \n"
                 + "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n"
                 + "            PREFIX dco: <http://purl.org/dc/terms/>                                     \n"
-                + "SELECT ?category (COUNT(DISTINCT ?makor) AS ?num)  WHERE {\n"
+                + "SELECT ?category ?makor WHERE {\n"
                 + "values ?pasuk { " + psukimList + " }\n"
                 + "?makor jbo:mentions ?pasuk; jbo:book ?book.\n"
                 + "?book dco:subject ?category.\n"
-                + "} GROUP BY ?category order by DESC(?num)";
+                + "} GROUP BY ?category";
     }
 
     public static String getMekorotAuthors(ArrayList<String> mekorotUris) {

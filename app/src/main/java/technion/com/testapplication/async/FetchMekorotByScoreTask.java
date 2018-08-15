@@ -11,8 +11,11 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.sparql.engine.http.QueryEngineHTTP;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import technion.com.testapplication.JBSQueries;
@@ -57,6 +60,7 @@ public class FetchMekorotByScoreTask
             String... params) {
         HashMap<String, MakorModel> sortedMekorot = new HashMap<>();
         ArrayList<CategoryModel> bookSubjects = new ArrayList<>();
+        HashMap<String, CategoryModel> subjectToCategory = new HashMap<>();
         ArrayList<String> mekorotUris = new ArrayList<>();
         HashMap<String, String> mekorotUrisAuthors = new HashMap<>();
         try
@@ -119,7 +123,7 @@ public class FetchMekorotByScoreTask
                     QuerySolution rb = resultSet.nextSolution();
                     String makorUri = rb.get(JBSQueries.MAKOR).toString();
                     RDFNode authorNode = rb.get(JBSQueries.AUTHOR);
-                    String authorFull = "";
+                    String authorFull;
                     String authorName = "";
                     if (authorNode != null)
                     {
@@ -152,18 +156,36 @@ public class FetchMekorotByScoreTask
                 {
                     QuerySolution rb = resultSet.nextSolution();
                     String bookSubjectUri = rb.get(JBSQueries.CATEGORY).toString();
-                    String referenceNumNodeAsString = rb.get(
-                            JBSQueries.CATEGORY_REFERENCE_NUM).toString();
-                    String bookReferenceNum = referenceNumNodeAsString.substring(0,
-                                                                                 referenceNumNodeAsString.indexOf(
-                                                                                         NUM_OF_REFERENCES_REGEX));
+//                    String referenceNumNodeAsString = rb.get(
+//                            JBSQueries.CATEGORY_REFERENCE_NUM).toString();
+//                    String bookReferenceNum = referenceNumNodeAsString.substring(0,
+//                                                                                 referenceNumNodeAsString.indexOf(
+//                                                                                         NUM_OF_REFERENCES_REGEX));
                     String bookSubject = bookSubjectUri.substring(
                             bookSubjectUri.lastIndexOf(BOOK_URI_SEPARATOR) + 1);
-                    CategoryModel categoryModel = new CategoryModel(bookSubject, bookReferenceNum);
-                    bookSubjects.add(categoryModel);
+                    String makorUri = rb.get(JBSQueries.MAKOR).toString();
+                    CategoryModel categoryModel;
+                    if (subjectToCategory.containsKey(bookSubject))
+                    {
+                        categoryModel = subjectToCategory.get(bookSubject);
+                    }
+                    else
+                    {
+                        categoryModel = new CategoryModel(bookSubject, "");
+                        subjectToCategory.put(bookSubject, categoryModel);
+                    }
+                    categoryModel.addToMekorotUris(makorUri);
                 }
             } finally
             {
+                List<CategoryModel> categoriesSorted = new ArrayList<>(subjectToCategory.values());
+                Collections.sort(categoriesSorted, new Comparator<CategoryModel>() {
+
+                    public int compare(CategoryModel c1, CategoryModel c2) {
+                        return Integer.valueOf(c2.getCategoryRefernceNum()) - Integer.valueOf(c1.getCategoryRefernceNum());
+                    }
+                });
+                bookSubjects.addAll(categoriesSorted);
                 queryEngineHTTPCategories.close();
             }
         } catch (Exception err)
