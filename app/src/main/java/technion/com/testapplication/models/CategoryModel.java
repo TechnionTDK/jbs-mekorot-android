@@ -1,7 +1,6 @@
 package technion.com.testapplication.models;
 
 import java.io.Serializable;
-import java.util.HashSet;
 
 /**
  * Created by tomerlevinson on 14/01/2018.
@@ -10,12 +9,12 @@ import java.util.HashSet;
 public class CategoryModel implements Serializable {
     private String mCategoryName;
     private String mCategoryRefernceNum;
-    private HashSet<String> mMekorotUris;
+    private String mBookUri;
 
-    public CategoryModel(String categoryName, String referenceNumber) {
+    public CategoryModel(String categoryName, String referenceNumber, String bookUri) {
         mCategoryName = categoryName;
         mCategoryRefernceNum = referenceNumber;
-        mMekorotUris = new HashSet<>();
+        mBookUri = bookUri;
     }
 
     public String getCategoryName() {
@@ -26,14 +25,7 @@ public class CategoryModel implements Serializable {
         return mCategoryRefernceNum;
     }
 
-    public HashSet<String> getmMekorotUris() {
-        return mMekorotUris;
+    public String getBookUri() {
+        return mBookUri;
     }
-
-    public boolean addToMekorotUris(String makorUri) {
-        boolean result = mMekorotUris.add(makorUri);
-        mCategoryRefernceNum = String.valueOf(mMekorotUris.size());
-        return result;
-    }
-
 }

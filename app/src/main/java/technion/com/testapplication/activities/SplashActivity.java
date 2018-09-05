@@ -18,6 +18,6 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
         FetchParashotAndPrakimTask task = new FetchParashotAndPrakimTask(this);
-        task.execute(JBSQueries.GET_ALL_PARASHOT, JBSQueries.GET_ALL_PRAKIM);
+        task.execute(JBSQueries.GET_ALL_PARASHOT, JBSQueries.GET_ALL_PRAKIM, JBSQueries.GET_BOOKS_AND_CATEGORIES);
     }
 }

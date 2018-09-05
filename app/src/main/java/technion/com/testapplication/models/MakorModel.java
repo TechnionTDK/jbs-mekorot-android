@@ -11,14 +11,16 @@ public class MakorModel implements Serializable {
     private String mMakorName;
     private String mMakorAuthor;
     private String mMakorText;
+    private String mMakorBook;
     private String mNumOfPsukimMentions;
     private String mMakorUri;
     private boolean mIsClicked = false;
 
-    public MakorModel(String name, String text, String uri, String numOfPsukimMentions) {
+    public MakorModel(String name, String text, String uri, String book, String numOfPsukimMentions) {
         mMakorName = name;
         mMakorText = text;
         mMakorUri = uri;
+        mMakorBook = book;
         mNumOfPsukimMentions = numOfPsukimMentions;
     }
 
@@ -32,6 +34,10 @@ public class MakorModel implements Serializable {
 
     public String getMakorText() {
         return mMakorText;
+    }
+
+    public String getMakorBook() {
+        return mMakorBook;
     }
 
     public String getNumOfPsukimMentions() {

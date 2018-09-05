@@ -44,6 +44,8 @@ public class MekorotTab extends Fragment {
     private static final String CATEGORY_NUM_CLOSE_BRACE = ")";
     private HashMap<String, MakorModel> mMekorotModels;
     private HashMap<String, MakorModel> mFilteredMekorotModels;
+    private HashMap<String, ArrayList<String>> mBookToCategories;
+    private HashMap<String, ArrayList<String>> mCategoryToBooks;
 
     public MekorotTab() {
     }
@@ -112,7 +114,7 @@ public class MekorotTab extends Fragment {
      */
     private void setFilterDialog() {
         ArrayList<String> prettifiedCategories = new ArrayList<>();
-        ArrayList<CategoryModel> mekorotCategories = new ArrayList<>(mMekorotCategories.values());
+        final ArrayList<CategoryModel> mekorotCategories = new ArrayList<>(mMekorotCategories.values());
         Collections.sort(mekorotCategories, new Comparator<CategoryModel>() {
             @Override
             public int compare(CategoryModel cm1, CategoryModel cm2) {
@@ -181,11 +183,21 @@ public class MekorotTab extends Fragment {
                                                                           selectedCategories.add(mMekorotCategories.get(selectedItemName));
                                                                       }
                                                                       mFilteredMekorotModels = new HashMap<>();
+                                                                      ArrayList<String> relevantBooks = new ArrayList<>();
+                                                                      ArrayList<MakorModel> mekorot = new ArrayList<>();
+                                                                      for (MakorModel makor : mMekorotModels.values())
+                                                                      {
+                                                                          mekorot.add(makor);
+                                                                      }
                                                                       for (CategoryModel cm : selectedCategories)
                                                                       {
-                                                                          for (String makorUri : cm.getmMekorotUris())
+                                                                          relevantBooks.add(cm.getBookUri());
+                                                                      }
+                                                                      for (MakorModel makor : mekorot)
+                                                                      {
+                                                                          if (relevantBooks.contains(makor.getMakorBook()))
                                                                           {
-                                                                              mFilteredMekorotModels.put(makorUri, mMekorotModels.get(makorUri));
+                                                                              mFilteredMekorotModels.put(makor.getMakorUri(), makor);
                                                                           }
                                                                       }
                                                                       selfie.setRecyclerViewAdapter(mFilteredMekorotModels);
@@ -248,6 +260,14 @@ public class MekorotTab extends Fragment {
         };
         DataManager dataManager = new DataManager(this.getContext());
         dataManager.getData(mekorotForPsukim, onComplete);
+    }
+
+    public void setBookToCategories(HashMap<String, ArrayList<String>> booksToCategories) {
+        mBookToCategories = booksToCategories;
+    }
+
+    public void setCategoryToBooks(HashMap<String, ArrayList<String>> categoryToBooks) {
+        mCategoryToBooks = categoryToBooks;
     }
 
     /**

@@ -9,6 +9,7 @@ public class JBSQueries {
 
     public static final String JBS_ENDPOINT = "http://tdk3.csf.technion.ac.il:8890/sparql";
     public static final String JBS_LABEL = "label";
+    public static final String JBS_BOOK = "book";
     public static final String JBS_URI = "uri";
     public static final String PASUK = "pasuk";
     public static final String PASUK_TEXT = "pasuk_text";
@@ -47,6 +48,12 @@ public class JBSQueries {
             "?uri jbo:book ?book.\n" +
             "?book a jbo:BookTanach.\n" +
             "} ORDER BY ASC(xsd:integer(?position))";
+
+    public static final String GET_BOOKS_AND_CATEGORIES = "PREFIX jbo: <http://jbs.technion.ac.il/ontology/>\n" +
+            "PREFIX dc: <http://purl.org/dc/terms/>\n" +
+            "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+            "SELECT ?book ?label ?category {\n" +
+            "?book a jbo:Book; rdfs:label ?label; dc:subject ?category.}";
 
     public static String getAllPsukimFromParashaQuery(String parashaUri) {
         return " PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
@@ -120,11 +127,12 @@ public class JBSQueries {
         return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>                           \n"
                 + "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n"
                 + "            PREFIX dco: <http://purl.org/dc/terms/>                                     \n"
-                + "SELECT ?category ?makor WHERE {\n"
+                + "            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>             \n"
+                + "SELECT ?category (COUNT(DISTINCT ?makor) AS ?num) ?book WHERE {\n"
                 + "values ?pasuk { " + psukimList + " }\n"
                 + "?makor jbo:mentions ?pasuk; jbo:book ?book.\n"
                 + "?book dco:subject ?category.\n"
-                + "} GROUP BY ?category";
+                + "} GROUP BY ?category ?book order by DESC(?num)";
     }
 
     public static String getMekorotAuthors(ArrayList<String> mekorotUris) {
@@ -335,13 +343,14 @@ public class JBSQueries {
         return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>                           \n" +
                 "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n" +
                 "            PREFIX dco: <http://purl.org/dc/terms/>                                     \n" +
-                "SELECT ?label ?text ?makor (COUNT(?pasuk) AS ?numOfPsukim) (SUM(xsd:integer(?numOfMentions)) as ?score) WHERE {\n" +
+                "SELECT ?label ?text ?makor ?book (COUNT(?pasuk) AS ?numOfPsukim) (SUM(xsd:integer(?numOfMentions)) as ?score) WHERE {\n" +
                 "values ?pasuk {" + psukimList + "}\n" +
                 "?mention a jbo:Mention.\n" +
                 "?mention jbo:source ?makor; jbo:target ?pasuk; jbo:numOfMentions ?numOfMentions.\n" +
                 "?makor rdfs:label ?label.\n" +
                 "?makor jbo:text ?text.\n" +
-                "} GROUP BY ?text ?label ?makor ORDER BY DESC(?score)\n";
+                "?makor jbo:book ?book.\n" +
+                "} GROUP BY ?text ?label ?makor ?book ORDER BY DESC(?score)\n";
     }
 
 }

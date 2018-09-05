@@ -47,6 +47,39 @@ public class DataManager {
         cacheable.FetchDataAsync(onDataFetchComplete);
     }
 
+    public boolean cacheData(String key, Object data) {
+        try
+        {
+            InternalStorage.writeObject(mContext, key, data);
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+        SharedPreferences.Editor editor = mLocalCache.edit();
+        editor.putBoolean(key, true);
+        editor.apply();
+        return true;
+    }
+
+    public Object getCachedData(String key) {
+        if (mLocalCache.getBoolean(key, false))
+        {
+            // DATA IS IN CACHE
+            try
+            {
+                return InternalStorage.readObject(mContext, key);
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
     private void onDataFetchComplete(Cacheable cacheable, Runnable onComplete) {
         try
         {

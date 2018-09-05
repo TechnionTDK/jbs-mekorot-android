@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import technion.com.testapplication.JBSQueries;
@@ -59,9 +58,8 @@ public class FetchMekorotByScoreTask
     protected Pair<HashMap<String, MakorModel>, ArrayList<CategoryModel>> doInBackground(
             String... params) {
         HashMap<String, MakorModel> sortedMekorot = new HashMap<>();
-        ArrayList<CategoryModel> bookSubjects = new ArrayList<>();
-        HashMap<String, CategoryModel> subjectToCategory = new HashMap<>();
         ArrayList<String> mekorotUris = new ArrayList<>();
+        ArrayList<CategoryModel> categories = new ArrayList<>();
         HashMap<String, String> mekorotUrisAuthors = new HashMap<>();
         try
         {
@@ -78,6 +76,7 @@ public class FetchMekorotByScoreTask
                     String numOfPsukimString;
                     String makorName = rb.get(JBSQueries.MAKOR_NAME).toString();
                     String makorText = rb.get(JBSQueries.MAKOR_TEXT).toString();
+                    String makorBook = rb.get(JBSQueries.JBS_BOOK).toString();
                     String makorUri;
                     String numOfPsukimLiteralAsString;
                     if (mShouldFilter)
@@ -105,6 +104,7 @@ public class FetchMekorotByScoreTask
                             makorName,
                             makorText,
                             makorUri,
+                            makorBook,
                             numOfPsukimString);
                     sortedMekorot.put(makorUri, makorModel);
                 }
@@ -155,37 +155,25 @@ public class FetchMekorotByScoreTask
                 while (resultSet.hasNext())
                 {
                     QuerySolution rb = resultSet.nextSolution();
-                    String bookSubjectUri = rb.get(JBSQueries.CATEGORY).toString();
-//                    String referenceNumNodeAsString = rb.get(
-//                            JBSQueries.CATEGORY_REFERENCE_NUM).toString();
-//                    String bookReferenceNum = referenceNumNodeAsString.substring(0,
-//                                                                                 referenceNumNodeAsString.indexOf(
-//                                                                                         NUM_OF_REFERENCES_REGEX));
-                    String bookSubject = bookSubjectUri.substring(
-                            bookSubjectUri.lastIndexOf(BOOK_URI_SEPARATOR) + 1);
-                    String makorUri = rb.get(JBSQueries.MAKOR).toString();
-                    CategoryModel categoryModel;
-                    if (subjectToCategory.containsKey(bookSubject))
-                    {
-                        categoryModel = subjectToCategory.get(bookSubject);
-                    }
-                    else
-                    {
-                        categoryModel = new CategoryModel(bookSubject, "");
-                        subjectToCategory.put(bookSubject, categoryModel);
-                    }
-                    categoryModel.addToMekorotUris(makorUri);
+                    String categoryUri = rb.get(JBSQueries.CATEGORY).toString();
+                    String bookUri = rb.get(JBSQueries.JBS_BOOK).toString();
+                    String referenceNumNodeAsString = rb.get(
+                            JBSQueries.CATEGORY_REFERENCE_NUM).toString();
+                    String referenceNum = referenceNumNodeAsString.substring(0,
+                                                                             referenceNumNodeAsString.indexOf(
+                                                                                     NUM_OF_REFERENCES_REGEX));
+                    String categoryName = categoryUri.substring(
+                            categoryUri.lastIndexOf(BOOK_URI_SEPARATOR) + 1);
+                    categories.add(new CategoryModel(categoryName, referenceNum, bookUri));
                 }
             } finally
             {
-                List<CategoryModel> categoriesSorted = new ArrayList<>(subjectToCategory.values());
-                Collections.sort(categoriesSorted, new Comparator<CategoryModel>() {
+                Collections.sort(categories, new Comparator<CategoryModel>() {
 
                     public int compare(CategoryModel c1, CategoryModel c2) {
                         return Integer.valueOf(c2.getCategoryRefernceNum()) - Integer.valueOf(c1.getCategoryRefernceNum());
                     }
                 });
-                bookSubjects.addAll(categoriesSorted);
                 queryEngineHTTPCategories.close();
             }
         } catch (Exception err)
@@ -194,7 +182,7 @@ public class FetchMekorotByScoreTask
         }
         Pair<HashMap<String, MakorModel>, ArrayList<CategoryModel>> queryResultsPair = Pair.create(
                 sortedMekorot,
-                bookSubjects);
+                categories);
         Iterator it = mekorotUrisAuthors.entrySet().iterator();
         while (it.hasNext())
         {

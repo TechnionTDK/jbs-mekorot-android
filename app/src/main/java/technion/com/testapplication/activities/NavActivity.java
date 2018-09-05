@@ -51,6 +51,8 @@ public class NavActivity extends AppCompatActivity
     private final ArrayList<String> mPrakim = new ArrayList<>();
     private ArrayList<String> mParashotAndUris;
     private ArrayList<String> mPrakimAndUris;
+    private HashMap<String, ArrayList<String>> mBookToCategories;
+    private HashMap<String, ArrayList<String>> mCategoryToBooks;
     private ArrayList<Pair<String, String>> parashotURILabelPairs = new ArrayList<>();
     private ArrayList<Pair<String, String>> prakimURILabelPairs = new ArrayList<>();
     private ViewPager mViewPager;
@@ -91,6 +93,8 @@ public class NavActivity extends AppCompatActivity
                 getResources().getString(R.string.parashot_and_uri_extra));
         mPrakimAndUris = (ArrayList<String>) intent.getExtras().get(
                 getResources().getString(R.string.prakim_and_uri_extra));
+        mBookToCategories = (HashMap<String, ArrayList<String>>) intent.getSerializableExtra("bookToCategories");
+        mCategoryToBooks = (HashMap<String, ArrayList<String>>) intent.getSerializableExtra("categoryToBooks");
         populateUriLabelPairs();
         getWindow().getDecorView().setBackgroundColor(
                 ContextCompat.getColor(this, R.color.MainActivityBG));
@@ -259,6 +263,8 @@ public class NavActivity extends AppCompatActivity
                 MEKOROT_FRAG_POSITION);
         if (mIsNewQuerySubmitted)
         {
+            mekorotTabFrag.setBookToCategories(mBookToCategories);
+            mekorotTabFrag.setCategoryToBooks(mCategoryToBooks);
             mekorotTabFrag.runMekorotAndCategoriesQueries(psukimUris);
             mIsNewQuerySubmitted = false;
             setFilterIconClickable(true);
