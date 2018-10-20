@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.util.Pair;
+import android.util.TimingLogger;
 
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
@@ -57,19 +58,24 @@ public class FetchMekorotByScoreTask
     @Override
     protected Pair<HashMap<String, MakorModel>, ArrayList<CategoryModel>> doInBackground(
             String... params) {
+        TimingLogger timings = new TimingLogger("FetchMekorot", "DoInBackground");
+        timings.addSplit("fetch began...");
         HashMap<String, MakorModel> sortedMekorot = new HashMap<>();
         ArrayList<String> mekorotUris = new ArrayList<>();
         ArrayList<CategoryModel> categories = new ArrayList<>();
         HashMap<String, String> mekorotUrisAuthors = new HashMap<>();
         try
         {
+            timings.addSplit("creating reading mekorot and categories queries...");
             QueryEngineHTTP sortedMekorotQuery = new QueryEngineHTTP(JBSQueries.JBS_ENDPOINT,
                                                                      params[0]);
             QueryEngineHTTP queryEngineHTTPCategories = new QueryEngineHTTP(JBSQueries.JBS_ENDPOINT,
                                                                             params[1]);
+            timings.addSplit("fetching mekorot...");
             try
             {
                 ResultSet resultSet = sortedMekorotQuery.execSelect();
+                timings.addSplit("query returned.");
                 while (resultSet.hasNext())
                 {
                     QuerySolution rb = resultSet.nextSolution();
@@ -110,11 +116,13 @@ public class FetchMekorotByScoreTask
                 }
             } finally
             {
+                timings.addSplit("finished fetching mekorot.");
                 sortedMekorotQuery.close();
             }
             String mekorotAuthorsQuery = JBSQueries.getMekorotAuthors(mekorotUris);
             QueryEngineHTTP mekorotAuthorsSelect = new QueryEngineHTTP(JBSQueries.JBS_ENDPOINT,
                                                                        mekorotAuthorsQuery);
+            timings.addSplit("fetching authors...");
             try
             {
                 ResultSet resultSet = mekorotAuthorsSelect.execSelect();
@@ -124,31 +132,33 @@ public class FetchMekorotByScoreTask
                     String makorUri = rb.get(JBSQueries.MAKOR).toString();
                     RDFNode authorNode = rb.get(JBSQueries.AUTHOR);
                     String authorFull;
-                    String authorName = "";
+                    StringBuilder authorName = new StringBuilder();
                     if (authorNode != null)
                     {
                         authorFull = authorNode.toString();
                         String author = authorFull.substring(authorFull.lastIndexOf("-") + 1);
                         String[] authorNameArray = author.split("_");
-                        authorName = "";
+                        authorName = new StringBuilder();
                         for (int i = 0; i < authorNameArray.length; i++)
                         {
                             if (i != authorNameArray.length - 1)
                             {
-                                authorName += authorNameArray[i] + " ";
+                                authorName.append(authorNameArray[i]).append(" ");
                             }
                             else
                             {
-                                authorName += authorNameArray[i];
+                                authorName.append(authorNameArray[i]);
                             }
                         }
                     }
-                    mekorotUrisAuthors.put(makorUri, authorName);
+                    mekorotUrisAuthors.put(makorUri, authorName.toString());
                 }
             } finally
             {
+                timings.addSplit("finished fetching authors.");
                 mekorotAuthorsSelect.close();
             }
+            timings.addSplit("fetching categories...");
             try
             {
                 ResultSet resultSet = queryEngineHTTPCategories.execSelect();
@@ -168,18 +178,21 @@ public class FetchMekorotByScoreTask
                 }
             } finally
             {
+                timings.addSplit("sorting categories...");
                 Collections.sort(categories, new Comparator<CategoryModel>() {
 
                     public int compare(CategoryModel c1, CategoryModel c2) {
                         return Integer.valueOf(c2.getCategoryRefernceNum()) - Integer.valueOf(c1.getCategoryRefernceNum());
                     }
                 });
+                timings.addSplit("finished fetching categories.");
                 queryEngineHTTPCategories.close();
             }
         } catch (Exception err)
         {
             err.printStackTrace();
         }
+        timings.addSplit("constructing the fetch results...");
         Pair<HashMap<String, MakorModel>, ArrayList<CategoryModel>> queryResultsPair = Pair.create(
                 sortedMekorot,
                 categories);
@@ -200,6 +213,8 @@ public class FetchMekorotByScoreTask
             }
             it.remove(); // avoids a ConcurrentModificationException
         }
+        timings.addSplit("finished fetching.");
+        timings.dumpToLog();
         return queryResultsPair;
     }
 

@@ -33,6 +33,7 @@
     <string name="favorites_text_prefix">text***</string>
     <string name="favorites_file_name">favorites</string>
     <string name="choose_sharing_option">בחר אופן שיתוף</string>
+    <string name="report_no_ident">דיווח אי-זיהוי</string>
     <string name="full_text_share_option">טקסט מלא</string>
     <string name="link_to_text_share_option">קישור לאתר</string>
     <string name="makor_removed_from_favorites">מקור הוסר מנבחרים</string>
@@ -64,4 +65,9 @@
     <string name="nav_item_favorites">תוצאות נבחרות</string>
     <string name="nav_item_settings">הגדרות</string>
     <string name="nav_item_help">עזרה ומשוב</string>
+    <string name="bad_ident_text">זיהוי לא נכון של פסוק</string>
+    <string name="partial_ident_text">זיהוי חלקי</string>
+    <string name="free_text_text">טקסט חופשי</string>
+    <string name="free_text_hint">(אופציונלי) פרט עוד על השגיאה שזוהתה</string>
+    <string name="send">שלח</string>
 </resources>

@@ -2,6 +2,7 @@ package technion.com.testapplication.data_manage;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.TimingLogger;
 
 import java.io.IOException;
 
@@ -9,10 +10,13 @@ public class DataManager {
     private static final String DATA_PREF_NAME = "sulamot_data_local_cache";
     private SharedPreferences mLocalCache;
     private Context mContext;
+    private TimingLogger mTimings;
+    private String DATA_TAG = "DataManager";
 
     public DataManager(Context context) {
         mContext = context;
         this.mLocalCache = context.getSharedPreferences(DATA_PREF_NAME, Context.MODE_PRIVATE);
+        mTimings = new TimingLogger(DATA_TAG, "DM:");
     }
 
     public void getData(final Cacheable cacheable, final Runnable onComplete) {
@@ -21,10 +25,14 @@ public class DataManager {
             // DATA IS IN CACHE
             try
             {
+                mTimings.addSplit("getData: reading from cache...");
                 cacheable.setData(InternalStorage.readObject(mContext, cacheable.getKey()));
+                mTimings.addSplit("getData: finished reading from cache.");
                 if (onComplete != null)
                 {
+                    mTimings.addSplit("getData: Running onComplete...");
                     onComplete.run();
+                    mTimings.addSplit("getData: onComplete finished.");
                 }
                 return;
             } catch (IOException e)
@@ -37,6 +45,7 @@ public class DataManager {
         }
 
         // DATA NOT IN CACHE
+        mTimings.addSplit("getData: Data not in cache, fetching async...");
         final DataManager selfie = this;
         Runnable onDataFetchComplete = new Runnable() {
             @Override
@@ -50,7 +59,9 @@ public class DataManager {
     public boolean cacheData(String key, Object data) {
         try
         {
+            mTimings.addSplit("cacheData: writing to cache...");
             InternalStorage.writeObject(mContext, key, data);
+            mTimings.addSplit("cachedata: finished writing to cache.");
         } catch (IOException e)
         {
             e.printStackTrace();
@@ -68,7 +79,10 @@ public class DataManager {
             // DATA IS IN CACHE
             try
             {
-                return InternalStorage.readObject(mContext, key);
+                mTimings.addSplit("getData: reading from cache...");
+                Object res = InternalStorage.readObject(mContext, key);
+                mTimings.addSplit("getData: finished writing to cache.");
+                return res;
             } catch (IOException e)
             {
                 e.printStackTrace();
@@ -83,7 +97,9 @@ public class DataManager {
     private void onDataFetchComplete(Cacheable cacheable, Runnable onComplete) {
         try
         {
+            mTimings.addSplit("onDataFetchComplete: writing to cache...");
             InternalStorage.writeObject(mContext, cacheable.getKey(), cacheable.getData());
+            mTimings.addSplit("onDataFetchComplete: finished writing to cache.");
         } catch (IOException e)
         {
             e.printStackTrace();
@@ -93,8 +109,11 @@ public class DataManager {
         editor.apply();
         if (onComplete != null)
         {
+            mTimings.addSplit("onDataFetchComplete: Running onComplete...");
             onComplete.run();
         }
+        mTimings.addSplit("onDataFetchComplete: onComplete finished.");
+        mTimings.dumpToLog();
     }
 
 }

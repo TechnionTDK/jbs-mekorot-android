@@ -1,5 +1,6 @@
 package technion.com.testapplication.activities;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,23 +17,33 @@ import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Pair;
+import android.view.ActionMode;
+import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.PopupMenu;
+import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.R;
 import technion.com.testapplication.adapters.ResultsCollectionPagerAdapter;
 import technion.com.testapplication.async.FetchHighlightsForMakorTask;
+import technion.com.testapplication.async.PostRequester;
 import technion.com.testapplication.fragments.MekorotTab;
+import technion.com.testapplication.models.ErrorModel;
 import technion.com.testapplication.models.MakorModel;
 import technion.com.testapplication.models.ResultModel;
 import technion.com.testapplication.utils.IndexWrapper;
@@ -46,8 +57,9 @@ public class ResultsActivity extends AppCompatActivity
     private ArrayList<String> mPsukimUris;
     private int mCurrentResult = 0;
     private int mClickedIndex = 0;
+    private ProgressDialog mProgressDialog;
     private ArrayList<Integer> mScrollToList;
-    private Intent mShareIntent;
+    private android.app.AlertDialog alert;
     private static final String INDICES_DELIMITER = "-";
     private static final String SPLIT_BY_SPACES_REGEX = "\\s+";
     private static final String MAKOR_URI_DELIMITER = "/";
@@ -61,6 +73,7 @@ public class ResultsActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
         Toolbar toolbar = findViewById(R.id.my_toolbar);
+
         setSupportActionBar(toolbar);
 
         setToolbarAndColors();
@@ -174,7 +187,7 @@ public class ResultsActivity extends AppCompatActivity
     private void setToolbarAndColors() {
         getWindow().getDecorView().setBackgroundColor(
                 ContextCompat.getColor(this, R.color.MakorDetailViewBG));
-        final Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        final Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         if (getSupportActionBar() != null)
         {
@@ -206,6 +219,7 @@ public class ResultsActivity extends AppCompatActivity
                 onShareClick();
                 return true;
             case R.id.action_report_error:
+                onReportErrorClicked(mResults.get(mCurrentResult).URI, "", "", true);
                 return true;
             default:
                 return false;
@@ -213,7 +227,7 @@ public class ResultsActivity extends AppCompatActivity
     }
 
     private void onShareClick() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ResultsActivity.this);
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ResultsActivity.this);
         String[] options = new String[]{getResources().getString(
                 R.string.full_text_share_option), getResources().getString(
                 R.string.link_to_text_share_option)};
@@ -227,7 +241,7 @@ public class ResultsActivity extends AppCompatActivity
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        int selectedPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
+                        int selectedPosition = ((android.app.AlertDialog) dialog).getListView().getCheckedItemPosition();
                         if (selectedPosition == 0)
                         {
                             startActivity(createShareIntent(true));
@@ -247,12 +261,12 @@ public class ResultsActivity extends AppCompatActivity
                     }
                 });
 
-        AlertDialog dialog = builder.create();
+        android.app.AlertDialog dialog = builder.create();
         dialog.show();
     }
 
     private Intent createShareIntent(boolean fullText) {
-        mShareIntent = new Intent(Intent.ACTION_SEND);
+        Intent mShareIntent = new Intent(Intent.ACTION_SEND);
         mShareIntent.setType("text/plain");
         if (fullText)
         {
@@ -303,7 +317,7 @@ public class ResultsActivity extends AppCompatActivity
             }
             else
             {
-                partialPasukText.append(splitMakorText[i] + " ");
+                partialPasukText.append(splitMakorText[i]).append(" ");
             }
         }
         return partialPasukText.toString();
@@ -320,6 +334,98 @@ public class ResultsActivity extends AppCompatActivity
         Collections.sort(mScrollToList);
     }
 
+    private void reportError(ErrorModel error) {
+        final ResultsActivity selfie = this;
+        Map<String, String> params = new HashMap<>();
+        params.put("makor_uri", error.makorUri);
+        params.put("makor_range", error.makorRange);
+        params.put("issue_text", error.issueText);
+        params.put("free_text", error.freeText);
+        params.put("report_type", error.reportType.toString());
+
+        Runnable onResponse = new Runnable() {
+            @Override
+            public void run() {
+                if (mProgressDialog.isShowing())
+                {
+                    mProgressDialog.dismiss();
+                }
+                Toast.makeText(selfie, "דיווח נשלח בהצלחה", Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        Runnable onError = new Runnable() {
+            @Override
+            public void run() {
+                if (mProgressDialog.isShowing())
+                {
+                    mProgressDialog.dismiss();
+                }
+                Toast.makeText(getApplicationContext(), "דיווח שגיאה נכשל", Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        PostRequester postRequester = new PostRequester(this);
+        postRequester.SendRequest("http://haggaidev.com/mekorot/html/error_report.php", params, onResponse, onError);
+    }
+
+    public void onReportErrorClicked(final String makorUri, final String makorRange, final String issueText, boolean isFreeTextOnly) {
+        final ResultsActivity selfie = this;
+        mProgressDialog = new ProgressDialog(selfie);
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View errorReportView = inflater.inflate(R.layout.alert_report_error, null);
+        TextView txtMsg = errorReportView.findViewById(R.id.txt_error_report_msg);
+        RadioGroup radioGroup = errorReportView.findViewById(R.id.rad_err_report_group);
+
+        final ErrorModel errorModel = new ErrorModel(makorUri, makorRange, issueText, "", ErrorModel.ReportType.FREE_TEXT);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId)
+                {
+                    case R.id.rad_bad_ident:
+                        errorModel.reportType = ErrorModel.ReportType.BAD_IDENTIFICATION;
+                        break;
+                    case R.id.rad_part_ident:
+                        errorModel.reportType = ErrorModel.ReportType.PARTIAL_IDENTIFICATION;
+                        break;
+                }
+            }
+        });
+
+        if (isFreeTextOnly)
+        {
+            radioGroup.getChildAt(0).setEnabled(false);
+            radioGroup.getChildAt(1).setEnabled(false);
+            txtMsg.setText("אנא ציין מטה את תוכן הדיווח:");
+        }
+        else
+        {
+            txtMsg.setText(issueText);
+        }
+
+        Button btnSend = errorReportView.findViewById(R.id.btn_err_report_send);
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String freeText = ((TextView) errorReportView.findViewById(R.id.err_rep_free_text)).getText().toString();
+                errorModel.issueText = issueText;
+                errorModel.freeText = freeText;
+                selfie.mProgressDialog.setMessage(
+                        selfie.getResources().getString(R.string.please_wait_he));
+                selfie.mProgressDialog.show();
+                selfie.reportError(errorModel);
+                alert.dismiss();
+            }
+        });
+
+        builder.setView(errorReportView);
+        alert = builder.create();
+        alert.show();
+    }
+
+
     /**
      * 1) Go over each index range in the psukimSubstrings.
      * 2) Highlight each index-range.
@@ -331,15 +437,17 @@ public class ResultsActivity extends AppCompatActivity
      */
     public void highlightPsukim(ArrayList<Pair<String, String>> psukimSubstrings) {
         editTitleWithHighlights(psukimSubstrings.size());
-        ResultsCollectionPagerAdapter.ResultObjectFragment fragment =
+        final ResultsCollectionPagerAdapter.ResultObjectFragment fragment =
                 (ResultsCollectionPagerAdapter.ResultObjectFragment) mResultsCollectionPagerAdapter.getRegisteredFragment(mCurrentResult);
-        TextView makorTextView = fragment.MakorTextView;
-        String makorText = makorTextView.getText().toString();
+        final TextView makorTextView = fragment.MakorTextView;
+        final String makorText = makorTextView.getText().toString();
         String[] splitMakorText = makorText.split(SPLIT_BY_SPACES_REGEX);
         SpannableString spannableMakorText = new SpannableString(makorText);
         final ResultsActivity selfie = this;
         mScrollToList = new ArrayList<>();
         mClickedIndex = 0;
+        final String makorUri = mResults.get(mCurrentResult).URI;
+
         for (final Pair<String, String> subsetToHighlight : psukimSubstrings)
         {
             String successivePsukim = calculatePasukReferenceFromGivenIndices(subsetToHighlight.first,
@@ -359,13 +467,20 @@ public class ResultsActivity extends AppCompatActivity
             // Highlight each indicesList members.
             for (IndexWrapper indexWrapper : indicesList)
             {
+                final String spanRange = String.valueOf(indexWrapper.getStart()) + "-" + String.valueOf(indexWrapper.getEnd());
                 ClickableSpan clickableSpan = new ClickableSpan() {
                     @Override
                     public void onClick(View widget) {
-                        AlertDialog alert = new AlertDialog.Builder(selfie).create();
-                        alert.setTitle("");
-                        alert.setMessage(subsetToHighlight.second);
-                        alert.show();
+                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(selfie);
+                        builder.setTitle("");
+                        builder.setMessage(subsetToHighlight.second);
+                        builder.setNegativeButton("דווח שגיאה", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                selfie.onReportErrorClicked(makorUri, spanRange, subsetToHighlight.second, false);
+                            }
+                        });
+                        builder.create().show();
                     }
 
                     @Override
@@ -384,7 +499,75 @@ public class ResultsActivity extends AppCompatActivity
         makorTextView.setText(spannableMakorText);
         makorTextView.setMovementMethod(LinkMovementMethod.getInstance());
         setFab();
+        makorTextView.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                // Remove the "select all" option
+                menu.removeItem(android.R.id.selectAll);
+                // Remove the "cut" option
+                menu.removeItem(android.R.id.cut);
+                return true;
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                // Called when action mode is first created. The menu supplied
+                // will be used to generate action buttons for the action mode
+
+                // Here is an example MenuItem
+                menu.add(0, 0, 0, "דווח אי-זיהוי").setIcon(R.drawable.ic_error);
+                return true;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                // Called when an action mode is about to be exited and
+                // destroyed
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId())
+                {
+                    case 0:
+                        int min = 0;
+                        int max = makorTextView.getText().length();
+                        if (makorTextView.isFocused())
+                        {
+                            final int selStart = makorTextView.getSelectionStart();
+                            final int selEnd = makorTextView.getSelectionEnd();
+
+                            min = Math.max(0, Math.min(selStart, selEnd));
+                            max = Math.max(0, Math.max(selStart, selEnd));
+                        }
+                        final int finalMin = min;
+                        final int finalMax = max;
+                        // Perform your definition lookup with the selected text
+                        final CharSequence selectedText = makorTextView.getText().subSequence(min, max);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(selfie);
+                        builder.setCancelable(true);
+                        builder.setTitle("דיווח שגיאה");
+                        builder.setMessage("\"" + selectedText + "\"");
+                        builder.setPositiveButton(
+                                selfie.getApplicationContext().getResources().getString(R.string.choose_button),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        selfie.onReportErrorClicked(makorUri, String.format("%s-%s", finalMin, finalMax),
+                                                                    selectedText.toString(), false);
+                                    }
+                                });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                        // Finish and close the ActionMode
+                        mode.finish();
+                        return true;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        });
     }
-
-
 }
