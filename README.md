@@ -164,6 +164,108 @@ All you'll have to do is define the following:
 
 - **And finally paste your query into the edit box**.
 
+#### Remote Linux Server
+As a part of the error reporting feature added to the project, a remote linux server is initialized and installed with local MySQL to store the error reports which arrive from the application users.
+The following section will describe the following:
+- Initializing the linux server
+- Installing and configuring the necessary packages on the server
+- Installing local MySQL DB
+- Installing and running Apache2
+- Installing and configuring PHP
+- Creating web interface for the local MySQL using phpMyAdmin tool
+
+## Initialize the linux server
+- Updating and upgrading all the existing packages:
+$ sudo apt-get update
+$ sudo apt-get upgrade
+
+- Install MySQL:
+$ sudo apt-get mysql-server
+
+- Installing and configuring Apache2
+**guide for apache2** https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-16-04
+$ sudo apt-get install apache2
+$ sudo ufw app list
+$ sudo ufw allow 'Apache Full'
+
+- Install php7.0
+$ sudo apt-get install php7.0 libapache2-mod-php7.0 
+$ sudo a2enmod php7.0
+$ sudo service apache2 restart
+
+- Install phpMyAdmin
+**installation guide** https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-phpmyadmin-on-ubuntu-16-04
+$ sudo apt-get install phpmyadmin php-mbstring php-gettext
+During the installation you will be required to define a username and password.
+When asked, select "Configure with Apache2"
+When asked, choose to set up database with dbconfig-common
+
+- Configure the SQL DB:
+(run the mysql)
+$ mysql -u root -p
+[root password]
+$ create database mekorot;
+$ grant select,insert,update,delete,create,drop on mekorot.* to 'phpmyadmin'@localhost
+It is recommended to create a dedicated user for the mekorot database and not to use the root user for remote access to the DB due to security reasons.
+Further instructions will refer to the SQL DB user as [SQL_USER]
+
+Server should now be up and running, and the SQL is accessible through the phpMyAdmin.
+
+## Creating a PHP file that allows connection to the SQL DB (dbconnection.php)
+The following php file should be placed at the server directory /var/www/db/
+This file creates the object "$dbconnection" which allows accessing the local database from other php files, and the access to it is only enabled locally.
+(Please notice that parameters with [] are macros that should be replaced with the corresponding info)
+
+	<?php
+	header('Content-Type: text/html; charset=utf-8');
+
+	$db_username="[SQL_USER]";
+	$db_password="[PASSWORD]";
+
+	try {
+	    $dbconnection = new PDO('mysql:host=localhost;port=3306;dbname=mekorot', $db_username, $db_password, array(PDO::ATTR_PERSISTENT => true
+	    ));
+	} catch(PDOException $e) {
+
+	}
+	$dbconnection->query("SET NAMES 'utf8'");
+
+	?>
+	
+## Creating the php report error interface (db_functions.php)
+This file should be placed at /var/www/html/
+
+	<?php
+	header('Content-Type: text/html; charset=utf-8');
+
+	require_once "dbconnection.php";
+
+	function reportError($makorUri, $makorRange, $issueText, $freeText, $reportType)
+	{
+	    global $dbconnection;
+
+	    $dbconnection->beginTransaction();
+
+	    $stmt = $dbconnection->prepare('INSERT INTO error_reports 
+					  (makor_uri,makor_range,issue_text,free_text,report_type,date)
+					  VALUES (:makor_uri, :makor_range, :issue_text, :free_text, :report_type, NOW())');
+	    $result = $stmt->execute(array(':makor_uri' => $makorUri, ':makor_range' => $makorRange, ':issue_text' => $issueText,
+		':free_text' => $freeText, ':report_type' => $reportType));
+
+	    if ($result != true)
+	    {
+		$dbconnection->rollBack();
+		return false;
+	    }
+	    $dbconnection->commit();
+
+	    return true;
+	}
+	
+## Creating the php interface for the android application (error_report.php)
+This file should be placed at /var/www/html/
+This file is the endpoint for the android application.
+
 #### Notes 
 - some queries are parametized, therefore you will need to replace the variables with actual strings.
 - Other queries you can play around with can be found here: [Google Doc](https://docs.google.com/document/d/1MhTRhy99P_DytAVrMufJRUMmfHu16vKDs2y2jmT3pXo/edit)
