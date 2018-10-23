@@ -343,7 +343,7 @@ public class JBSQueries {
         return "PREFIX jbr: <http://jbs.technion.ac.il/resource/>                           \n" +
                 "            PREFIX jbo: <http://jbs.technion.ac.il/ontology/>                           \n" +
                 "            PREFIX dco: <http://purl.org/dc/terms/>                                     \n" +
-                "SELECT ?label ?text ?makor ?book (COUNT(?pasuk) AS ?numOfPsukim) (SUM(xsd:integer(?numOfMentions)) as ?score) WHERE {\n" +
+                "SELECT SAMPLE(?label) as ?label SAMPLE(?text) as ?text ?makor SAMPLE(?book) as ?book (COUNT(?pasuk) AS ?numOfPsukim) (SUM(xsd:integer(?numOfMentions)) as ?score) WHERE {\n" +
                 "values ?pasuk {" + psukimList + "}\n" +
                 "?mention a jbo:Mention.\n" +
                 "?mention jbo:source ?makor; jbo:target ?pasuk; jbo:numOfMentions ?numOfMentions.\n" +
