@@ -164,6 +164,10 @@ All you'll have to do is define the following:
 
 - **And finally paste your query into the edit box**.
 
+#### Notes 
+- some queries are parametized, therefore you will need to replace the variables with actual strings.
+- Other queries you can play around with can be found here: [Google Doc](https://docs.google.com/document/d/1MhTRhy99P_DytAVrMufJRUMmfHu16vKDs2y2jmT3pXo/edit)
+
 #### Remote Linux Server
 As a part of the error reporting feature added to the project, a remote linux server is initialized and installed with local MySQL to store the error reports which arrive from the application users.
 The following section will describe the following:
@@ -176,45 +180,46 @@ The following section will describe the following:
 
 ## Initialize the linux server
 - Updating and upgrading all the existing packages:
-$ sudo apt-get update
-$ sudo apt-get upgrade
+- $ sudo apt-get update
+- $ sudo apt-get upgrade
 
-- Install MySQL:
-$ sudo apt-get mysql-server
+# Install MySQL:
+- $ sudo apt-get mysql-server
 
-- Installing and configuring Apache2
+# Installing and configuring Apache2
 **guide for apache2** https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-16-04
-$ sudo apt-get install apache2
-$ sudo ufw app list
-$ sudo ufw allow 'Apache Full'
+- $ sudo apt-get install apache2
+- $ sudo ufw app list
+- $ sudo ufw allow 'Apache Full'
 
-- Install php7.0
-$ sudo apt-get install php7.0 libapache2-mod-php7.0 
-$ sudo a2enmod php7.0
-$ sudo service apache2 restart
+# Install php7.0
+- $ sudo apt-get install php7.0 libapache2-mod-php7.0 
+- $ sudo a2enmod php7.0
+- $ sudo service apache2 restart
 
-- Install phpMyAdmin
+$ Install phpMyAdmin
 **installation guide** https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-phpmyadmin-on-ubuntu-16-04
-$ sudo apt-get install phpmyadmin php-mbstring php-gettext
-During the installation you will be required to define a username and password.
-When asked, select "Configure with Apache2"
-When asked, choose to set up database with dbconfig-common
+- $ sudo apt-get install phpmyadmin php-mbstring php-gettext
+- During the installation you will be required to define a username and password.
+- When asked, select "Configure with Apache2"
+- When asked, choose to set up database with dbconfig-common
 
-- Configure the SQL DB:
-(run the mysql)
-$ mysql -u root -p
-[root password]
-$ create database mekorot;
-$ grant select,insert,update,delete,create,drop on mekorot.* to 'phpmyadmin'@localhost
-It is recommended to create a dedicated user for the mekorot database and not to use the root user for remote access to the DB due to security reasons.
-Further instructions will refer to the SQL DB user as [SQL_USER]
+# Configure the SQL DB:
+- (run the mysql)
+- $ mysql -u root -p
+- [root password]
+- $ create database mekorot;
+- $ grant select,insert,update,delete,create,drop on mekorot.* to 'phpmyadmin'@localhost
 
-Server should now be up and running, and the SQL is accessible through the phpMyAdmin.
+- It is recommended to create a dedicated user for the mekorot database and not to use the root user for remote access to the DB due to security reasons.
+- Further instructions will refer to the SQL DB user as [SQL_USER]
+
+- Server should now be up and running, and the SQL is accessible through the phpMyAdmin.
 
 ## Creating a PHP file that allows connection to the SQL DB (dbconnection.php)
-The following php file should be placed at the server directory /var/www/db/
+- The following php file should be placed at the server directory /var/www/db/
 This file creates the object "$dbconnection" which allows accessing the local database from other php files, and the access to it is only enabled locally.
-(Please notice that parameters with [] are macros that should be replaced with the corresponding info)
+- (Please notice that parameters with [] are macros that should be replaced with the corresponding info)
 
 	<?php
 	header('Content-Type: text/html; charset=utf-8');
@@ -263,9 +268,29 @@ This file should be placed at /var/www/html/
 	}
 	
 ## Creating the php interface for the android application (error_report.php)
-This file should be placed at /var/www/html/
-This file is the endpoint for the android application.
+- This file should be placed at /var/www/html/
+- This file is the endpoint for the android application.
+	<?php
+	require_once "../db_functions.php";
 
-#### Notes 
-- some queries are parametized, therefore you will need to replace the variables with actual strings.
-- Other queries you can play around with can be found here: [Google Doc](https://docs.google.com/document/d/1MhTRhy99P_DytAVrMufJRUMmfHu16vKDs2y2jmT3pXo/edit)
+	$result = false;
+	$message = "";
+
+	if (!isset($_POST['makor_uri']) || !isset($_POST['report_type']))
+	{
+	    $message = 'error_report.php: lacks necessary POST parameters.';
+	    goto result;
+	}
+
+	$makorUri = $_POST['makor_uri'];
+	$makorRange = $_POST['makor_range'];
+	$issueText = $_POST['issue_text'];
+	$freeText = $_POST['free_text'];
+	$reportType = $_POST['report_type'];
+
+	$result = reportError($makorUri, $makorRange, $issueText, $freeText, $reportType);
+
+	result:
+	echo json_encode(array('result' => $result, 'error' => !$result, 'message' => $message,
+	    'params' => array($makorUri, $makorRange, $issueText, $reportType)));
+	exit;
