@@ -178,33 +178,33 @@ The following section will describe the following:
 - Installing and configuring PHP
 - Creating web interface for the local MySQL using phpMyAdmin tool
 
-## Initialize the linux server
+# Initialize the linux server
 - Updating and upgrading all the existing packages:
 - $ sudo apt-get update
 - $ sudo apt-get upgrade
 
-# Install MySQL:
+#### Install MySQL:
 - $ sudo apt-get mysql-server
 
-# Installing and configuring Apache2
+#### Installing and configuring Apache2
 **guide for apache2** https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-16-04
 - $ sudo apt-get install apache2
 - $ sudo ufw app list
 - $ sudo ufw allow 'Apache Full'
 
-# Install php7.0
+#### Install php7.0
 - $ sudo apt-get install php7.0 libapache2-mod-php7.0 
 - $ sudo a2enmod php7.0
 - $ sudo service apache2 restart
 
-$ Install phpMyAdmin
+#### Install phpMyAdmin
 **installation guide** https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-phpmyadmin-on-ubuntu-16-04
 - $ sudo apt-get install phpmyadmin php-mbstring php-gettext
 - During the installation you will be required to define a username and password.
 - When asked, select "Configure with Apache2"
 - When asked, choose to set up database with dbconfig-common
 
-# Configure the SQL DB:
+#### Configure the SQL DB:
 - (run the mysql)
 - $ mysql -u root -p
 - [root password]
@@ -216,7 +216,7 @@ $ Install phpMyAdmin
 
 - Server should now be up and running, and the SQL is accessible through the phpMyAdmin.
 
-## Creating a PHP file that allows connection to the SQL DB (dbconnection.php)
+#### Creating a PHP file that allows connection to the SQL DB (dbconnection.php)
 - The following php file should be placed at the server directory /var/www/db/
 This file creates the object "$dbconnection" which allows accessing the local database from other php files, and the access to it is only enabled locally.
 - (Please notice that parameters with [] are macros that should be replaced with the corresponding info)
@@ -237,7 +237,7 @@ This file creates the object "$dbconnection" which allows accessing the local da
 
 	?>
 	
-## Creating the php report error interface (db_functions.php)
+#### Creating the php report error interface (db_functions.php)
 This file should be placed at /var/www/html/
 
 	<?php
@@ -267,30 +267,6 @@ This file should be placed at /var/www/html/
 	    return true;
 	}
 	
-## Creating the php interface for the android application (error_report.php)
+#### Creating the php interface for the android application (error_report.php)
 - This file should be placed at /var/www/html/
 - This file is the endpoint for the android application.
-	<?php
-	require_once "../db_functions.php";
-
-	$result = false;
-	$message = "";
-
-	if (!isset($_POST['makor_uri']) || !isset($_POST['report_type']))
-	{
-	    $message = 'error_report.php: lacks necessary POST parameters.';
-	    goto result;
-	}
-
-	$makorUri = $_POST['makor_uri'];
-	$makorRange = $_POST['makor_range'];
-	$issueText = $_POST['issue_text'];
-	$freeText = $_POST['free_text'];
-	$reportType = $_POST['report_type'];
-
-	$result = reportError($makorUri, $makorRange, $issueText, $freeText, $reportType);
-
-	result:
-	echo json_encode(array('result' => $result, 'error' => !$result, 'message' => $message,
-	    'params' => array($makorUri, $makorRange, $issueText, $reportType)));
-	exit;
