@@ -60,7 +60,6 @@ public class FetchParashotAndPrakimTask extends AsyncTask<String, Void, Parashot
     protected ParashotAndPrakimAndBooks doInBackground(String... params) {
         ArrayList<String> queryResultsParashot = new ArrayList<>();
         ArrayList<String> queryResultsPrakim = new ArrayList<>();
-        HashMap<String, ArrayList<String>> bookToCategories = new HashMap<>();
         HashMap<String, ArrayList<String>> categoryToBooks = new HashMap<>();
         try
         {
@@ -122,11 +121,9 @@ public class FetchParashotAndPrakimTask extends AsyncTask<String, Void, Parashot
             try
             {
                 DataManager dataManager = new DataManager(mActivity.getApplicationContext());
-                bookToCategories = (HashMap<String, ArrayList<String>>) dataManager.getCachedData("BOOK_TO_CATEGORIES");
-                categoryToBooks = (HashMap<String, ArrayList<String>>) dataManager.getCachedData("CATEGORY_TO_BOOKS");
-                if (bookToCategories == null || categoryToBooks == null)
+                categoryToBooks = (HashMap<String, ArrayList<String>>) dataManager.getCachedData("CATEGORIES_TO_BOOKS");
+                if (categoryToBooks == null)
                 {
-                    bookToCategories = new HashMap<>();
                     categoryToBooks = new HashMap<>();
                     ResultSet rs = booksQueryExec.execSelect();
                     while (rs.hasNext())
@@ -134,18 +131,6 @@ public class FetchParashotAndPrakimTask extends AsyncTask<String, Void, Parashot
                         QuerySolution rb = rs.nextSolution();
                         String book = rb.get(JBSQueries.JBS_BOOK).toString();
                         String category = rb.get(JBSQueries.CATEGORY).toString();
-
-                        // update book to categories
-                        if (bookToCategories.containsKey(book))
-                        {
-                            bookToCategories.get(book).add(category);
-                        }
-                        else
-                        {
-                            ArrayList<String> categories = new ArrayList<>();
-                            categories.add(category);
-                            bookToCategories.put(book, categories);
-                        }
 
                         // update category to books
                         if (categoryToBooks.containsKey(category))
@@ -159,7 +144,6 @@ public class FetchParashotAndPrakimTask extends AsyncTask<String, Void, Parashot
                             categoryToBooks.put(category, books);
                         }
                     }
-                    dataManager.cacheData("BOOK_TO_CATEGORIES", bookToCategories);
                     dataManager.cacheData("CATEGORIES_TO_BOOKS", categoryToBooks);
                 }
             } finally
@@ -171,7 +155,7 @@ public class FetchParashotAndPrakimTask extends AsyncTask<String, Void, Parashot
             isError = true;
             err.printStackTrace();
         }
-        return new ParashotAndPrakimAndBooks(queryResultsParashot, queryResultsPrakim, bookToCategories, categoryToBooks);
+        return new ParashotAndPrakimAndBooks(queryResultsParashot, queryResultsPrakim, categoryToBooks);
     }
 
     @Override
@@ -185,13 +169,11 @@ public class FetchParashotAndPrakimTask extends AsyncTask<String, Void, Parashot
         Intent startMainActivityIntent = new Intent(mActivity, NavActivity.class);
         ArrayList<String> parashotArray = parashotAndPrakimAndBooks.getParashot();
         ArrayList<String> prakimArray = parashotAndPrakimAndBooks.getPrakim();
-        HashMap<String, ArrayList<String>> bookToCategoriesMap = parashotAndPrakimAndBooks.getBookToCategories();
         HashMap<String, ArrayList<String>> categoriesToBooksMap = parashotAndPrakimAndBooks.getCategoryToBooks();
         startMainActivityIntent.putStringArrayListExtra(
                 mActivity.getResources().getString(R.string.parashot_and_uri_extra), parashotArray);
         startMainActivityIntent.putStringArrayListExtra(
                 mActivity.getResources().getString(R.string.prakim_and_uri_extra), prakimArray);
-        startMainActivityIntent.putExtra("bookToCategories", bookToCategoriesMap);
         startMainActivityIntent.putExtra("categoryToBooks", categoriesToBooksMap);
         try
         {

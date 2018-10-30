@@ -2,37 +2,35 @@ package technion.com.testapplication.data_manage;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.TimingLogger;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class DataManager {
     private static final String DATA_PREF_NAME = "sulamot_data_local_cache";
+    private static final String DATA_AGE_SET = "sulamot_data_age_set";
     private SharedPreferences mLocalCache;
     private Context mContext;
-    private TimingLogger mTimings;
-    private String DATA_TAG = "DataManager";
 
     public DataManager(Context context) {
         mContext = context;
         this.mLocalCache = context.getSharedPreferences(DATA_PREF_NAME, Context.MODE_PRIVATE);
-        mTimings = new TimingLogger(DATA_TAG, "DM:");
     }
 
     public void getData(final Cacheable cacheable, final Runnable onComplete) {
-        if (mLocalCache.getBoolean(cacheable.getKey(), false))
+        boolean cacheValid = validateCache(cacheable.getKey());
+        if (cacheValid && mLocalCache.getBoolean(cacheable.getKey(), false))
         {
             // DATA IS IN CACHE
             try
             {
-                mTimings.addSplit("getData: reading from cache...");
                 cacheable.setData(InternalStorage.readObject(mContext, cacheable.getKey()));
-                mTimings.addSplit("getData: finished reading from cache.");
                 if (onComplete != null)
                 {
-                    mTimings.addSplit("getData: Running onComplete...");
                     onComplete.run();
-                    mTimings.addSplit("getData: onComplete finished.");
                 }
                 return;
             } catch (IOException e)
@@ -45,7 +43,6 @@ public class DataManager {
         }
 
         // DATA NOT IN CACHE
-        mTimings.addSplit("getData: Data not in cache, fetching async...");
         final DataManager selfie = this;
         Runnable onDataFetchComplete = new Runnable() {
             @Override
@@ -59,29 +56,91 @@ public class DataManager {
     public boolean cacheData(String key, Object data) {
         try
         {
-            mTimings.addSplit("cacheData: writing to cache...");
             InternalStorage.writeObject(mContext, key, data);
-            mTimings.addSplit("cachedata: finished writing to cache.");
         } catch (IOException e)
         {
             e.printStackTrace();
             return false;
         }
+        String dateKey = key + "_date";
+        Set<String> ageSet = mLocalCache.getStringSet(DATA_AGE_SET, null);
+        if (ageSet == null)
+        {
+            ageSet = new HashSet<>();
+        }
+        ageSet.add(dateKey);
         SharedPreferences.Editor editor = mLocalCache.edit();
+        editor.putStringSet(DATA_AGE_SET, ageSet);
         editor.putBoolean(key, true);
+        Date date = new Date();
+        editor.putString(dateKey, String.valueOf(date.getTime()));
         editor.apply();
         return true;
     }
 
+    public void validateAllCache() {
+        Set<String> ageSet = mLocalCache.getStringSet(DATA_AGE_SET, null);
+        if (ageSet == null)
+        {
+            return;
+        }
+        Set<String> updatedAgeSet = new HashSet<>(ageSet);
+        SharedPreferences.Editor editor = mLocalCache.edit();
+        for (String dateKey : ageSet)
+        {
+            Date dateFromCache = new Date(Long.valueOf(mLocalCache.getString(dateKey, "")));
+            Date nowDate = new Date();
+            long diffInMillies = Math.abs(nowDate.getTime() - dateFromCache.getTime());
+            long diffDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+            if (diffDays > 14)
+            {
+                String key = dateKey.replace("_date", "");
+                InternalStorage.deleteObject(mContext, key);
+                updatedAgeSet.remove(dateKey);
+                editor.remove(dateKey);
+                editor.remove(key);
+            }
+        }
+        editor.putStringSet(DATA_AGE_SET, ageSet);
+        editor.apply();
+    }
+
+    private boolean validateCache(String key) {
+        String dateKey = key + "_date";
+        if (!mLocalCache.contains(dateKey))
+        {
+            return false;
+        }
+        Date dateFromCache = new Date(Long.valueOf(mLocalCache.getString(dateKey, "")));
+        Date nowDate = new Date();
+        long diffInMillies = Math.abs(nowDate.getTime() - dateFromCache.getTime());
+        long diffDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+        if (diffDays > 14)
+        {
+            InternalStorage.deleteObject(mContext, key);
+            Set<String> ageSet = mLocalCache.getStringSet(DATA_AGE_SET, null);
+            if (ageSet != null)
+            {
+                ageSet.remove(dateKey);
+            }
+            SharedPreferences.Editor editor = mLocalCache.edit();
+            editor.putStringSet(DATA_AGE_SET, ageSet);
+            editor.remove(dateKey);
+            editor.remove(key);
+            editor.apply();
+            return false;
+        }
+        return true;
+    }
+
     public Object getCachedData(String key) {
-        if (mLocalCache.getBoolean(key, false))
+        boolean cacheValid = validateCache(key);
+        if (cacheValid && mLocalCache.getBoolean(key, false))
         {
             // DATA IS IN CACHE
             try
             {
-                mTimings.addSplit("getData: reading from cache...");
                 Object res = InternalStorage.readObject(mContext, key);
-                mTimings.addSplit("getData: finished writing to cache.");
                 return res;
             } catch (IOException e)
             {
@@ -95,25 +154,11 @@ public class DataManager {
     }
 
     private void onDataFetchComplete(Cacheable cacheable, Runnable onComplete) {
-        try
-        {
-            mTimings.addSplit("onDataFetchComplete: writing to cache...");
-            InternalStorage.writeObject(mContext, cacheable.getKey(), cacheable.getData());
-            mTimings.addSplit("onDataFetchComplete: finished writing to cache.");
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        SharedPreferences.Editor editor = mLocalCache.edit();
-        editor.putBoolean(cacheable.getKey(), true);
-        editor.apply();
+        cacheData(cacheable.getKey(), cacheable.getData());
         if (onComplete != null)
         {
-            mTimings.addSplit("onDataFetchComplete: Running onComplete...");
             onComplete.run();
         }
-        mTimings.addSplit("onDataFetchComplete: onComplete finished.");
-        mTimings.dumpToLog();
     }
 
 }

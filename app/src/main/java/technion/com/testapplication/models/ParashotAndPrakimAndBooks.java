@@ -10,15 +10,12 @@ import java.util.HashMap;
 public class ParashotAndPrakimAndBooks {
     private ArrayList<String> mParashot;
     private ArrayList<String> mPrakim;
-    private HashMap<String, ArrayList<String>> mBookToCategories;
     private HashMap<String, ArrayList<String>> mCategoryToBooks;
 
     public ParashotAndPrakimAndBooks(ArrayList<String> parashot, ArrayList<String> prakim,
-                                     HashMap<String, ArrayList<String>> bookToCategories,
                                      HashMap<String, ArrayList<String>> categoryToBooks) {
         mParashot = parashot;
         mPrakim = prakim;
-        mBookToCategories = bookToCategories;
         mCategoryToBooks = categoryToBooks;
     }
 
@@ -28,10 +25,6 @@ public class ParashotAndPrakimAndBooks {
 
     public ArrayList<String> getPrakim() {
         return mPrakim;
-    }
-
-    public HashMap<String, ArrayList<String>> getBookToCategories() {
-        return mBookToCategories;
     }
 
     public HashMap<String, ArrayList<String>> getCategoryToBooks() {

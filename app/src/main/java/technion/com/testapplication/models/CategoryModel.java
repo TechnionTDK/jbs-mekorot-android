@@ -9,12 +9,12 @@ import java.io.Serializable;
 public class CategoryModel implements Serializable {
     private String mCategoryName;
     private String mCategoryRefernceNum;
-    private String mBookUri;
+    private String mCategoryUri;
 
-    public CategoryModel(String categoryName, String referenceNumber, String bookUri) {
+    public CategoryModel(String categoryName, String referenceNumber, String uri) {
         mCategoryName = categoryName;
         mCategoryRefernceNum = referenceNumber;
-        mBookUri = bookUri;
+        mCategoryUri = uri;
     }
 
     public String getCategoryName() {
@@ -25,7 +25,7 @@ public class CategoryModel implements Serializable {
         return mCategoryRefernceNum;
     }
 
-    public String getBookUri() {
-        return mBookUri;
+    public String getCategoryUri() {
+        return mCategoryUri;
     }
 }

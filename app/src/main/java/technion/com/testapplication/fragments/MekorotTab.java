@@ -44,7 +44,6 @@ public class MekorotTab extends Fragment {
     private static final String CATEGORY_NUM_CLOSE_BRACE = ")";
     private HashMap<String, MakorModel> mMekorotModels;
     private HashMap<String, MakorModel> mFilteredMekorotModels;
-    private HashMap<String, ArrayList<String>> mBookToCategories;
     private HashMap<String, ArrayList<String>> mCategoryToBooks;
 
     public MekorotTab() {
@@ -131,9 +130,10 @@ public class MekorotTab extends Fragment {
                     + CATEGORY_NUM_CLOSE_BRACE;
             prettifiedCategories.add(prettifiedCategory);
         }
+        prettifiedCategories.add("אפס בחירה");
         final CharSequence[] items = prettifiedCategories.toArray(
                 new CharSequence[prettifiedCategories.size()]);
-        boolean[] checkedItemsPositions = new boolean[mMekorotCategories.size()];
+        final boolean[] checkedItemsPositions = new boolean[prettifiedCategories.size()];
         for (Integer selectedItem : mDialogSelectedItems)
         {
             checkedItemsPositions[selectedItem] = true;
@@ -146,6 +146,17 @@ public class MekorotTab extends Fragment {
                                          @Override
                                          public void onClick(DialogInterface dialog, int indexSelected,
                                                              boolean isChecked) {
+                                             if (indexSelected == checkedItemsPositions.length - 1)
+                                             {
+                                                 for (int i = 0; i < checkedItemsPositions.length; i++)
+                                                 {
+                                                     checkedItemsPositions[i] = false;
+                                                     ((AlertDialog) dialog).getListView().setItemChecked(i, false);
+                                                 }
+                                                 mDialogSelectedItems.clear();
+                                                 mDialogSelectedItemsNames.clear();
+                                             }
+
                                              ArrayList<CategoryModel> mekorotCategories = new ArrayList<>(mMekorotCategories.values());
                                              Collections.sort(mekorotCategories, new Comparator<CategoryModel>() {
                                                  @Override
@@ -154,7 +165,7 @@ public class MekorotTab extends Fragment {
                                                              Integer.valueOf(cm1.getCategoryRefernceNum());
                                                  }
                                              });
-                                             if (isChecked)
+                                             if (isChecked && indexSelected != checkedItemsPositions.length - 1)
                                              {
                                                  // If the user checked the item, add it to the selected items
                                                  mDialogSelectedItems.add(indexSelected);
@@ -171,49 +182,51 @@ public class MekorotTab extends Fragment {
                                                  mDialogSelectedItemsNames.remove(prefixedSelection);
                                              }
                                          }
-                                     }).setPositiveButton(getResources().getString(R.string.choose_button),
-                                                          new DialogInterface.OnClickListener() {
-                                                              @Override
-                                                              public void onClick(DialogInterface dialog, int id) {
-                                                                  if (mDialogSelectedItemsNames.size() > 0)
-                                                                  {
-                                                                      ArrayList<CategoryModel> selectedCategories = new ArrayList<>();
-                                                                      for (String selectedItemName : mDialogSelectedItemsNames)
-                                                                      {
-                                                                          selectedCategories.add(mMekorotCategories.get(selectedItemName));
-                                                                      }
-                                                                      mFilteredMekorotModels = new HashMap<>();
-                                                                      ArrayList<String> relevantBooks = new ArrayList<>();
-                                                                      ArrayList<MakorModel> mekorot = new ArrayList<>();
-                                                                      for (MakorModel makor : mMekorotModels.values())
-                                                                      {
-                                                                          mekorot.add(makor);
-                                                                      }
-                                                                      for (CategoryModel cm : selectedCategories)
-                                                                      {
-                                                                          relevantBooks.add(cm.getBookUri());
-                                                                      }
-                                                                      for (MakorModel makor : mekorot)
-                                                                      {
-                                                                          if (relevantBooks.contains(makor.getMakorBook()))
-                                                                          {
-                                                                              mFilteredMekorotModels.put(makor.getMakorUri(), makor);
-                                                                          }
-                                                                      }
-                                                                      selfie.setRecyclerViewAdapter(mFilteredMekorotModels);
-                                                                  }
-                                                                  else
-                                                                  {
-                                                                      selfie.setRecyclerViewAdapter(mMekorotModels);
-                                                                  }
-                                                              }
-                                                          }).setNegativeButton(getResources().getString(R.string.cancel_button),
-                                                                               new DialogInterface.OnClickListener() {
-                                                                                   @Override
-                                                                                   public void onClick(DialogInterface dialog, int id) {
-                                                                                       dialog.dismiss();
-                                                                                   }
-                                                                               }).create();
+                                     })
+                .setPositiveButton(getResources().getString(R.string.choose_button),
+                                   new DialogInterface.OnClickListener() {
+                                       @Override
+                                       public void onClick(DialogInterface dialog, int id) {
+                                           if (mDialogSelectedItemsNames.size() > 0)
+                                           {
+                                               ArrayList<CategoryModel> selectedCategories = new ArrayList<>();
+                                               for (String selectedItemName : mDialogSelectedItemsNames)
+                                               {
+                                                   selectedCategories.add(mMekorotCategories.get(selectedItemName));
+                                               }
+                                               mFilteredMekorotModels = new HashMap<>();
+                                               ArrayList<String> relevantBooks = new ArrayList<>();
+                                               ArrayList<MakorModel> mekorot = new ArrayList<>();
+                                               for (MakorModel makor : mMekorotModels.values())
+                                               {
+                                                   mekorot.add(makor);
+                                               }
+                                               for (CategoryModel cm : selectedCategories)
+                                               {
+                                                   ArrayList<String> books = mCategoryToBooks.get(cm.getCategoryUri());
+                                                   relevantBooks.addAll(books);
+                                               }
+                                               for (MakorModel makor : mekorot)
+                                               {
+                                                   if (relevantBooks.contains(makor.getMakorBook()))
+                                                   {
+                                                       mFilteredMekorotModels.put(makor.getMakorUri(), makor);
+                                                   }
+                                               }
+                                               selfie.setRecyclerViewAdapter(mFilteredMekorotModels);
+                                           }
+                                           else
+                                           {
+                                               selfie.setRecyclerViewAdapter(mMekorotModels);
+                                           }
+                                       }
+                                   }).setNegativeButton(getResources().getString(R.string.cancel_button),
+                                                        new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int id) {
+                                                                dialog.dismiss();
+                                                            }
+                                                        }).create();
         mCallback.setFilterIcon(dialog);
     }
 
@@ -260,10 +273,6 @@ public class MekorotTab extends Fragment {
         };
         DataManager dataManager = new DataManager(this.getContext());
         dataManager.getData(mekorotForPsukim, onComplete);
-    }
-
-    public void setBookToCategories(HashMap<String, ArrayList<String>> booksToCategories) {
-        mBookToCategories = booksToCategories;
     }
 
     public void setCategoryToBooks(HashMap<String, ArrayList<String>> categoryToBooks) {

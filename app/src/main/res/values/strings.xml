@@ -67,7 +67,7 @@
     <string name="nav_item_help">עזרה ומשוב</string>
     <string name="bad_ident_text">זיהוי לא נכון של פסוק</string>
     <string name="partial_ident_text">זיהוי חלקי</string>
-    <string name="free_text_text">טקסט חופשי</string>
+    <string name="free_text_text">תיאור</string>
     <string name="free_text_hint">(אופציונלי) פרט עוד על השגיאה שזוהתה</string>
     <string name="send">שלח</string>
 </resources>

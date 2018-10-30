@@ -11,9 +11,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
+import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Pair;
@@ -23,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
@@ -376,12 +379,15 @@ public class ResultsActivity extends AppCompatActivity
         LayoutInflater inflater = this.getLayoutInflater();
         final View errorReportView = inflater.inflate(R.layout.alert_report_error, null);
         TextView txtMsg = errorReportView.findViewById(R.id.txt_error_report_msg);
-        RadioGroup radioGroup = errorReportView.findViewById(R.id.rad_err_report_group);
-
+        final RadioGroup radioGroup = errorReportView.findViewById(R.id.rad_err_report_group);
+        final Button btnSend = errorReportView.findViewById(R.id.btn_err_report_send);
         final ErrorModel errorModel = new ErrorModel(makorUri, makorRange, issueText, "", ErrorModel.ReportType.FREE_TEXT);
+
+        btnSend.setEnabled(false);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
+                btnSend.setEnabled(true);
                 switch (checkedId)
                 {
                     case R.id.rad_bad_ident:
@@ -394,18 +400,42 @@ public class ResultsActivity extends AppCompatActivity
             }
         });
 
+        EditText errRepTxt = errorReportView.findViewById(R.id.err_rep_free_text);
+        errRepTxt.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before,
+                                      int count) {
+                if (count > 0)
+                {
+                    btnSend.setEnabled(true);
+                }
+                else
+                {
+                    if (radioGroup.getCheckedRadioButtonId() == -1)
+                    {
+                        btnSend.setEnabled(false);
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         if (isFreeTextOnly)
         {
             radioGroup.getChildAt(0).setEnabled(false);
             radioGroup.getChildAt(1).setEnabled(false);
-            txtMsg.setText("אנא ציין מטה את תוכן הדיווח:");
         }
-        else
-        {
-            txtMsg.setText(issueText);
-        }
+        txtMsg.setText("דיווח שגיאה");
 
-        Button btnSend = errorReportView.findViewById(R.id.btn_err_report_send);
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -471,16 +501,7 @@ public class ResultsActivity extends AppCompatActivity
                 ClickableSpan clickableSpan = new ClickableSpan() {
                     @Override
                     public void onClick(View widget) {
-                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(selfie);
-                        builder.setTitle("");
-                        builder.setMessage(subsetToHighlight.second);
-                        builder.setNegativeButton("דווח שגיאה", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                selfie.onReportErrorClicked(makorUri, spanRange, subsetToHighlight.second, false);
-                            }
-                        });
-                        builder.create().show();
+                        selfie.onReportErrorClicked(makorUri, spanRange, subsetToHighlight.second, false);
                     }
 
                     @Override

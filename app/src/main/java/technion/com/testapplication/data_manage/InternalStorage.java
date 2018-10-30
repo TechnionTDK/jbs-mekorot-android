@@ -27,4 +27,8 @@ public final class InternalStorage {
         return object;
     }
 
+    public static boolean deleteObject(Context context, String key) {
+        return context.deleteFile(key);
+    }
+
 }
