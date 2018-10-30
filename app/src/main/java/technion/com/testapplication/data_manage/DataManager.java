@@ -140,7 +140,12 @@ public class DataManager {
             // DATA IS IN CACHE
             try
             {
+                String dateKey = key + "_date";
                 Object res = InternalStorage.readObject(mContext, key);
+                SharedPreferences.Editor editor = mLocalCache.edit();
+                Date date = new Date();
+                editor.putString(dateKey, String.valueOf(date.getTime()));
+                editor.apply();
                 return res;
             } catch (IOException e)
             {
