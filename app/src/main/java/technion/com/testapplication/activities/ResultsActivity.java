@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -566,22 +565,9 @@ public class ResultsActivity extends AppCompatActivity
                         final int finalMax = max;
                         // Perform your definition lookup with the selected text
                         final CharSequence selectedText = makorTextView.getText().subSequence(min, max);
-                        AlertDialog.Builder builder = new AlertDialog.Builder(selfie);
-                        builder.setCancelable(true);
-                        builder.setTitle("דיווח שגיאה");
-                        builder.setMessage("\"" + selectedText + "\"");
-                        builder.setPositiveButton(
-                                selfie.getApplicationContext().getResources().getString(R.string.choose_button),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        selfie.onReportErrorClicked(makorUri, String.format("%s-%s", finalMin, finalMax),
-                                                                    selectedText.toString(), false);
-                                    }
-                                });
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-                        // Finish and close the ActionMode
+
+                        selfie.onReportErrorClicked(makorUri, String.format("%s-%s", finalMin, finalMax),
+                                                    selectedText.toString(), false);
                         mode.finish();
                         return true;
                     default:
