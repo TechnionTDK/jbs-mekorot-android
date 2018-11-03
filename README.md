@@ -181,6 +181,14 @@ All you'll have to do is define the following:
 
 - **And finally paste your query into the edit box**.
 
+# Cacheable Data
+- The caching feature allows storing SPARQL responses locally on the device, providing a smoother user experience by skipping the long wait for queries that can take up to 20 seconds.
+- Cacheable data lifetime is 2 weeks from the last time that the data was requested.
+- The following models are included in the caching mechanism:
+-- MekorotForPsukim: The Mekorot results for a set of Psukim
+-- PsukimForParashaPerek: The relevant Psukim to the chosen Perek/Parasha
+-- CategoryToBooks: The mapping between one Category to a set of Books
+
 ## How to add a new cacheable data object
 The heaviest remote data requests are already being saved into the cache to allow better user experience, although the _DataManager_ architecture enables the developer to add any other data to the cache for future use.
 To add a cacheable data object:
@@ -267,37 +275,51 @@ The following section will describe the following:
 
 ## Initialize the linux server
 - Updating and upgrading all the existing packages:
-- $ sudo apt-get update
-- $ sudo apt-get upgrade
+```
+$ sudo apt-get update
+$ sudo apt-get upgrade
+```
 
 #### Install MySQL:
-- $ sudo apt-get mysql-server
+```
+$ sudo apt-get mysql-server
+```
 
 #### Installing and configuring Apache2
+During installation of apache2, depending on the machine that it is being installed on - several issues can appear. The following guide addresses such issues and explains what needs to be done in order to complete the installation.
 **guide for apache2** https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-16-04
-- $ sudo apt-get install apache2
-- $ sudo ufw app list
-- $ sudo ufw allow 'Apache Full'
-
+``` 
+$ sudo apt-get install apache2
+$ sudo ufw app list
+$ sudo ufw allow 'Apache Full'
+```
 #### Install php7.0
-- $ sudo apt-get install php7.0 libapache2-mod-php7.0 
-- $ sudo a2enmod php7.0
-- $ sudo service apache2 restart
+```
+$ sudo apt-get install php7.0 libapache2-mod-php7.0 
+$ sudo a2enmod php7.0
+$ sudo service apache2 restart
+```
 
 #### Install phpMyAdmin
+During installation of phpMyAdmin, depending on the machine that it is being installed on - several issues can appear. The following guide addresses such issues and explains what needs to be done in order to complete the installation.
 **installation guide** https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-phpmyadmin-on-ubuntu-16-04
-- $ sudo apt-get install phpmyadmin php-mbstring php-gettext
+```
+$ sudo apt-get install phpmyadmin php-mbstring php-gettext
+```
 - During the installation you will be required to define a username and password.
 - When asked, select "Configure with Apache2"
 - When asked, choose to set up database with dbconfig-common
 
 #### Configure the SQL DB:
-- (run the mysql)
-- $ mysql -u root -p
-- [root password]
-- $ create database mekorot;
-- $ grant select,insert,update,delete,create,drop on mekorot.* to 'phpmyadmin'@localhost
+- run the mysql, create the database and the table, create user and grant permissions:
+```
+$ mysql -u root -p
+[root password]
+$ create database mekorot;
+$ grant select,insert,update,delete,create,drop on mekorot.* to 'phpmyadmin'@localhost
+```
 
+- In order to create the 'mekorot' table, please use the phpMyAdmin tool as explained below.
 - It is recommended to create a dedicated user for the mekorot database and not to use the root user for remote access to the DB due to security reasons.
 - Further instructions will refer to the SQL DB user as [SQL_USER]
 
@@ -307,7 +329,7 @@ The following section will describe the following:
 - The following php file should be placed at the server directory /var/www/db/
 This file creates the object "$dbconnection" which allows accessing the local database from other php files, and the access to it is only enabled locally.
 - (Please notice that parameters with [] are macros that should be replaced with the corresponding info)
-
+```
 	<?php
 	header('Content-Type: text/html; charset=utf-8');
 
@@ -323,10 +345,11 @@ This file creates the object "$dbconnection" which allows accessing the local da
 	$dbconnection->query("SET NAMES 'utf8'");
 
 	?>
-	
-#### Creating the php report error interface (db_functions.php)
-This file should be placed at /var/www/html/
+```
 
+#### Creating the php report error interface (db_functions.php)
+This file should be placed at /var/www/db/
+```
 	<?php
 	header('Content-Type: text/html; charset=utf-8');
 
@@ -353,7 +376,107 @@ This file should be placed at /var/www/html/
 
 	    return true;
 	}
-	
+```
+
 #### Creating the php interface for the android application (error_report.php)
 - This file should be placed at /var/www/html/
 - This file is the endpoint for the android application.
+```
+	<?php
+	require_once "../db/db_functions.php";
+
+	$result = false;
+	$message = "";
+
+	if (!isset($_POST['makor_uri']) || !isset($_POST['report_type']))
+	{
+	    $message = 'error_report.php: lacks necessary POST parameters.';
+	    goto result;
+	}
+
+	$makorUri = $_POST['makor_uri'];
+	$makorRange = $_POST['makor_range'];
+	$issueText = $_POST['issue_text'];
+	$freeText = $_POST['free_text'];
+	$reportType = $_POST['report_type'];
+
+	$result = reportError($makorUri, $makorRange, $issueText, $freeText, $reportType);
+
+	result:
+	echo json_encode(array('result' => $result, 'error' => !$result, 'message' => $message,
+	    'params' => array($makorUri, $makorRange, $issueText, $reportType)));
+	exit;
+```
+
+# PostRequester Class
+- This class simplifies the POST request API, using _Volley_ library for html requests.
+ 
+## API
+
+**public PostRequester(Context context)**
+Constructor
+
+**public void SendRequest(final String URL, final Map<String, String> Params, final Runnable OnResponse, final Runnable OnError)**
+- Dispatches the asynchrouos POST request to the given URL, adding the supplied Parameters (Params).
+- Upon request reponse and after parsing the response ends successfully, the OnResponse callback is invoked.
+- Upon any error in the request or during it's parse, the OnError callback is invoked.
+- Usage example: the following method reports an error to the remote server
+```
+private void reportError(ErrorModel error) {
+        final ResultsActivity selfie = this;
+        Map<String, String> params = new HashMap<>();
+        params.put("makor_uri", error.makorUri);
+        params.put("makor_range", error.makorRange);
+        params.put("issue_text", error.issueText);
+        params.put("free_text", error.freeText);
+        params.put("report_type", error.reportType.toString());
+
+        Runnable onResponse = new Runnable() {
+            @Override
+            public void run() {
+                if (mProgressDialog.isShowing())
+                {
+                    mProgressDialog.dismiss();
+                }
+                Toast.makeText(selfie, "דיווח נשלח בהצלחה", Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        Runnable onError = new Runnable() {
+            @Override
+            public void run() {
+                if (mProgressDialog.isShowing())
+                {
+                    mProgressDialog.dismiss();
+                }
+                Toast.makeText(getApplicationContext(), "דיווח שגיאה נכשל", Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        PostRequester postRequester = new PostRequester(this);
+        postRequester.SendRequest("http://haggaidev.com/mekorot/html/error_report.php", params, onResponse, onError);
+    }
+```
+
+- The POST request response is stored inside the PostRequest class member: 
+**private org.json.JSONObject JsonObject;**
+
+# Major changes
+
+## Results filtering by categories
+- Filtering the results is a common action for the user. In the previous implementation, for each filtering selection a new query would be dispatched, taking notable time to return.
+- The current implementation uses the relational structure of Mekorot and Categories to infer the relevant set of Mekorot per selected filtering category.
+- Explanation of the filtering flow:
+1. User filters results, he selects one or more categories
+2. Creating a set of Books, by using the mapping _Category -> Set of Books_ for each category
+3. Create the set of filetered Mekorot, by using the mapping _Makor -> Book_. each makor with a book that appears in the books set from step 2 is included in the filetered Mekorot set.
+
+## Crowd sourcing
+- Error reporting feature, runs in the _Results_ screen, allowes users to report errors about the result.
+- Reporting is enabled through the menu, or through highlighted text or manual user text selection.
+- The application instances a data model with the error details and reports it to the remote server.
+- The error is sent to the remote server using the _PostRequester_ class.
+- The error reporting code runs through the _ResultsActivity_, through the menu flow, through highlighted text click callback, and through a custom menu that appears when user manually selects text from the result text.
+- Highlighted text callback is instanced inside the method _highlightPsukim_.
+- The custom menu that appears during user manual text selection is defined by using _setCustomSelectionActionModeCallback_ which is a class method of TextView. **An important note about custom menu - the only device that doesn't support the custom menu is MIUI4 (Xiaomi MI 4)**
+- Managing the reported errors is enabled through the phpMyAdmin interface.
