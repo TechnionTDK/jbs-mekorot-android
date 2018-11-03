@@ -65,6 +65,7 @@ public class ResultsActivity extends AppCompatActivity
     private static final String INDICES_DELIMITER = "-";
     private static final String SPLIT_BY_SPACES_REGEX = "\\s+";
     private static final String MAKOR_URI_DELIMITER = "/";
+    private boolean isExecuteHighlightRanFirstTime = false;
     // When requested, this adapter returns a DemoObjectFragment,
     // representing an object in the collection.
     ResultsCollectionPagerAdapter mResultsCollectionPagerAdapter;
@@ -88,6 +89,10 @@ public class ResultsActivity extends AppCompatActivity
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
 
             public void onPageSelected(int position) {
+                if (position == 0 && !isExecuteHighlightRanFirstTime)
+                {
+                    isExecuteHighlightRanFirstTime = true;
+                }
                 selfie.unsetFab();
                 selfie.setTitleByPosition(position);
                 selfie.mCurrentResult = position;
@@ -124,7 +129,11 @@ public class ResultsActivity extends AppCompatActivity
         mCurrentResult = intent.getIntExtra(EXTRA_MAKOR_INDEX, 0);
         mViewPager.setCurrentItem(mCurrentResult);
         setTitleByPosition(mCurrentResult);
-        executeGetHighlightsForMakorQuery();
+        if (!isExecuteHighlightRanFirstTime)
+        {
+            isExecuteHighlightRanFirstTime = true;
+            executeGetHighlightsForMakorQuery();
+        }
     }
 
     private void unsetFab() {
@@ -290,6 +299,7 @@ public class ResultsActivity extends AppCompatActivity
      * Executes the get highlights for makor query.
      */
     private void executeGetHighlightsForMakorQuery() {
+        isExecuteHighlightRanFirstTime = true;
         String fetchHighlightsForMakor = JBSQueries.getPsukimToHighlightFromMakor(mResults.get(mCurrentResult).URI,
                                                                                   mPsukimUris);
         FetchHighlightsForMakorTask fetchHighlightsForMakorTask = new FetchHighlightsForMakorTask(
@@ -432,6 +442,8 @@ public class ResultsActivity extends AppCompatActivity
         {
             radioGroup.getChildAt(0).setEnabled(false);
             radioGroup.getChildAt(1).setEnabled(false);
+            radioGroup.getChildAt(0).setVisibility(View.GONE);
+            radioGroup.getChildAt(1).setVisibility(View.GONE);
         }
         txtMsg.setText("דיווח שגיאה");
 
