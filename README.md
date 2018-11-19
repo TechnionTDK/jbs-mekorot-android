@@ -264,7 +264,7 @@ An instance such as the above can now be managed by the DataManager, saved in ca
 - Other queries you can play around with can be found here: [Google Doc](https://docs.google.com/document/d/1MhTRhy99P_DytAVrMufJRUMmfHu16vKDs2y2jmT3pXo/edit)
 
 # Remote Linux Server
-As a part of the error reporting feature added to the project, a remote linux server is initialized and installed with local MySQL to store the error reports which arrive from the application users.
+As a part of the error reporting feature we added to the project, a remote linux server is initialized and installed with local MySQL to store the error reports which arrive from the application users.
 The following section will describe the following:
 - Initializing the linux server
 - Installing and configuring the necessary packages on the server
@@ -286,7 +286,7 @@ $ sudo apt-get mysql-server
 ```
 
 #### Installing and configuring Apache2
-During installation of apache2, depending on the machine that it is being installed on - several issues can appear. The following guide addresses such issues and explains what needs to be done in order to complete the installation.
+- During installation of apache2, depending on the machine that it is being installed on - several issues can appear. The following guide addresses such issues and explains what needs to be done in order to complete the installation.
 **guide for apache2** https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-16-04
 ``` 
 $ sudo apt-get install apache2
@@ -301,7 +301,7 @@ $ sudo service apache2 restart
 ```
 
 #### Install phpMyAdmin
-During installation of phpMyAdmin, depending on the machine that it is being installed on - several issues can appear. The following guide addresses such issues and explains what needs to be done in order to complete the installation.
+- During installation of phpMyAdmin, depending on the machine that it is being installed on - several issues can appear. The following guide addresses such issues and explains what needs to be done in order to complete the installation.
 **installation guide** https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-phpmyadmin-on-ubuntu-16-04
 ```
 $ sudo apt-get install phpmyadmin php-mbstring php-gettext
