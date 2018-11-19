@@ -2,7 +2,6 @@ package technion.com.testapplication.fragments;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -11,21 +10,27 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import technion.com.testapplication.JBSQueries;
 import technion.com.testapplication.R;
+import technion.com.testapplication.adapters.ListViewItemCheckboxBaseAdapter;
 import technion.com.testapplication.adapters.MekorotRecyclerViewAdapter;
 import technion.com.testapplication.data_manage.DataManager;
 import technion.com.testapplication.data_manage.MekorotForPsukim;
 import technion.com.testapplication.models.CategoryModel;
 import technion.com.testapplication.models.MakorModel;
+import technion.com.testapplication.utils.ListViewItemDTO;
 
 /**
  * Created by tomerlevinson on 13/01/2018.
@@ -108,6 +113,20 @@ public class MekorotTab extends Fragment {
 
     }
 
+    // Return an initialize list of ListViewItemDTO.
+    private List<ListViewItemDTO> getInitViewItemDtoList(CharSequence[] items, boolean[] checkedStatus) {
+        List<ListViewItemDTO> ret = new ArrayList<>();
+        for (int i = 0; i < items.length; i++)
+        {
+            String itemText = items[i].toString();
+            ListViewItemDTO dto = new ListViewItemDTO();
+            dto.setChecked(checkedStatus[i]);
+            dto.setItemText(itemText);
+            ret.add(dto);
+        }
+        return ret;
+    }
+
     /**
      * Sets the filter dialog in the mekorot tab.
      */
@@ -130,103 +149,124 @@ public class MekorotTab extends Fragment {
                     + CATEGORY_NUM_CLOSE_BRACE;
             prettifiedCategories.add(prettifiedCategory);
         }
-        prettifiedCategories.add("אפס בחירה");
-        final CharSequence[] items = prettifiedCategories.toArray(
-                new CharSequence[prettifiedCategories.size()]);
+        final CharSequence[] items = prettifiedCategories.toArray(new CharSequence[prettifiedCategories.size()]);
         final boolean[] checkedItemsPositions = new boolean[prettifiedCategories.size()];
         for (Integer selectedItem : mDialogSelectedItems)
         {
             checkedItemsPositions[selectedItem] = true;
         }
-        final MekorotTab selfie = this;
-        final AlertDialog dialog = new AlertDialog.Builder(getContext())
-                .setTitle(getResources().getString(R.string.choose_category_to_filter))
-                .setMultiChoiceItems(items, checkedItemsPositions,
-                                     new DialogInterface.OnMultiChoiceClickListener() {
-                                         @Override
-                                         public void onClick(DialogInterface dialog, int indexSelected,
-                                                             boolean isChecked) {
-                                             if (indexSelected == checkedItemsPositions.length - 1)
-                                             {
-                                                 for (int i = 0; i < checkedItemsPositions.length; i++)
-                                                 {
-                                                     checkedItemsPositions[i] = false;
-                                                     ((AlertDialog) dialog).getListView().setItemChecked(i, false);
-                                                 }
-                                                 mDialogSelectedItems.clear();
-                                                 mDialogSelectedItemsNames.clear();
-                                             }
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this.getActivity());
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.filter_dialog, null);
 
-                                             ArrayList<CategoryModel> mekorotCategories = new ArrayList<>(mMekorotCategories.values());
-                                             Collections.sort(mekorotCategories, new Comparator<CategoryModel>() {
-                                                 @Override
-                                                 public int compare(CategoryModel cm1, CategoryModel cm2) {
-                                                     return Integer.valueOf(cm2.getCategoryRefernceNum()) -
-                                                             Integer.valueOf(cm1.getCategoryRefernceNum());
-                                                 }
-                                             });
-                                             if (isChecked && indexSelected != checkedItemsPositions.length - 1)
-                                             {
-                                                 // If the user checked the item, add it to the selected items
-                                                 mDialogSelectedItems.add(indexSelected);
-                                                 String prefixedSelection = mekorotCategories.get(
-                                                         indexSelected).getCategoryName();
-                                                 mDialogSelectedItemsNames.add(prefixedSelection);
-                                             }
-                                             else if (mDialogSelectedItems.contains(indexSelected))
-                                             {
-                                                 // Else, if the item is already in the array, remove it
-                                                 mDialogSelectedItems.remove(Integer.valueOf(indexSelected));
-                                                 String prefixedSelection = mekorotCategories.get(
-                                                         indexSelected).getCategoryName();
-                                                 mDialogSelectedItemsNames.remove(prefixedSelection);
-                                             }
-                                         }
-                                     })
-                .setPositiveButton(getResources().getString(R.string.choose_button),
-                                   new DialogInterface.OnClickListener() {
-                                       @Override
-                                       public void onClick(DialogInterface dialog, int id) {
-                                           if (mDialogSelectedItemsNames.size() > 0)
-                                           {
-                                               ArrayList<CategoryModel> selectedCategories = new ArrayList<>();
-                                               for (String selectedItemName : mDialogSelectedItemsNames)
-                                               {
-                                                   selectedCategories.add(mMekorotCategories.get(selectedItemName));
-                                               }
-                                               mFilteredMekorotModels = new HashMap<>();
-                                               ArrayList<String> relevantBooks = new ArrayList<>();
-                                               ArrayList<MakorModel> mekorot = new ArrayList<>();
-                                               for (MakorModel makor : mMekorotModels.values())
-                                               {
-                                                   mekorot.add(makor);
-                                               }
-                                               for (CategoryModel cm : selectedCategories)
-                                               {
-                                                   ArrayList<String> books = mCategoryToBooks.get(cm.getCategoryUri());
-                                                   relevantBooks.addAll(books);
-                                               }
-                                               for (MakorModel makor : mekorot)
-                                               {
-                                                   if (relevantBooks.contains(makor.getMakorBook()))
-                                                   {
-                                                       mFilteredMekorotModels.put(makor.getMakorUri(), makor);
-                                                   }
-                                               }
-                                               selfie.setRecyclerViewAdapter(mFilteredMekorotModels);
-                                           }
-                                           else
-                                           {
-                                               selfie.setRecyclerViewAdapter(mMekorotModels);
-                                           }
-                                       }
-                                   }).setNegativeButton(getResources().getString(R.string.cancel_button),
-                                                        new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialog, int id) {
-                                                                dialog.dismiss();
-                                                            }
-                                                        }).create();
+        final ListView listViewWithCheckbox = dialogView.findViewById(R.id.filtering_listview);
+        final List<ListViewItemDTO> initItemList = this.getInitViewItemDtoList(items, checkedItemsPositions);
+        final ListViewItemCheckboxBaseAdapter listViewDataAdapter = new ListViewItemCheckboxBaseAdapter(getContext(), initItemList);
+        listViewDataAdapter.notifyDataSetChanged();
+        listViewWithCheckbox.setAdapter(listViewDataAdapter);
+        // When list view item is clicked.
+        listViewWithCheckbox.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int itemIndex, long l) {
+                Object itemObject = adapterView.getAdapter().getItem(itemIndex);
+                ListViewItemDTO itemDto = (ListViewItemDTO) itemObject;
+                CheckBox itemCheckbox = view.findViewById(R.id.list_view_item_checkbox);
+                if (itemDto.isChecked())
+                {
+                    itemCheckbox.setChecked(false);
+                    itemDto.setChecked(false);
+                }
+                else
+                {
+                    itemCheckbox.setChecked(true);
+                    itemDto.setChecked(true);
+                }
+                ArrayList<CategoryModel> mekorotCategories = new ArrayList<>(mMekorotCategories.values());
+                Collections.sort(mekorotCategories, new Comparator<CategoryModel>() {
+                    @Override
+                    public int compare(CategoryModel cm1, CategoryModel cm2) {
+                        return Integer.valueOf(cm2.getCategoryRefernceNum()) -
+                                Integer.valueOf(cm1.getCategoryRefernceNum());
+                    }
+                });
+                if (itemCheckbox.isChecked())
+                {
+                    // If the user checked the item, add it to the selected items
+                    mDialogSelectedItems.add(itemIndex);
+                    String prefixedSelection = mekorotCategories.get(itemIndex).getCategoryName();
+                    mDialogSelectedItemsNames.add(prefixedSelection);
+                }
+                else if (mDialogSelectedItems.contains(itemIndex))
+                {
+                    // Else, if the item is already in the array, remove it
+                    mDialogSelectedItems.remove(Integer.valueOf(itemIndex));
+                    String prefixedSelection = mekorotCategories.get(itemIndex).getCategoryName();
+                    mDialogSelectedItemsNames.remove(prefixedSelection);
+                }
+            }
+        });
+
+        final MekorotTab selfie = this;
+
+        dialogBuilder.setView(dialogView);
+        final AlertDialog dialog = dialogBuilder.create();
+
+        dialogView.findViewById(R.id.btn_choose).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mDialogSelectedItemsNames.size() > 0)
+                {
+                    ArrayList<CategoryModel> selectedCategories = new ArrayList<>();
+                    for (String selectedItemName : mDialogSelectedItemsNames)
+                    {
+                        selectedCategories.add(mMekorotCategories.get(selectedItemName));
+                    }
+                    mFilteredMekorotModels = new HashMap<>();
+                    ArrayList<String> relevantBooks = new ArrayList<>();
+                    ArrayList<MakorModel> mekorot = new ArrayList<>(mMekorotModels.values());
+                    for (CategoryModel cm : selectedCategories)
+                    {
+                        ArrayList<String> books = mCategoryToBooks.get(cm.getCategoryUri());
+                        relevantBooks.addAll(books);
+                    }
+                    for (MakorModel makor : mekorot)
+                    {
+                        if (relevantBooks.contains(makor.getMakorBook()))
+                        {
+                            mFilteredMekorotModels.put(makor.getMakorUri(), makor);
+                        }
+                    }
+                    selfie.setRecyclerViewAdapter(mFilteredMekorotModels);
+                }
+                else
+                {
+                    selfie.setRecyclerViewAdapter(mMekorotModels);
+                }
+                dialog.dismiss();
+            }
+        });
+
+        dialogView.findViewById(R.id.btn_clear_selection).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selfie.clearFilterDialogSelections();
+                int size = initItemList.size();
+                for (int i = 0; i < size; i++)
+                {
+                    ListViewItemDTO dto = initItemList.get(i);
+                    dto.setChecked(false);
+                }
+                listViewDataAdapter.notifyDataSetChanged();
+            }
+        });
+
+        dialogView.findViewById(R.id.btn_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
         mCallback.setFilterIcon(dialog);
     }
 

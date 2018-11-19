@@ -48,11 +48,14 @@
         android:id="@+id/err_rep_free_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:layout_marginEnd="25dp"
         android:layout_marginStart="25dp"
+        android:background="@drawable/elemnt_border"
         android:hint="@string/free_text_hint"
-        android:inputType="text"
-        android:lines="2" />
+        android:gravity="top"
+        android:inputType="textMultiLine"
+        android:lines="4" />
 
     <Button
         android:id="@+id/btn_err_report_send"

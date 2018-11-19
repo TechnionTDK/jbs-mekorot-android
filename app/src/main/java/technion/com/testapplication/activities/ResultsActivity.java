@@ -512,7 +512,16 @@ public class ResultsActivity extends AppCompatActivity
                 ClickableSpan clickableSpan = new ClickableSpan() {
                     @Override
                     public void onClick(View widget) {
-                        selfie.onReportErrorClicked(makorUri, spanRange, subsetToHighlight.second, false);
+                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(selfie);
+                        builder.setTitle("");
+                        builder.setMessage(subsetToHighlight.second);
+                        builder.setNegativeButton("דווח שגיאה", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                selfie.onReportErrorClicked(makorUri, spanRange, subsetToHighlight.second, false);
+                            }
+                        });
+                        builder.create().show();
                     }
 
                     @Override
