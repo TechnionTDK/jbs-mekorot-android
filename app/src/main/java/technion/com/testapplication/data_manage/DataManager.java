@@ -88,7 +88,7 @@ public class DataManager {
         SharedPreferences.Editor editor = mLocalCache.edit();
         for (String dateKey : ageSet)
         {
-            Date dateFromCache = new Date(Long.valueOf(mLocalCache.getString(dateKey, "")));
+            Date dateFromCache = new Date(Long.valueOf(mLocalCache.getString(dateKey, "0")));
             Date nowDate = new Date();
             long diffInMillies = Math.abs(nowDate.getTime() - dateFromCache.getTime());
             long diffDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);

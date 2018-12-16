@@ -329,6 +329,10 @@ public class ResultsActivity extends AppCompatActivity
             }
             else
             {
+                if (i > splitMakorText.length)
+                {
+                    return partialPasukText.toString();
+                }
                 partialPasukText.append(splitMakorText[i]).append(" ");
             }
         }
